@@ -1,0 +1,37 @@
+name: EAS CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build with EAS
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1 : Checkout du code source
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Étape 2 : Installer Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Étape 3 : Installer les dépendances
+      - name: Install dependencies
+        run: npm install
+
+      # Étape 4 : Authentification EAS
+      - name: Authenticate with Expo
+        run: eas login --token ${{ secrets.EXPO_TOKEN }}
+
+      # Étape 5 : Lancer la build EAS
+      - name: Run EAS build
+        run: eas build --platform all --non-interactive
