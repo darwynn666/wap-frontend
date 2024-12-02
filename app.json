@@ -1,6 +1,7 @@
 {
   "expo": {
     "name": "wap",
+    "owner": "wap_team",
     "slug": "wap",
     "version": "1.0.0",
     "orientation": "portrait",
