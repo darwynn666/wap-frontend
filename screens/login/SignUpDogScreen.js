@@ -16,21 +16,11 @@ export default function SignUpDogScreen(props) {
     console.log(route.params)
 
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (submit) => {
         setErrorMessage(null)
 
         // console.log(name, sex)
         if (!name || !sex) { setErrorMessage('Nom et sexe obligatoires'); return }
-
-
-        // name: req.body.name,
-        // sex: req.body.sex,
-        // race: req.body.race,
-        // birthday: req.body.birthday,
-        // status: req.body.status,
-        // chipid: req.body.chipid,
-        // isTaken: 
-
 
 
         console.log('fetch dog')
@@ -42,17 +32,19 @@ export default function SignUpDogScreen(props) {
         const dogData = await dogRes.json()
         console.log(dogData)
         if (dogData.result) {
+
             console.log('fetch user')
             const userRes = await fetch(`${BACKEND_URL}/users/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstname:firstname, lastname:lastname, email:email, telephone:telephone, password:password })
+                body: JSON.stringify({ firstname: firstname, lastname: lastname, email: email, telephone: telephone, password: password })
             })
             const userData = await userRes.json()
             console.log(userData)
         }
 
     }
+
 
     return (
         <ScrollView>
@@ -89,7 +81,8 @@ export default function SignUpDogScreen(props) {
                 </View>
 
                 <View style={styles.bottomControls}>
-                    <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' />
+                    <ButtonPrimary  title='Ajouter un autre chien' />
+                    <ButtonPrimary onPress={() => handleSubmit(true)} title='Terminer mon inscription' />
                 </View>
 
             </SafeAreaView>
