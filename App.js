@@ -141,6 +141,7 @@ export default function App() {
         <Tab.Screen name="Login" component={StackLogin} />
         <Tab.Screen name="Tuto" component={StackTuto} />
         <Tab.Screen name="Map" component={DrawerMap} />
+        <Tab.Screen name="Test" component={TestScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
