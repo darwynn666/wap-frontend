@@ -121,11 +121,11 @@ const StackEditPlace = () => {
 }
 const DrawerMap = () => {
   return (
-    <Drawer.Navigator screenOptions={{ headerShown: true }}>
-      <Drawer.Screen name="_Map"  component={StackMap} options={{ drawerItemStyle: { display: '_none' } }} />
+    <Drawer.Navigator initialRouteName='_Map' screenOptions={{ headerShown: true }}>
       <Drawer.Screen name="Mon compte" component={StackUser} />
       <Drawer.Screen name="Mes chiens" component={StackDogs} />
       <Drawer.Screen name="Mes amis" component={StackFriends} />
+      <Drawer.Screen name="_Map"  component={StackMap} options={{ drawerItemStyle: { display: '_none' } }} />
       <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ drawerItemStyle: { display: '_none' } }}/>
       <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: '_none' } }}/>
     </Drawer.Navigator>
