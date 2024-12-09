@@ -1,19 +1,99 @@
-import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
+import { StyleSheet, Text, TextInput, View, ScrollView, SafeAreaView, ImageBackground, Dimensions, TouchableOpacity } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
-
+import ButtonPrimary from '../../globalComponents/ButtonPrimary'
+import { BACKEND_URL } from '../../config'
 
 
 export default function SignUpDogScreen(props) {
     const navigation = useNavigation()
     const route = useRoute()
+    const { firstname, lastname, email, telephone, password } = route.params
+    const [name, setName] = useState()
+    const [sex, setSex] = useState()
+    const [errorMessage, setErrorMessage] = useState()
+    console.log(route.params)
+
+
+    const handleSubmit = async () => {
+        setErrorMessage(null)
+
+        // console.log(name, sex)
+        if (!name || !sex) { setErrorMessage('Nom et sexe obligatoires'); return }
+
+
+        // name: req.body.name,
+        // sex: req.body.sex,
+        // race: req.body.race,
+        // birthday: req.body.birthday,
+        // status: req.body.status,
+        // chipid: req.body.chipid,
+        // isTaken: 
+
+
+
+        console.log('fetch dog')
+        const dogRes = await fetch(`${BACKEND_URL}/dogs`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, sex: sex })
+        })
+        const dogData = await dogRes.json()
+        console.log(dogData)
+        if (dogData.result) {
+            console.log('fetch user')
+            const userRes = await fetch(`${BACKEND_URL}/users/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstname:firstname, lastname:lastname, email:email, telephone:telephone, password:password })
+            })
+            const userData = await userRes.json()
+            console.log(userData)
+        }
+
+    }
 
     return (
-        <View style={styles.container}>
-            <Text>Component : SignUpDogScreen</Text>
-            <Text>Route : {route.name}</Text>
-        </View>
+        <ScrollView>
+            <SafeAreaView style={styles.container}>
+
+                <View style={styles.titleContainer}>
+                    <Text style={styles.titleText}>Ajoute ton chien</Text>
+                </View>
+
+                <View style={styles.avatarContainer}>
+                    <ImageBackground source={require('../../assets/avatar.jpg')} resizeMode="cover"></ImageBackground>
+                </View>
+
+                <View style={styles.inputsContainer}>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.titleText}>Son nom</Text>
+                        <TextInput onChangeText={(value) => setName(value)} value={name} style={styles.input} placeholder='Nom de ton chien'></TextInput>
+                    </View>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.titleText}>Son sexe</Text>
+                        <View style={styles.optionsContainer}>
+                            <TouchableOpacity onPress={() => setSex('female')} style={[styles.optionFemale, sex === 'female' && styles.optionSelected]}></TouchableOpacity>
+                            <TouchableOpacity onPress={() => setSex('male')} style={[styles.optionMale, sex === 'male' && styles.optionSelected]}></TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+
+                <View>
+                    <Text style={styles.info}>Tu pourras jouter d'autres informations ultérieurement</Text>
+                </View>
+
+                <View style={styles.bottomControls}>
+                    <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' />
+                </View>
+
+            </SafeAreaView>
+        </ScrollView>
     )
 }
 
@@ -22,9 +102,79 @@ import { globalStyle } from '../../config'
 const styles = StyleSheet.create({
     container: {
         backgroundColor: globalStyle.backgroundColor,
+        padding: globalStyle.padding,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 20,
+    },
+    titleContainer: {
+        // backgroundColor:'red',
+        width: '100%',
+        marginBottom: 10,
+    },
+    titleText: {
+        fontSize: globalStyle.h3,
+        textAlign: 'center',
+    },
+    avatarContainer: {
+        backgroundColor: '#cccccc',
+        width: Dimensions.get('window').width * 0.4,
+        height: Dimensions.get('window').width * 0.4,
+        borderRadius: Dimensions.get('window').width * 0.4,
+        marginBottom: 10,
+    },
+    avatar: {},
+    inputsContainer: {
+        // backgroundColor:'#999999',
+        width: '100%',
+    },
+    inputContainer: {
+        width: '100%',
+        borderBottomWidth: 1,
+        borderBottomColor: '#999999',
+        marginBottom: 5,
+    },
+    optionsContainer: {
+        // backgroundColor:'yellow',
+        // width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    optionFemale: {
+        backgroundColor: '#ff9999',
+        width: 50,
+        height: 50,
+        borderRadius: 50,
+        margin: 10,
+    },
+    optionMale: {
+        backgroundColor: '#9999ff',
+        width: 50,
+        height: 50,
+        borderRadius: 50,
+        margin: 10,
+    },
+    optionSelected: {
+        borderWidth: 3,
+        borderColor: '#333333',
+    },
+    errorContainer: {
+        width: '100%',
+        height: 40,
+    },
+    errorText: {
+        color: 'red',
+        textAlign: 'center',
+    },
+    input: {},
+    info: {
+        textAlign: 'center',
+        margin: 10,
+    },
+    bottomControls: {
+        // backgroundColor: 'yellow',
+        width: '100%',
+        alignItems: 'center',
     },
 })

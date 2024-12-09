@@ -4,7 +4,8 @@ import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
 
 
-
+import ButtonPrimary from '../globalComponents/ButtonPrimary'
+import ButtonSecondary from '../globalComponents/ButtonSecondary'
 
 export default function TestScreen(props) {
     const navigation = useNavigation()
@@ -14,6 +15,9 @@ export default function TestScreen(props) {
         <View style={styles.container}>
             <Text>Component : TestScreen</Text>
             <Text>Route : {route.name}</Text>
+            <ButtonPrimary title='Button Primary'/>
+            <ButtonSecondary title='Secondary status=yes' status='yes'/>
+            <ButtonSecondary title='Secondary status=no' status='no'/>
         </View>
     )
 }
