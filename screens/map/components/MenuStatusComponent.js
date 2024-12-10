@@ -11,13 +11,11 @@ import { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import { globalStyle } from "../../../config";
+import ModalMenu from "./ModalMenu";
 
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faAngleDown
-} from "@fortawesome/free-solid-svg-icons";
+
 
 export default function MenuStatusComponent(props) {
   const navigation = useNavigation();
@@ -31,16 +29,11 @@ export default function MenuStatusComponent(props) {
 
   return (
     <>
-      <Modal transparent={true} visible={modalVisibility} animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity style={styles.closeButton} onPress={()=>setModalVisibility(false)}>
-            <FontAwesomeIcon icon={faAngleDown} color={globalStyle.buttonSecondaryNoColor} size={30} />
-            </TouchableOpacity>
-            <View style={styles.test}></View>
-          </View>
+      <ModalMenu visibility={modalVisibility} onRequestClose={()=>setModalVisibility(false)}>
+        <View style={styles.test}>
+          <Text>test</Text>
         </View>
-      </Modal>
+      </ModalMenu>
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.button}
@@ -71,23 +64,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  modalContainer: {
-    flex: 1,
-    flexDirection:"column",
-    justifyContent:"flex-end"
+  test: {
+   minHeight:50
   },
-  modalContent:{
-    backgroundColor: "white",
-    flexDirection:"column",
-    alignItems:"center",
-  },
-  closeButton:{
-    width:"100%",
-    alignItems:"center",
-    height:"10%"
-
-  },
-  test:{
-    height:'50%'
-  }
 });
