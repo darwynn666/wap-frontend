@@ -12,6 +12,7 @@ import {
 import { Marker, Callout } from "react-native-maps";
 import MapView from "react-native-maps";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -23,7 +24,6 @@ import {
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
-import { useSelector } from "react-redux";
 import { BACKEND_URL } from "../../config";
 
 // COMPONENT
@@ -92,9 +92,12 @@ export default function MapScreen2() {
 
   // markers users
   const getUsers = async () => {
-    const usersResponse = await fetch(`${BACKEND_URL}/users`);
+    console.log('getUsers')
+    const usersResponse = await fetch(`${BACKEND_URL}/users/${user.token}`);
     const usersData = await usersResponse.json();
+    console.log('userData',usersData)
     if (usersData.result) {
+        console.log(usersData.data)
       setUsersMarkers(usersData.data);
     }
   };
