@@ -35,7 +35,7 @@ export default function MenuStatusComponent(props) {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.closeButton} onPress={()=>setModalVisibility(false)}>
-            <FontAwesomeIcon icon={faAngleDown} color="black" size={30} />
+            <FontAwesomeIcon icon={faAngleDown} color={globalStyle.buttonSecondaryNoColor} size={30} />
             </TouchableOpacity>
             <View style={styles.test}></View>
           </View>
@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
     alignItems:"center",
   },
   closeButton:{
-    backgroundColor:'red',
     width:"100%",
     alignItems:"center",
     height:"10%"
