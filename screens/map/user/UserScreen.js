@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Button, Image } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
@@ -11,6 +11,12 @@ export default function UserScreen(props) {
 
     return (
         <View style={styles.container}>
+            <View>
+                <Image></Image>
+            </View>
+            <View>
+                <TextInput></TextInput>
+            </View>
             <Text>Component : UserScreen</Text>
             <Text>Route : {route.name}</Text>
         </View>
