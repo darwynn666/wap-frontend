@@ -16,6 +16,18 @@ import ModalMenu from "./ModalMenu";
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
 
+const MainButton = ({ onPressCallBack }) => {
+  return (
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => {
+        onPressCallBack();
+      }}
+    >
+      <Text>Status</Text>
+    </TouchableOpacity>
+  );
+};
 
 export default function MenuStatusComponent(props) {
   const navigation = useNavigation();
@@ -24,23 +36,22 @@ export default function MenuStatusComponent(props) {
   const [modalVisibility, setModalVisibility] = useState(false);
 
   const MainButtonHandle = () => {
-    setModalVisibility(true);
+    setModalVisibility(!modalVisibility);
   };
 
   return (
     <>
-      <ModalMenu visibility={modalVisibility} onRequestClose={()=>setModalVisibility(false)}>
+      <ModalMenu
+        visibility={modalVisibility}
+        onRequestClose={() => setModalVisibility(false)}
+      >
         <View style={styles.test}>
           <Text>test</Text>
         </View>
+        <MainButton onPressCallBack={MainButtonHandle}></MainButton>
       </ModalMenu>
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => MainButtonHandle()}
-        >
-          <Text>Status</Text>
-        </TouchableOpacity>
+        <MainButton onPressCallBack={MainButtonHandle}></MainButton>
       </View>
     </>
   );
@@ -65,6 +76,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   test: {
-   minHeight:50
+    minHeight: 50,
   },
 });

@@ -33,22 +33,6 @@ export default ModalMenu = ({children,visibility,onRequestClose}) => {
 
 // STYLES
 const styles = StyleSheet.create({
-    // container: {
-    //   backgroundColor: globalStyle.backgroundColor,
-    //   flex: 1,
-    //   justifyContent: "center",
-    //   alignItems: "center",
-    // },
-    // button: {
-    //   width: 140,
-    //   height: 50,
-    //   borderRadius: 25,
-    //   borderWidth: 1,
-    //   borderColor: globalStyle.buttonSecondaryNoColor,
-    //   flexDirection: "column",
-    //   justifyContent: "center",
-    //   alignItems: "center",
-    // },
     modalContainer: {
       flex: 1,
       flexDirection: "column",
@@ -58,6 +42,7 @@ const styles = StyleSheet.create({
       backgroundColor: "white",
       flexDirection: "column",
       alignItems: "center",
+      paddingBottom:4
     },
     closeButton: {
       width: "100%",
