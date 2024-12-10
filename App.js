@@ -77,7 +77,7 @@ const StackTuto = () => {
 // MAP
 const StackMap = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Map" component={MapScreen} />
     </Stack.Navigator>
   )
@@ -133,7 +133,7 @@ const DrawerMap = () => {
       <Drawer.Screen name="Mon compte" component={StackUser} />
       <Drawer.Screen name="Mes chiens" component={StackDogs} />
       <Drawer.Screen name="Mes amis" component={StackFriends} />
-      <Drawer.Screen name="_Map" component={StackMap} options={{ drawerItemStyle: { display: '_none' } }} />
+      <Drawer.Screen name="_Map" component={StackMap} options={{ headerShown: false,  drawerItemStyle: { display: '_none' } }} />
       <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ drawerItemStyle: { display: '_none' } }} />
       <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: '_none' } }} />
     </Drawer.Navigator>

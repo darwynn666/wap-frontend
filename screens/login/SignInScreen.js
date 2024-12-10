@@ -35,6 +35,9 @@ export default function SignIn(props) {
             dispatch(setUser({ token: data.token }))
             navigation.navigate('Map')
         }
+        else {
+            setErrorMessage('Cet email n\'existe pas')
+        }
     }
 
 
