@@ -1,0 +1,30 @@
+import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
+import { useEffect, useState } from 'react'
+import { useRoute } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
+import { globalStyle } from '../../../config'
+
+
+import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
+import ButtonSecondary from '../../../globalComponents/ButtonSecondary'
+
+export default function MenuStatusComponent(props) {
+    const navigation = useNavigation()
+    const route = useRoute()
+
+    return (
+        <View style={styles.container}>
+            <Text>Status</Text>
+        </View>
+    )
+}
+
+// STYLES
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: globalStyle.backgroundColor,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+})

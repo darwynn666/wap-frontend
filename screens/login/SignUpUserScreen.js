@@ -1,8 +1,11 @@
 import { StyleSheet, Text, TextInput, View, Image, Dimensions, ImageBackground, SafeAreaView, ScrollView } from 'react-native'
 import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
 import ButtonPrimary from '../../globalComponents/ButtonPrimary'
+import { BACKEND_URL } from '../../config'
+import { setUser } from '../../reducers/user'
 
 
 export default function SignUpUserScreen(props) {
@@ -15,22 +18,38 @@ export default function SignUpUserScreen(props) {
     const [errorMessage, setErrorMessage] = useState(null)
     const navigation = useNavigation()
 
+    const dispatch = useDispatch()
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setErrorMessage(null)
+
         console.log('check form')
-        navigation.navigate('SignUpDog', { firstname:firstname, lastname:lastname, email:email, telephone:telephone, password:password1 })
         if (!firstname || !lastname) { setErrorMessage('Nom et prénom obligatoires'); return }
         const emailPattern = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'g')
         if (!email || !emailPattern.test(email)) { setErrorMessage('Email invalide'); return }
+        else {
+            const response = await fetch(`${BACKEND_URL}/users/checkmail`, { // check if email exists
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            })
+            const data = await response.json()
+            if (data.result) {
+                setErrorMessage('Cet email existe déjà, essayez de vous connecter');
+                navigation.navigate('SignIn', { email: email ,message:'Un compte associé à cet email existe déjà. Connectez-vous'}) // go to signin screen
+                return
+            }
+        }
         const telPattern = new RegExp(/^((\+|00)33\s?|0)[67](\s?\d{2}){4}$/, 'g')
         if (!telephone || !telPattern.test(telephone)) { setErrorMessage('Numéro de téléphone invalide : +33...'); return }
         if (!password1 || !password2) { setErrorMessage('Mot de passe obligatoire'); return }
         if (password1.length < 8) { setErrorMessage('Mot de passe trop court'); return }
         if (password1 !== password2) { setErrorMessage('Mots de passe différents'); return }
+
         console.log('form ok')
-        navigation.navigate('SignUpDog', { firstname:firstname, lastname:lastname, email:email, telephone:telephone, password:password1 })
+        navigation.navigate('SignUpDog', { firstname: firstname, lastname: lastname, email: email, telephone: telephone, password: password1 })
     }
+
 
     return (
         <ScrollView>
@@ -72,7 +91,7 @@ export default function SignUpUserScreen(props) {
                 <View style={styles.bottomControls}>
                     <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' />
                 </View>
-                
+
             </SafeAreaView>
         </ScrollView>
     )
@@ -96,6 +115,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontSize: globalStyle.h3,
+        textAlign:'center',
     },
     avatarContainer: {
         backgroundColor: '#cccccc',
