@@ -16,10 +16,10 @@ import ModalMenu from "./ModalMenu";
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
 
-const MainButton = ({ onPressCallBack }) => {
+const MainButton = ({ onPressCallBack, color }) => {
   return (
     <TouchableOpacity
-      style={styles.button}
+      style={[styles.button, { borderColor: color }]}
       onPress={() => {
         onPressCallBack();
       }}
@@ -48,10 +48,16 @@ export default function MenuStatusComponent(props) {
         <View style={styles.test}>
           <Text>test</Text>
         </View>
-        <MainButton onPressCallBack={MainButtonHandle}></MainButton>
+        <MainButton
+          onPressCallBack={MainButtonHandle}
+          color={globalStyle.buttonSecondaryYesColor}
+        ></MainButton>
       </ModalMenu>
       <View style={styles.container}>
-        <MainButton onPressCallBack={MainButtonHandle}></MainButton>
+        <MainButton
+          onPressCallBack={MainButtonHandle}
+          color={globalStyle.buttonSecondaryNoColor}
+        ></MainButton>
       </View>
     </>
   );
