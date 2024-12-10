@@ -18,7 +18,7 @@ export default function MapScreen2() {
     const [currentPosition, setCurrentPosition] = useState(false)
     const [positionMarker, setPositionMarker] = useState()
     const [mapType, setMapType] = useState('standard')
-    const [placesMarkers, setPlacesMarkers] = useState(null)
+    const [placesMarkers, setPlacesMarkers] = useState([])
     const [visibleRegion, setVisibleRegion] = useState(null);
 
 
@@ -74,25 +74,33 @@ export default function MapScreen2() {
         console.log('get places')
         const placesResponse = await fetch(`${BACKEND_URL}/places`)
         const placesData = await placesResponse.json()
-        console.log(placesData.data)
+        // console.log(placesData.data)
+        console.log(placesData.result)
         if (placesData.result) {
-            setPlacesMarkers([...placesMarkers, placesDatas.data])
-            const places = placesMarkers.map((e, i) => {
-                return (<Marker key={i} coordinate={e.coordinates}><FontAwesomeIcon icon={faMapMarker} size={20} color='royalblue' /></Marker>)
-            })
-            console.log('places',places)
+            setPlacesMarkers(placesData.data)
         }
     }
     useEffect(() => {
         getPlaces()
-    }, [visibleRegion])
+    }, [])
 
+    // visibleRegion
+    const places = placesMarkers.map((e, i) => {
+        return (<Marker key={i} coordinate={{ latitude: e.location.coordinates[1], longitude: e.location.coordinates[0] }} />)
+        // return (<Marker key={i} coordinate={{ latitude: e.location.coordinates[1], longitude: e.location.coordinates[0] }}><FontAwesomeIcon icon={faMapMarker} size={20} color='royalblue' /></Marker>)
+    })
 
-    console.log('current position', currentPosition)
+    // console.log('current position', currentPosition)
     return (
         <View style={styles.container}>
             {currentPosition &&
                 <MapView
+                initialRegion={{
+                    latitude: currentPosition.latitude,
+                    longitude: currentPosition.longitude,
+                    latitudeDelta: 0.05,    //0.05 equivaut à environ 5km
+                    longitudeDelta: 0.05,
+                  }}
                     type={mapType}
                     style={{ width: '100%', height: '100%' }}
                     showsUserLocation={!forcePosition}
@@ -102,6 +110,7 @@ export default function MapScreen2() {
 
                 >
                     {forcePosition && positionMarker}
+                    {places}
                 </MapView>
             }
 
