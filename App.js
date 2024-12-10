@@ -4,6 +4,14 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+// redux 
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import user from './reducers/user'
+const store = configureStore({
+  reducer: { user },
+})
+
 // IMPORT SCREENS
 import TestScreen from './screens/TestScreen'; //empty component for tests
 
@@ -125,9 +133,9 @@ const DrawerMap = () => {
       <Drawer.Screen name="Mon compte" component={StackUser} />
       <Drawer.Screen name="Mes chiens" component={StackDogs} />
       <Drawer.Screen name="Mes amis" component={StackFriends} />
-      <Drawer.Screen name="_Map"  component={StackMap} options={{ drawerItemStyle: { display: '_none' } }} />
-      <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ drawerItemStyle: { display: '_none' } }}/>
-      <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: '_none' } }}/>
+      <Drawer.Screen name="_Map" component={StackMap} options={{ drawerItemStyle: { display: '_none' } }} />
+      <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ drawerItemStyle: { display: '_none' } }} />
+      <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: '_none' } }} />
     </Drawer.Navigator>
   )
 }
@@ -136,14 +144,16 @@ const DrawerMap = () => {
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
-        <Tab.Screen name="Login" component={StackLogin} />
-        <Tab.Screen name="Tuto" component={StackTuto} />
-        <Tab.Screen name="Map" component={DrawerMap} />
-        <Tab.Screen name="Test" component={TestScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
+          <Tab.Screen name="Login" component={StackLogin} />
+          <Tab.Screen name="Tuto" component={StackTuto} />
+          <Tab.Screen name="Map" component={DrawerMap} />
+          <Tab.Screen name="Test" component={TestScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 

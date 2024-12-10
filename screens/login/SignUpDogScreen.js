@@ -1,9 +1,11 @@
 import { StyleSheet, Text, TextInput, View, ScrollView, SafeAreaView, ImageBackground, Dimensions, TouchableOpacity } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import ButtonPrimary from '../../globalComponents/ButtonPrimary'
 import { BACKEND_URL } from '../../config'
+import { setUser } from '../../reducers/user'
 
 
 export default function SignUpDogScreen(props) {
@@ -13,7 +15,8 @@ export default function SignUpDogScreen(props) {
     const [name, setName] = useState()
     const [sex, setSex] = useState()
     const [errorMessage, setErrorMessage] = useState()
-    console.log(route.params)
+    const dispatch = useDispatch()
+    console.log('route params', route.params)
 
 
     const handleSubmit = async (submit) => {
@@ -32,17 +35,21 @@ export default function SignUpDogScreen(props) {
         const dogData = await dogRes.json()
         console.log(dogData)
         if (dogData.result) {
-
+            const dogId = dogData.data._id
+            const newUser = { firstname: firstname, lastname: lastname, email: email, telephone: telephone, password: password, dogs: [dogId] }
             console.log('fetch user')
             const userRes = await fetch(`${BACKEND_URL}/users/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstname: firstname, lastname: lastname, email: email, telephone: telephone, password: password })
+                body: JSON.stringify(newUser)
             })
             const userData = await userRes.json()
             console.log(userData)
+            if (userData.result) {
+                dispatch(setUser({ ...newUser, token: userData.token }))
+                navigation.navigate('Tuto')
+            }
         }
-
     }
 
 
@@ -81,7 +88,7 @@ export default function SignUpDogScreen(props) {
                 </View>
 
                 <View style={styles.bottomControls}>
-                    <ButtonPrimary  title='Ajouter un autre chien' />
+                    {/* <ButtonPrimary  title='Ajouter un autre chien' /> */}
                     <ButtonPrimary onPress={() => handleSubmit(true)} title='Terminer mon inscription' />
                 </View>
 

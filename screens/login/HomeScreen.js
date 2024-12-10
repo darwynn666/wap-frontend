@@ -14,7 +14,7 @@ export default function HomeScreen(props) {
     }
 
     const handleSignIn=()=> {
-        console.log('sign in ...')
+        navigation.navigate('SignIn')
     }
 
     console.log(route.name)
