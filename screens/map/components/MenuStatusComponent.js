@@ -14,7 +14,7 @@ export default function MenuStatusComponent(props) {
 
     return (
         <View style={styles.container}>
-            <Text>Menu Status Component</Text>
+            <Text>Status</Text>
         </View>
     )
 }

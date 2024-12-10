@@ -14,7 +14,7 @@ export default function MenuFiltersComponent(props) {
 
     return (
         <View style={styles.container}>
-            <Text>Menu Filters Component</Text>
+            <Text>Filters</Text>
         </View>
     )
 }
