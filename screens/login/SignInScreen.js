@@ -12,7 +12,21 @@ export default function SignIn(props) {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
+    const [title,setTitle]=useState()
     const navigation = useNavigation()
+    const route = useRoute()
+
+    console.log(route.params)
+
+    useEffect(()=>{
+        if(route.params) {
+            setTitle(route.params.message)
+            setEmail(route.params.email)
+        }
+        else {
+            setTitle('Connecte-toi')
+        }
+    },[])
 
     const dispatch = useDispatch()
 
@@ -46,7 +60,7 @@ export default function SignIn(props) {
             <SafeAreaView style={styles.container}>
 
                 <View style={styles.titleContainer}>
-                    <Text style={styles.titleText}>Connecte-toi</Text>
+                    <Text style={styles.titleText}>{title}</Text>
                 </View>
 
                 <View style={styles.avatarContainer}>

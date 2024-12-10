@@ -28,7 +28,7 @@ export default function SignUpUserScreen(props) {
         const emailPattern = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'g')
         if (!email || !emailPattern.test(email)) { setErrorMessage('Email invalide'); return }
         else {
-            const response = await fetch(`${BACKEND_URL}/users/checkmail`, { // chaek if email exists
+            const response = await fetch(`${BACKEND_URL}/users/checkmail`, { // check if email exists
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email })
@@ -36,7 +36,7 @@ export default function SignUpUserScreen(props) {
             const data = await response.json()
             if (data.result) {
                 setErrorMessage('Cet email existe déjà, essayez de vous connecter');
-                navigation.navigate('SignIn', { email: email }) // go to signin screen
+                navigation.navigate('SignIn', { email: email ,message:'Un compte associé à cet email existe déjà. Connectez-vous'}) // go to signin screen
                 return
             }
         }
