@@ -1,6 +1,6 @@
 import {
   StyleSheet,
-  Button,
+  Image,
   Text,
   TextInput,
   View,
@@ -25,6 +25,8 @@ import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
 import { BACKEND_URL } from "../../config";
+
+import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
 
 // COMPONENT
 export default function MapScreen2() {
@@ -92,12 +94,18 @@ export default function MapScreen2() {
 
   // markers users
   const getUsers = async () => {
-    console.log('getUsers')
+    console.log("getUsers");
     const usersResponse = await fetch(`${BACKEND_URL}/users`);
     const usersData = await usersResponse.json();
     if (usersData.result) {
-        //filter valid coordinate
-      setUsersMarkers(usersData.data.filter(x=>{return x.currentLocation.coordinates[0] && x.currentLocation.coordinates[1]  }));
+      //filter valid coordinate
+      setUsersMarkers(
+        usersData.data.filter((x) => {
+          return (
+            x.currentLocation.coordinates[0] && x.currentLocation.coordinates[1]
+          );
+        })
+      );
     }
   };
 
@@ -112,11 +120,30 @@ export default function MapScreen2() {
 
   useEffect(() => {
     getPlaces();
-    getUsers();
+    //getUsers();
   }, [visibleRegion]);
 
   const places = placesMarkers.map((e, i) => {
-    //use awesome font too heavy
+    let icon = "";
+    switch (e.type) {
+      case "restaurants":
+        icon = require("../../assets/icons/icon_restaurant.png");
+        break;
+      case "bars":
+        icon = require("../../assets/icons/icon_bar.png");
+        break;
+      case "garbages":
+        icon = require("../../assets/icons/icon_toilet.png");
+        break;
+      case "shops":
+        icon = require("../../assets/icons/icon_shop.png");
+        break;
+      case "parks":
+        icon = require("../../assets/icons/icon_park.png");
+        break;
+      default:
+        icon = require("../../assets/icons/icon_location.png");
+    }
     return (
       <Marker
         key={i}
@@ -124,7 +151,7 @@ export default function MapScreen2() {
           latitude: e.location.coordinates[1],
           longitude: e.location.coordinates[0],
         }}
-        pinColor="royalblue"
+        image={icon}
       />
     );
   });
@@ -139,7 +166,7 @@ export default function MapScreen2() {
           longitude: e.currentLocation.coordinates[0],
         }}
         // pinColor="royalblue"
-      />
+      ></Marker>
     );
   });
 
@@ -261,4 +288,5 @@ const styles = StyleSheet.create({
   buttonAddPlaceText: {
     textAlign: "center",
   },
+  marker: {},
 });
