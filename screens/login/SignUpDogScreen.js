@@ -6,8 +6,8 @@ import { useNavigation } from '@react-navigation/native'
 import ButtonPrimary from '../../globalComponents/ButtonPrimary'
 import { setUser } from '../../reducers/user'
 
-// import { BACKEND_URL } from '../../config'
-const BACKEND_URL = 'http://10.1.1.56:3000'
+import { BACKEND_URL } from '../../config'
+// const BACKEND_URL = 'http://10.1.1.56:3000'
 
 export default function SignUpDogScreen(props) {
     const navigation = useNavigation()
