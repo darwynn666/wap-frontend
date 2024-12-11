@@ -42,12 +42,14 @@ const MainButton = ({ onPressCallBack, color, status }) => {
   };
   return (
     <TouchableOpacity
-      style={[styles.button, { borderColor: color }]}
+      style={{width:'100%',alignItems:"center"}}
       onPress={() => {
         onPressCallBack();
       }}
     >
-      {statusIcon[status]}
+      <View style={[styles.button, { borderColor: color }]}>
+        {statusIcon[status]}
+      </View>
     </TouchableOpacity>
   );
 };
@@ -78,12 +80,10 @@ export default function MenuStatusComponent(props) {
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify({status:status}), // We send data in JSON format
+      body: JSON.stringify({ status: status }), // We send data in JSON format
     });
     const data = await response.json();
-    console.log(data);
-    if (!data.result)
-      setStatus(statusBackup);
+    if (!data.result) setStatus(statusBackup);
   };
 
   return (

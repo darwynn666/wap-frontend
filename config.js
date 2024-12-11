@@ -30,7 +30,8 @@ export const globalStyle  = {
     buttonSecondaryYesColor:greenPrimary, // text & border
     buttonSecondaryNoColor:grayPrimary, // text & border
 
-    //
+    //icon
+    iconSize:30
    
     
 }

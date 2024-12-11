@@ -3,7 +3,7 @@ import { faDog } from "@fortawesome/free-solid-svg-icons";
 import { globalStyle } from "../config"
 
 const IconDog = ({ color }) => {
-  return <FontAwesomeIcon icon={faDog} color={color} size={30} />;
+  return <FontAwesomeIcon icon={faDog} color={color} size={globalStyle.iconSize} />;
 };
 
 const IconDogGray = () => {
