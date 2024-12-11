@@ -93,12 +93,11 @@ export default function MapScreen2() {
   // markers users
   const getUsers = async () => {
     console.log('getUsers')
-    const usersResponse = await fetch(`${BACKEND_URL}/users/${user.token}`);
+    const usersResponse = await fetch(`${BACKEND_URL}/users`);
     const usersData = await usersResponse.json();
-    console.log('userData',usersData)
     if (usersData.result) {
-        console.log(usersData.data)
-      setUsersMarkers(usersData.data);
+        //filter valid coordinate
+      setUsersMarkers(usersData.data.filter(x=>{return x.currentLocation.coordinates[0] && x.currentLocation.coordinates[1]  }));
     }
   };
 
@@ -136,8 +135,8 @@ export default function MapScreen2() {
       <Marker
         key={i}
         coordinate={{
-          latitude: e.location.coordinates[1],
-          longitude: e.location.coordinates[0],
+          latitude: e.currentLocation.coordinates[1],
+          longitude: e.currentLocation.coordinates[0],
         }}
         // pinColor="royalblue"
       />

@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { Dimensions } from "react-native";
 
+
 export default ModalMenu = ({ children, visibility, onRequestClose }) => {
   return (
     <>
@@ -36,7 +37,7 @@ export default ModalMenu = ({ children, visibility, onRequestClose }) => {
             >
               <FontAwesomeIcon
                 icon={faAngleDown}
-                color={globalStyle.buttonSecondaryNoColor}
+                color={globalStyle.grayPrimary}
                 size={30}
               />
             </TouchableOpacity>

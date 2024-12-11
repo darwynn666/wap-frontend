@@ -13,6 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import { globalStyle } from "../../../config";
 import ModalMenu from "./ModalMenu";
 
+import {IconDogGray,IconDogGreen,IconDogBlue} from "../../../globalComponents/Icons"
+
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
 
@@ -29,6 +31,7 @@ const MainButton = ({ onPressCallBack, color }) => {
   );
 };
 
+
 export default function MenuStatusComponent(props) {
   const navigation = useNavigation();
   const route = useRoute();
@@ -39,6 +42,8 @@ export default function MenuStatusComponent(props) {
     setModalVisibility(!modalVisibility);
   };
 
+  
+
   return (
     <>
       <ModalMenu
@@ -46,7 +51,9 @@ export default function MenuStatusComponent(props) {
         onRequestClose={() => setModalVisibility(false)}
       >
         <View style={styles.test}>
-          <Text>test</Text>
+          <IconDogGreen />
+          <IconDogBlue />
+          <IconDogGray />
         </View>
         <MainButton
           onPressCallBack={MainButtonHandle}

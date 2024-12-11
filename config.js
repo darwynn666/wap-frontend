@@ -1,6 +1,11 @@
 // backend
 export const BACKEND_URL='https://wap-backend.vercel.app'
 
+import { faDog } from "@fortawesome/free-solid-svg-icons";
+
+const greenPrimary ="#44CD6F";
+const grayPrimary = "#A19D9D";
+const bluePrimary = "#5F9CE1";
 
 // global style properties
 export const globalStyle  = {
@@ -13,10 +18,18 @@ export const globalStyle  = {
     backgroundColor:'#fff',
     padding:20,
 
+    //colors
+    greenPrimary:greenPrimary,
+    grayPrimary:grayPrimary,
+    bluePrimary:bluePrimary,
 
     // buttons
-    buttonPrimaryBackgroundColor:'green', // background
+    buttonPrimaryBackgroundColor:greenPrimary, // background
     buttonPrimaryColor:'white', // text
-    buttonSecondaryYesColor:'green', // text & border
-    buttonSecondaryNoColor:'#999999', // text & border
+    buttonSecondaryYesColor:greenPrimary, // text & border
+    buttonSecondaryNoColor:grayPrimary, // text & border
+
+    //
+   
+    
 }
