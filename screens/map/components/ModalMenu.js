@@ -44,7 +44,6 @@ export default ModalMenu = ({ children, visibility, onRequestClose }) => {
           </View>
         </View>
       </Modal>
-      ;
     </>
   );
 };
