@@ -27,9 +27,9 @@ export default function InfosFriendScreen(props) {
                 </View>
             </View> */}
             <View>
-                <Icon>
+                {/* <Icon>
                     telephone
-                </Icon>
+                </Icon> */}
             </View>
         </View>
     )
