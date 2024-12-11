@@ -18,20 +18,21 @@ import {IconDogGray,IconDogGreen,IconDogBlue} from "../../../globalComponents/Ic
 
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
+import { useSelector } from "react-redux";
 
 const iconWalk = <IconDogGreen />;
 const iconPause = <IconDogBlue />;
 const iconOff = <IconDogGray />;
 
-const statusWalk="walk";
-const statusPause="pause";
-const statusOff="off";
+const STATUS_WALK="walk";
+const STATUS_PAUSE="pause";
+const STATUS_OFF="off";
 
 const MainButton = ({ onPressCallBack, color,status }) => {
   const statusIcon = {
-    walk:iconWalk,
-    pause:iconPause,
-    off:iconOff,
+    [STATUS_WALK]:iconWalk,
+    [STATUS_PAUSE]:iconPause,
+    [STATUS_OFF]:iconOff,
   }
   return (
     <TouchableOpacity
@@ -49,7 +50,9 @@ export default function MenuStatusComponent(props) {
   const navigation = useNavigation();
   const route = useRoute();
 
-  const [status,setStatus] = useState(statusOff)
+  const user = useSelector(state=> state.user.value)
+
+  const [status,setStatus] = useState(STATUS_OFF)
 
   const [modalVisibility, setModalVisibility] = useState(false);
 
@@ -61,6 +64,9 @@ export default function MenuStatusComponent(props) {
   const handleMenuBottomItemPressed = (status) =>{
     setStatus(status);
     setModalVisibility(false);
+    //change user status
+    console.log('token',user.token)
+
   }
 
   return (
@@ -70,9 +76,9 @@ export default function MenuStatusComponent(props) {
         onRequestClose={() => setModalVisibility(false)}
       >
         <View style={styles.content}>
-          <MenuBottomItem srcIsActive={iconWalk} label="en promenade" statusValue={statusWalk} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
-          <MenuBottomItem srcIsActive={iconPause} label="en pause" statusValue={statusPause} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
-          <MenuBottomItem srcIsActive={iconOff} label="hors ligne"statusValue={statusOff} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
+          <MenuBottomItem srcIsActive={iconWalk} label="en promenade" statusValue={STATUS_WALK} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
+          <MenuBottomItem srcIsActive={iconPause} label="en pause" statusValue={STATUS_PAUSE} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
+          <MenuBottomItem srcIsActive={iconOff} label="hors ligne"statusValue={STATUS_OFF} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
         </View>
         <MainButton
           onPressCallBack={MainButtonHandle}
