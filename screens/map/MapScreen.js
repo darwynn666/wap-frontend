@@ -120,7 +120,7 @@ export default function MapScreen2() {
 
   useEffect(() => {
     getPlaces();
-    //getUsers();
+    getUsers();
   }, [visibleRegion]);
 
   const places = placesMarkers.map((e, i) => {
@@ -157,7 +157,11 @@ export default function MapScreen2() {
   });
 
   const users = usersMarkers.map((e, i) => {
-    //use awesome font too heavy
+    let icon = require("../../assets/icons/icon_dog_gray.png");
+    //need to check if friends or blocked
+
+
+    
     return (
       <Marker
         key={i}
@@ -166,6 +170,7 @@ export default function MapScreen2() {
           longitude: e.currentLocation.coordinates[0],
         }}
         // pinColor="royalblue"
+        image={icon}
       ></Marker>
     );
   });
