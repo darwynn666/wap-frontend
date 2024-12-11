@@ -19,7 +19,20 @@ import {IconDogGray,IconDogGreen,IconDogBlue} from "../../../globalComponents/Ic
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
 
-const MainButton = ({ onPressCallBack, color }) => {
+const iconWalk = <IconDogGreen />;
+const iconPause = <IconDogBlue />;
+const iconOff = <IconDogGray />;
+
+const statusWalk="walk";
+const statusPause="pause";
+const statusOff="off";
+
+const MainButton = ({ onPressCallBack, color,status }) => {
+  const statusIcon = {
+    walk:iconWalk,
+    pause:iconPause,
+    off:iconOff,
+  }
   return (
     <TouchableOpacity
       style={[styles.button, { borderColor: color }]}
@@ -27,15 +40,16 @@ const MainButton = ({ onPressCallBack, color }) => {
         onPressCallBack();
       }}
     >
-      <Text>Status</Text>
+      {statusIcon[status]}
     </TouchableOpacity>
   );
 };
 
-
 export default function MenuStatusComponent(props) {
   const navigation = useNavigation();
   const route = useRoute();
+
+  const [status,setStatus] = useState(statusOff)
 
   const [modalVisibility, setModalVisibility] = useState(false);
 
@@ -43,9 +57,11 @@ export default function MenuStatusComponent(props) {
     setModalVisibility(!modalVisibility);
   };
 
-  const iconWalk = <IconDogGreen />;
-  const iconPause = <IconDogBlue />;
-  const iconOff = <IconDogGray />;
+
+  const handleMenuBottomItemPressed = (status) =>{
+    setStatus(status);
+    setModalVisibility(false);
+  }
 
   return (
     <>
@@ -54,19 +70,21 @@ export default function MenuStatusComponent(props) {
         onRequestClose={() => setModalVisibility(false)}
       >
         <View style={styles.content}>
-          <MenuBottomItem srcIsActive={iconWalk} label="en promenade"></MenuBottomItem>
-          <MenuBottomItem srcIsActive={iconPause} label="en pause"></MenuBottomItem>
-          <MenuBottomItem srcIsActive={iconOff} label="hors ligne"></MenuBottomItem>
+          <MenuBottomItem srcIsActive={iconWalk} label="en promenade" statusValue={statusWalk} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
+          <MenuBottomItem srcIsActive={iconPause} label="en pause" statusValue={statusPause} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
+          <MenuBottomItem srcIsActive={iconOff} label="hors ligne"statusValue={statusOff} onPressed={handleMenuBottomItemPressed}></MenuBottomItem>
         </View>
         <MainButton
           onPressCallBack={MainButtonHandle}
           color={globalStyle.buttonSecondaryYesColor}
+          status={status}
         ></MainButton>
       </ModalMenu>
       <View style={styles.container}>
         <MainButton
           onPressCallBack={MainButtonHandle}
           color={globalStyle.buttonSecondaryNoColor}
+          status={status}
         ></MainButton>
       </View>
     </>

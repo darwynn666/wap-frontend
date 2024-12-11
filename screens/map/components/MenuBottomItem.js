@@ -1,8 +1,8 @@
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 
-export default MenuBottomItem = ({ label, srcIsActive }) => {
+export default MenuBottomItem = ({ label, srcIsActive, onPressed ,statusValue}) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={()=>{onPressed(statusValue)}}>
       {srcIsActive}
       <Text style={styles.label}>{label}</Text>
     </TouchableOpacity>
