@@ -12,6 +12,7 @@ import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import { globalStyle } from "../../../config";
 import ModalMenu from "./ModalMenu";
+import MenuBottomItem from "./MenuBottomItem";
 
 import {IconDogGray,IconDogGreen,IconDogBlue} from "../../../globalComponents/Icons"
 
@@ -42,7 +43,9 @@ export default function MenuStatusComponent(props) {
     setModalVisibility(!modalVisibility);
   };
 
-  
+  const iconWalk = <IconDogGreen />;
+  const iconPause = <IconDogBlue />;
+  const iconOff = <IconDogGray />;
 
   return (
     <>
@@ -50,10 +53,10 @@ export default function MenuStatusComponent(props) {
         visibility={modalVisibility}
         onRequestClose={() => setModalVisibility(false)}
       >
-        <View style={styles.test}>
-          <IconDogGreen />
-          <IconDogBlue />
-          <IconDogGray />
+        <View style={styles.content}>
+          <MenuBottomItem srcIsActive={iconWalk} label="en promenade"></MenuBottomItem>
+          <MenuBottomItem srcIsActive={iconPause} label="en pause"></MenuBottomItem>
+          <MenuBottomItem srcIsActive={iconOff} label="hors ligne"></MenuBottomItem>
         </View>
         <MainButton
           onPressCallBack={MainButtonHandle}
@@ -88,7 +91,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  test: {
+  content: {
     minHeight: 50,
+    marginBottom:20,
+    gap:15
   },
 });
