@@ -16,6 +16,7 @@ export default function SignUpUserScreen(props) {
     const [password1, setPassword1] = useState(null)
     const [password2, setPassword2] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
+    const [disableButton, setDisableButton] = useState(false)
     const navigation = useNavigation()
 
     const dispatch = useDispatch()
@@ -28,15 +29,17 @@ export default function SignUpUserScreen(props) {
         const emailPattern = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'g')
         if (!email || !emailPattern.test(email)) { setErrorMessage('Email invalide'); return }
         else {
+            setDisableButton(true)
             const response = await fetch(`${BACKEND_URL}/users/checkmail`, { // check if email exists
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email })
             })
             const data = await response.json()
+            setDisableButton(false)
             if (data.result) {
                 setErrorMessage('Cet email existe déjà, essayez de vous connecter');
-                navigation.navigate('SignIn', { email: email ,message:'Un compte associé à cet email existe déjà. Connectez-vous'}) // go to signin screen
+                navigation.navigate('SignIn', { email: email, message: 'Un compte associé à cet email existe déjà. Connectez-vous' }) // go to signin screen
                 return
             }
         }
@@ -89,7 +92,7 @@ export default function SignUpUserScreen(props) {
                 </View>
 
                 <View style={styles.bottomControls}>
-                    <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' />
+                    <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton}/>
                 </View>
 
             </SafeAreaView>
@@ -115,7 +118,7 @@ const styles = StyleSheet.create({
     },
     titleText: {
         fontSize: globalStyle.h3,
-        textAlign:'center',
+        textAlign: 'center',
     },
     avatarContainer: {
         backgroundColor: '#cccccc',

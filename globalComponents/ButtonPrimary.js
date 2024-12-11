@@ -7,8 +7,8 @@ import { globalStyle } from '../config'
 export default function ButtonPrimary(props) {
     // console.log(props)
     return (
-        <TouchableOpacity onPress={props.onPress} style={styles.button}>
-            <Text style={styles.text}>{props.title}</Text>
+        <TouchableOpacity onPress={props.onPress} style={styles.button} disabled={props.disabled}>
+            <Text style={styles.text}>{props.disabled ? 'patientez...' : props.title}</Text>
         </TouchableOpacity>
     )
 }

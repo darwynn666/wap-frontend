@@ -4,9 +4,10 @@ import { useRoute } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
 import ButtonPrimary from '../../globalComponents/ButtonPrimary'
-import { BACKEND_URL } from '../../config'
 import { setUser } from '../../reducers/user'
 
+// import { BACKEND_URL } from '../../config'
+const BACKEND_URL = 'http://10.1.1.56:3000'
 
 export default function SignUpDogScreen(props) {
     const navigation = useNavigation()
@@ -19,37 +20,40 @@ export default function SignUpDogScreen(props) {
     console.log('route params', route.params)
 
 
-    const handleSubmit = async (submit) => {
+    const handleSubmit = async () => {
         setErrorMessage(null)
 
         // console.log(name, sex)
         if (!name || !sex) { setErrorMessage('Nom et sexe obligatoires'); return }
 
-
-        console.log('fetch dog')
-        const dogRes = await fetch(`${BACKEND_URL}/dogs`, {
+        const urlDogs = BACKEND_URL + '/dogs'
+        console.log('fetch', urlDogs)
+        const dogRes = await fetch(urlDogs, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: name, sex: sex })
         })
         const dogData = await dogRes.json()
-        console.log(dogData)
+        console.log('newDog', dogData)
+
         if (dogData.result) {
             const dogId = dogData.data._id
             const newUser = { firstname: firstname, lastname: lastname, email: email, telephone: telephone, password: password, dogs: [dogId] }
-            console.log('fetch user')
-            const userRes = await fetch(`${BACKEND_URL}/users/signup`, {
+            const urlUser = BACKEND_URL + '/users/signup'
+            console.log('fetch', urlUser)
+            const userRes = await fetch(urlUser, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newUser)
             })
             const userData = await userRes.json()
-            console.log(userData)
+            console.log('newUser', userData)
             if (userData.result) {
                 dispatch(setUser({ ...newUser, token: userData.token }))
                 navigation.navigate('Tuto')
             }
         }
+
     }
 
 
