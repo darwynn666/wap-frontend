@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faDog } from "@fortawesome/free-solid-svg-icons";
+import { faDog,faToiletPaper } from "@fortawesome/free-solid-svg-icons";
 
 import { MaterialCommunityIcons,MaterialIcons } from '@expo/vector-icons';
 
@@ -51,16 +51,24 @@ const IconParkBlue = () => {
   return <MaterialCommunityIcons name="nature-people" size={globalStyle.iconSize} color={globalStyle.bluePrimary} />;
 };
 
-const IconParkGray = () => {
+const IconParkGrayLight = () => {
   return <MaterialCommunityIcons name="nature-people" size={globalStyle.iconSize} color={globalStyle.grayLight} />;
 };
 
-const IconShop = () => {
-  return <IconDog color={globalStyle.bluePrimary} />;
+const IconShopsBlue = () => {
+  return <MaterialIcons name="storefront"  size={globalStyle.iconSize} color={globalStyle.bluePrimary} />;
 };
 
-const IconToilet = () => {
-  return <IconDog color={globalStyle.bluePrimary} />;
+const IconShopsGrayLight = () => {
+  return <MaterialIcons name="storefront"  size={globalStyle.iconSize} color={globalStyle.grayLight} />;
+};
+
+const IconToiletBlue = () => {
+  return <FontAwesomeIcon icon={faToiletPaper} color={globalStyle.bluePrimary} size={globalStyle.iconSize} />
+};
+
+const IconToiletGrayLight = () => {
+  return <FontAwesomeIcon icon={faToiletPaper} color={globalStyle.grayLight} size={globalStyle.iconSize} />
 };
 
 module.exports = {
@@ -74,5 +82,10 @@ module.exports = {
   IconRestaurantBlue,
   IconRestaurantGrayLight,
   IconParkBlue,
-  IconParkGray
+  IconParkGrayLight,
+  IconShopsBlue,
+  IconShopsGrayLight,
+  IconToiletBlue,
+  IconToiletGrayLight
+
 };

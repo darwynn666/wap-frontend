@@ -21,7 +21,11 @@ import {
   IconRestaurantBlue,
   IconRestaurantGrayLight,
   IconParkBlue,
-  IconParkGray,
+  IconParkGrayLight,
+  IconShopsBlue,
+  IconShopsGrayLight,
+  IconToiletBlue,
+  IconToiletGrayLight,
 } from "../../../globalComponents/Icons";
 import {
   setUsersDisplayIgnored,
@@ -151,7 +155,7 @@ export default function MenuFiltersComponent(props) {
               <MenuBottomItem
                 srcIsActive={
                   PlacesDisplayIgnoredCheckIfIsInStore("parks") ? (
-                    <IconParkGray />
+                    <IconParkGrayLight />
                   ) : (
                     <IconParkBlue />
                   )
@@ -159,6 +163,30 @@ export default function MenuFiltersComponent(props) {
                 label="parks"
                 onPressed={PlacesDisplayIgnoredItemOnPress}
                 statusValue={"parks"}
+              />
+              <MenuBottomItem
+                srcIsActive={
+                  PlacesDisplayIgnoredCheckIfIsInStore("shops") ? (
+                    <IconShopsGrayLight />
+                  ) : (
+                    <IconShopsBlue />
+                  )
+                }
+                label="shops"
+                onPressed={PlacesDisplayIgnoredItemOnPress}
+                statusValue={"shops"}
+              />
+              <MenuBottomItem
+                srcIsActive={
+                  PlacesDisplayIgnoredCheckIfIsInStore("toilets") ? (
+                    <IconToiletGrayLight />
+                  ) : (
+                    <IconToiletBlue />
+                  )
+                }
+                label="toilettes"
+                onPressed={PlacesDisplayIgnoredItemOnPress}
+                statusValue={"toilets"}
               />
             </View>
           </View>
@@ -254,11 +282,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
   },
 
-separator:{
-  borderBottomColor:globalStyle.grayPrimary,
-  borderBottomWidth:1,
-  height:1,
-  width:'100%'
-}
-  
+  separator: {
+    borderBottomColor: globalStyle.grayPrimary,
+    borderBottomWidth: 1,
+    height: 1,
+    width: "100%",
+  },
 });
