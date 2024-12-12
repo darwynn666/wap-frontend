@@ -238,7 +238,7 @@ export default function MenuFiltersComponent(props) {
               />
               <MenuBottomItem
                 srcIsActive={
-                  PlacesDisplayIgnoredCheckIfIsInStore("toilets") ? (
+                  PlacesDisplayIgnoredCheckIfIsInStore("garbages") ? (
                     <IconToiletGrayLight />
                   ) : (
                     <IconToiletBlue />
@@ -246,7 +246,7 @@ export default function MenuFiltersComponent(props) {
                 }
                 label="toilettes"
                 onPressed={PlacesDisplayIgnoredItemOnPress}
-                statusValue={"toilets"}
+                statusValue={"garbages"}
               />
             </View>
           </View>
