@@ -13,6 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import { globalStyle } from "../../../config";
 import ModalMenu from "./ModalMenu";
 import MenuBottomItem from "./MenuBottomItem";
+import { useSelector,useDispatch } from "react-redux";
+import {setUserStatus} from "../../../reducers/user"
 
 import {
   IconDogGray,
@@ -24,7 +26,6 @@ import { BACKEND_URL } from "../../../config";
 
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
-import { useSelector } from "react-redux";
 
 const iconWalk = <IconDogGreen />;
 const iconPause = <IconDogBlue />;
@@ -58,9 +59,11 @@ export default function MenuStatusComponent(props) {
   const navigation = useNavigation();
   const route = useRoute();
 
+  const dispatch = useDispatch()
+
   const user = useSelector((state) => state.user.value);
 
-  const [status, setStatus] = useState(STATUS_OFF);
+  const [status, setStatus] = useState(user.status);
 
   const [modalVisibility, setModalVisibility] = useState(false);
 
@@ -73,8 +76,7 @@ export default function MenuStatusComponent(props) {
     const statusBackup = status;
     setStatus(status);
     setModalVisibility(false);
-    //change user status
-    console.log("token", user.token);
+    //change user status in bdd
     const response = await fetch(`${BACKEND_URL}/users/${user.token}/status`, {
       method: "PUT",
       headers: {
@@ -83,7 +85,11 @@ export default function MenuStatusComponent(props) {
       body: JSON.stringify({ status: status }), // We send data in JSON format
     });
     const data = await response.json();
+    // if not response rollback status display
     if (!data.result) setStatus(statusBackup);
+    // else refresh user reducer
+    else
+      dispatch(setUserStatus(status))
   };
 
   return (
