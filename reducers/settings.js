@@ -1,28 +1,32 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    value: {
-        usersDisplayIgnored:[],
-        placesDisplayIgnored:[],
-        parksDisplayIgnored:[]
-    },
-}
+  value: {
+    usersDisplayIgnored: [],
+    placesDisplayIgnored: [],
+    mapDisplayIgnored:"regular",
+  },
+};
 
 export const settingsSlice = createSlice({
-    name: 'settings',
-    initialState,
-    reducers: {
-        setUsersDisplayIgnored: (state, action) => {
-            state.value.usersDisplayIgnored=action.payload
-        },
-        setPlacesDisplayIgnored: (state, action) => {
-            state.value.placesDisplayIgnored=action.payload
-        },
-        setParksDisplayIgnored: (state, action) => {
-            state.value.parksDisplayIgnored=action.payload
-        }
+  name: "settings",
+  initialState,
+  reducers: {
+    setUsersDisplayIgnored: (state, action) => {
+      state.value.usersDisplayIgnored = action.payload;
     },
-})
+    setPlacesDisplayIgnored: (state, action) => {
+      state.value.placesDisplayIgnored = action.payload;
+    },
+    setMapDisplayIgnored: (state, action) => {
+      state.value.mapDisplayIgnored = action.payload;
+    },
+  },
+});
 
-export const { setUsersDisplayIgnored,setPlacesDisplayIgnored,setParksDisplayIgnored } = settingsSlice.actions
-export default settingsSlice.reducer
+export const {
+  setUsersDisplayIgnored,
+  setPlacesDisplayIgnored,
+  setMapDisplayIgnored,
+} = settingsSlice.actions;
+export default settingsSlice.reducer;

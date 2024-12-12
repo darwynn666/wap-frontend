@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faDog,faToiletPaper } from "@fortawesome/free-solid-svg-icons";
-
+import { Image } from "react-native";
 import { MaterialCommunityIcons,MaterialIcons } from '@expo/vector-icons';
 
 import { globalStyle } from "../config";
@@ -71,6 +71,18 @@ const IconToiletGrayLight = () => {
   return <FontAwesomeIcon icon={faToiletPaper} color={globalStyle.grayLight} size={globalStyle.iconSize} />
 };
 
+const IconMapRegular = () => {
+  return <Image source={require('../assets/icons/map_regular.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
+};
+
+const IconMapHybrid = () => {
+  return <Image source={require('../assets/icons/map_hybrid.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
+};
+
+const IconMapSatellite = () => {
+  return <Image source={require('../assets/icons/map_satellite.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
+};
+
 module.exports = {
   IconDogGray,
   IconDogGreen,
@@ -86,6 +98,9 @@ module.exports = {
   IconShopsBlue,
   IconShopsGrayLight,
   IconToiletBlue,
-  IconToiletGrayLight
+  IconToiletGrayLight,
+  IconMapRegular,
+  IconMapHybrid,
+  IconMapSatellite
 
 };

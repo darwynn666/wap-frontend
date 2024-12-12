@@ -26,11 +26,14 @@ import {
   IconShopsGrayLight,
   IconToiletBlue,
   IconToiletGrayLight,
+  IconMapRegular,
+  IconMapHybrid,
+  IconMapSatellite,
 } from "../../../globalComponents/Icons";
 import {
   setUsersDisplayIgnored,
   setPlacesDisplayIgnored,
-  setParksDisplayIgnored,
+  setMapDisplayIgnored,
 } from "../../../reducers/settings";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -65,6 +68,7 @@ export default function MenuFiltersComponent(props) {
   const settings = useSelector((state) => state.settings.value);
   const userDisplayIgnored = settings.usersDisplayIgnored;
   const placesDisplayIgnored = settings.placesDisplayIgnored;
+  const mapDisplayIgnored = settings.mapDisplayIgnored;
 
   const [modalVisibility, setModalVisibility] = useState(false);
   // filters is an array of elements to ignore
@@ -116,6 +120,18 @@ export default function MenuFiltersComponent(props) {
     }
   };
 
+
+  // Map filter display
+  //
+  //
+  const MapDisplayIgnoredCheckIfIsInStore = (filterName) => {
+    return mapDisplayIgnored.some((x) => x === filterName);
+  };
+
+  const MapDisplayIgnoredItemOnPress = (data) => {
+      dispatch(setMapDisplayIgnored(data));
+  };
+
   return (
     <>
       <ModalMenu
@@ -123,8 +139,33 @@ export default function MenuFiltersComponent(props) {
         onRequestClose={() => setModalVisibility(false)}
       >
         {/* main content */}
-        <Text>{settings.placesDisplayIgnored}</Text>
+        <Text>{settings.mapDisplayIgnored}</Text>
+
         <View style={styles.content}>
+          <View style={[styles.usersFilterView]}>
+            <Text style={styles.filterTitle}>Carte</Text>
+            <View style={styles.itemsView}>
+              <MenuBottomItem
+                srcIsActive={<IconMapRegular />}
+                label="normal"
+                onPressed={MapDisplayIgnoredItemOnPress}
+                statusValue={"regular"}
+              />
+              <MenuBottomItem
+                srcIsActive={<IconMapHybrid />}
+                label="hybride"
+                onPressed={MapDisplayIgnoredItemOnPress}
+                statusValue={"hybrid"}
+              />
+              <MenuBottomItem
+                srcIsActive={<IconMapSatellite />}
+                label="satellite"
+                onPressed={MapDisplayIgnoredItemOnPress}
+                statusValue={"satellite"}
+              />
+            </View>
+          </View>
+          <View style={styles.separator}></View>
           <View style={[styles.usersFilterView]}>
             <Text style={styles.filterTitle}>Lieux</Text>
             <View style={styles.itemsView}>

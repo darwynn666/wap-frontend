@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
   },
   label: {
     textAlign: "center",
+    marginTop:2,
     fontSize:globalStyle.h5
   },
 });
