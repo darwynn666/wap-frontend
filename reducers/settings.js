@@ -4,6 +4,7 @@ const initialState = {
     value: {
         usersDisplayIgnored:[],
         placesDisplayIgnored:[],
+        parksDisplayIgnored:[]
     },
 }
 
@@ -16,9 +17,12 @@ export const settingsSlice = createSlice({
         },
         setPlacesDisplayIgnored: (state, action) => {
             state.value.placesDisplayIgnored=action.payload
+        },
+        setParksDisplayIgnored: (state, action) => {
+            state.value.parksDisplayIgnored=action.payload
         }
     },
 })
 
-export const { setUsersDisplayIgnored,setPlacesDisplayIgnored } = settingsSlice.actions
+export const { setUsersDisplayIgnored,setPlacesDisplayIgnored,setParksDisplayIgnored } = settingsSlice.actions
 export default settingsSlice.reducer

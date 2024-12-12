@@ -19,11 +19,14 @@ import {
   IconBarBlue,
   IconBarGrayLight,
   IconRestaurantBlue,
-  IconRestaurantGrayLight
+  IconRestaurantGrayLight,
+  IconParkBlue,
+  IconParkGray,
 } from "../../../globalComponents/Icons";
 import {
   setUsersDisplayIgnored,
   setPlacesDisplayIgnored,
+  setParksDisplayIgnored,
 } from "../../../reducers/settings";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -118,7 +121,7 @@ export default function MenuFiltersComponent(props) {
         {/* main content */}
         <Text>{settings.placesDisplayIgnored}</Text>
         <View style={styles.content}>
-          <View style={styles.usersFilterView}>
+          <View style={[styles.usersFilterView]}>
             <Text style={styles.filterTitle}>Lieux</Text>
             <View style={styles.itemsView}>
               <MenuBottomItem
@@ -133,20 +136,33 @@ export default function MenuFiltersComponent(props) {
                 onPressed={PlacesDisplayIgnoredItemOnPress}
                 statusValue={"bars"}
               />
-               <MenuBottomItem
+              <MenuBottomItem
                 srcIsActive={
                   PlacesDisplayIgnoredCheckIfIsInStore("restaurants") ? (
-                    <IconBarGrayLight />
+                    <IconRestaurantGrayLight />
                   ) : (
-                    <IconBarBlue />
+                    <IconRestaurantBlue />
                   )
                 }
                 label="restaurants"
                 onPressed={PlacesDisplayIgnoredItemOnPress}
                 statusValue={"restaurants"}
               />
+              <MenuBottomItem
+                srcIsActive={
+                  PlacesDisplayIgnoredCheckIfIsInStore("parks") ? (
+                    <IconParkGray />
+                  ) : (
+                    <IconParkBlue />
+                  )
+                }
+                label="parks"
+                onPressed={PlacesDisplayIgnoredItemOnPress}
+                statusValue={"parks"}
+              />
             </View>
           </View>
+          <View style={styles.separator}></View>
           {/* user filter View */}
           <View style={styles.usersFilterView}>
             <Text style={styles.filterTitle}>Utilisateurs</Text>
@@ -237,4 +253,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
   },
+
+separator:{
+  borderBottomColor:globalStyle.grayPrimary,
+  borderBottomWidth:1,
+  height:1,
+  width:'100%'
+}
+  
 });

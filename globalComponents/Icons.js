@@ -40,15 +40,19 @@ const IconBarGrayLight = () => {
 };
 
 const IconRestaurantBlue = () => {
-  return <MaterialIcons name="restaurant" color={globalStyle.bluePrimary} />;
+  return <MaterialIcons name="restaurant"  size={globalStyle.iconSize} color={globalStyle.bluePrimary} />;
 };
 
 const IconRestaurantGrayLight = () => {
-  return <MaterialIcons name="restaurant" color={globalStyle.grayLight} />;
+  return <MaterialIcons name="restaurant"  size={globalStyle.iconSize} color={globalStyle.grayLight} />;
 };
 
-const IconPark = () => {
-  return <IconDog color={globalStyle.bluePrimary} />;
+const IconParkBlue = () => {
+  return <MaterialCommunityIcons name="nature-people" size={globalStyle.iconSize} color={globalStyle.bluePrimary} />;
+};
+
+const IconParkGray = () => {
+  return <MaterialCommunityIcons name="nature-people" size={globalStyle.iconSize} color={globalStyle.grayLight} />;
 };
 
 const IconShop = () => {
@@ -68,5 +72,7 @@ module.exports = {
   IconBarBlue,
   IconBarGrayLight,
   IconRestaurantBlue,
-  IconRestaurantGrayLight
+  IconRestaurantGrayLight,
+  IconParkBlue,
+  IconParkGray
 };
