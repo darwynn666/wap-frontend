@@ -6,6 +6,7 @@ import { faDog } from "@fortawesome/free-solid-svg-icons";
 const greenPrimary ="#44CD6F";
 const grayPrimary = "#A19D9D";
 const bluePrimary = "#5F9CE1";
+const redPrimary = "#DF4141";
 
 // global style properties
 export const globalStyle  = {
