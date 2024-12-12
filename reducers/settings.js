@@ -1,7 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    value: {userDisplayIgnored:[]},
+    value: {
+        usersDisplayIgnored:[],
+        placesDisplayIgnored:[],
+    },
 }
 
 export const settingsSlice = createSlice({
@@ -9,10 +12,13 @@ export const settingsSlice = createSlice({
     initialState,
     reducers: {
         setUsersDisplayIgnored: (state, action) => {
-            state.value.userDisplayIgnored=action.payload
+            state.value.usersDisplayIgnored=action.payload
+        },
+        setPlacesDisplayIgnored: (state, action) => {
+            state.value.placesDisplayIgnored=action.payload
         }
     },
 })
 
-export const { setUsersDisplayIgnored } = settingsSlice.actions
+export const { setUsersDisplayIgnored,setPlacesDisplayIgnored } = settingsSlice.actions
 export default settingsSlice.reducer

@@ -16,8 +16,15 @@ import {
   IconDogGrayLight,
   IconDogGreen,
   IconDogRed,
+  IconBarBlue,
+  IconBarGrayLight,
+  IconRestaurantBlue,
+  IconRestaurantGrayLight
 } from "../../../globalComponents/Icons";
-import { setUsersDisplayIgnored } from "../../../reducers/settings";
+import {
+  setUsersDisplayIgnored,
+  setPlacesDisplayIgnored,
+} from "../../../reducers/settings";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
@@ -49,7 +56,8 @@ export default function MenuFiltersComponent(props) {
 
   const dispatch = useDispatch();
   const settings = useSelector((state) => state.settings.value);
-  const userDisplayIgnored = settings.userDisplayIgnored;
+  const userDisplayIgnored = settings.usersDisplayIgnored;
+  const placesDisplayIgnored = settings.placesDisplayIgnored;
 
   const [modalVisibility, setModalVisibility] = useState(false);
   // filters is an array of elements to ignore
@@ -59,15 +67,17 @@ export default function MenuFiltersComponent(props) {
     setModalVisibility(!modalVisibility);
   };
 
-  const checkIfIsInFilters = (filterName) => {
-    // return filters.some((x) => x === filterName);
+  // users display filter
+  //
+  //
+
+  const UsersDisplayIgnoredCheckIfIsInStore = (filterName) => {
     return userDisplayIgnored.some((x) => x === filterName);
   };
 
-  const MenuBottomItemOnPress = (data) => {
-    console.log(data);
+  const UsersDisplayIgnoredItemOnPress = (data) => {
     //if already in filter, remove
-    if (checkIfIsInFilters(data)) {
+    if (UsersDisplayIgnoredCheckIfIsInStore(data)) {
       dispatch(
         setUsersDisplayIgnored(userDisplayIgnored.filter((x) => x !== data))
       );
@@ -78,6 +88,27 @@ export default function MenuFiltersComponent(props) {
     }
   };
 
+  // places display filter
+  //
+  //
+
+  const PlacesDisplayIgnoredCheckIfIsInStore = (filterName) => {
+    return placesDisplayIgnored.some((x) => x === filterName);
+  };
+
+  const PlacesDisplayIgnoredItemOnPress = (data) => {
+    //if already in filter, remove
+    if (PlacesDisplayIgnoredCheckIfIsInStore(data)) {
+      dispatch(
+        setPlacesDisplayIgnored(placesDisplayIgnored.filter((x) => x !== data))
+      );
+    }
+    //else add
+    else {
+      dispatch(setPlacesDisplayIgnored([...placesDisplayIgnored, data]));
+    }
+  };
+
   return (
     <>
       <ModalMenu
@@ -85,10 +116,36 @@ export default function MenuFiltersComponent(props) {
         onRequestClose={() => setModalVisibility(false)}
       >
         {/* main content */}
-        <Text>{settings.userDisplayIgnored}</Text>
+        <Text>{settings.placesDisplayIgnored}</Text>
         <View style={styles.content}>
           <View style={styles.usersFilterView}>
-            <Text style={styles.filterTitle}>Utilisateurs</Text>
+            <Text style={styles.filterTitle}>Lieux</Text>
+            <View style={styles.itemsView}>
+              <MenuBottomItem
+                srcIsActive={
+                  PlacesDisplayIgnoredCheckIfIsInStore("bars") ? (
+                    <IconBarGrayLight />
+                  ) : (
+                    <IconBarBlue />
+                  )
+                }
+                label="bars"
+                onPressed={PlacesDisplayIgnoredItemOnPress}
+                statusValue={"bars"}
+              />
+               <MenuBottomItem
+                srcIsActive={
+                  PlacesDisplayIgnoredCheckIfIsInStore("restaurants") ? (
+                    <IconBarGrayLight />
+                  ) : (
+                    <IconBarBlue />
+                  )
+                }
+                label="restaurants"
+                onPressed={PlacesDisplayIgnoredItemOnPress}
+                statusValue={"restaurants"}
+              />
+            </View>
           </View>
           {/* user filter View */}
           <View style={styles.usersFilterView}>
@@ -96,38 +153,38 @@ export default function MenuFiltersComponent(props) {
             <View style={styles.itemsView}>
               <MenuBottomItem
                 srcIsActive={
-                  checkIfIsInFilters("friends") ? (
+                  UsersDisplayIgnoredCheckIfIsInStore("friends") ? (
                     <IconDogGrayLight />
                   ) : (
                     <IconDogGreen />
                   )
                 }
                 label="amis"
-                onPressed={MenuBottomItemOnPress}
+                onPressed={UsersDisplayIgnoredItemOnPress}
                 statusValue={"friends"}
               ></MenuBottomItem>
               <MenuBottomItem
                 srcIsActive={
-                  checkIfIsInFilters("unknows") ? (
+                  UsersDisplayIgnoredCheckIfIsInStore("unknows") ? (
                     <IconDogGrayLight />
                   ) : (
                     <IconDogGray />
                   )
                 }
                 label="inconnus"
-                onPressed={MenuBottomItemOnPress}
+                onPressed={UsersDisplayIgnoredItemOnPress}
                 statusValue={"unknows"}
               ></MenuBottomItem>
               <MenuBottomItem
                 srcIsActive={
-                  checkIfIsInFilters("blocked") ? (
+                  UsersDisplayIgnoredCheckIfIsInStore("blocked") ? (
                     <IconDogGrayLight />
                   ) : (
                     <IconDogRed />
                   )
                 }
                 label="bloqués"
-                onPressed={MenuBottomItemOnPress}
+                onPressed={UsersDisplayIgnoredItemOnPress}
                 statusValue={"blocked"}
               ></MenuBottomItem>
             </View>
