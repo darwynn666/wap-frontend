@@ -46,7 +46,7 @@ export default function SignIn(props) {
         const data = await response.json()
         if (data.result) {
             console.log('login ok')
-            dispatch(setUser({ token: data.token }))
+            dispatch(setUser(data)) // à verifier
             navigation.navigate('Map')
         }
         else {
