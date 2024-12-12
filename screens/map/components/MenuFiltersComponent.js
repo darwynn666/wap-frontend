@@ -51,12 +51,18 @@ export default function MenuFiltersComponent(props) {
         visibility={modalVisibility}
         onRequestClose={() => setModalVisibility(false)}
       >
-        <View style={styles.content}></View>
-        <View style={{width:'25%', alignSelf:"flex-start"}}>
-        <MainButton
-          onPressCallBack={MainButtonHandle}
-          color={globalStyle.greenPrimary}
-        ></MainButton>
+        {/* main content */}
+        <View style={styles.content}>
+          <View>
+            <Text>Utilisateurs</Text>
+          </View>
+        </View>
+        {/* bottom button */}
+        <View style={{ width: "25%", alignSelf: "flex-start" }}>
+          <MainButton
+            onPressCallBack={MainButtonHandle}
+            color={globalStyle.greenPrimary}
+          ></MainButton>
         </View>
       </ModalMenu>
       <View style={styles.container}>
