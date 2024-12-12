@@ -31,6 +31,7 @@ import UserScreen from './screens/map/user/UserScreen';
 import DogsScreen from './screens/map/dogs/DogsScreen';
 import EditDogScreen from './screens/map/dogs/EditDogScreen';
 import DeleteDogScreen from './screens/map/dogs/DeleteDogScreen'
+import AddDogScreen from './screens/map/dogs/AddDogScreen';
 import FriendsScreen from './screens/map/friends/FriendsScreen';
 import BlockFriendScreen from './screens/map/friends/BlockFriendScreen';
 import DeleteFriendScreen from './screens/map/friends/DeleteFriendScreen';
@@ -95,6 +96,7 @@ const StackDogs = () => {
       <Stack.Screen name="Dogs" component={DogsScreen} />
       <Stack.Screen name="EditDog" component={EditDogScreen} />
       <Stack.Screen name="DeleteDog" component={DeleteDogScreen} />
+      <Stack.Screen name="AddDog" component={AddDogScreen} />
     </Stack.Navigator>
   )
 }
@@ -105,6 +107,7 @@ const StackFriends = () => {
       <Stack.Screen name="BlockFriend" component={BlockFriendScreen} />
       <Stack.Screen name="DeleteFriend" component={DeleteFriendScreen} />
       <Stack.Screen name="InfosFriend" component={InfosFriendScreen} />
+      
     </Stack.Navigator>
   )
 }

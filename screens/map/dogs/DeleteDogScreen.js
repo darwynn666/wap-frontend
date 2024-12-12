@@ -17,7 +17,7 @@ export default function DeleteDogScreen(props) {
         <View style={styles.container}>
             <View style={styles.texticon} >
                 <Text style={styles.titre}>Non du chien</Text>
-                <Icon name="trash" size={60} color="green" style={styles.icon} />
+                <Icon name="trash" size={60} color={globalStyle.greenPrimary} style={styles.icon} />
                 <Text style={styles.paragraph}>Supprimer Nom du chien?</Text>
             </View>
 

@@ -7,7 +7,7 @@ import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
 
 
 
-export default function EditDogScreen(props) {
+export default function AddDogScreen(props) {
     const navigation = useNavigation()
     const route = useRoute()
 
@@ -104,5 +104,3 @@ const styles = StyleSheet.create({
     },
 
 })
-
-

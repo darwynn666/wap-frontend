@@ -41,7 +41,7 @@ export default function UserScreen(props) {
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View style={styles.containerimage}>
                 <Image style={styles.image} source={require('../../../assets/avatar.jpg')} />
-                <Icon name="pen" rotate={70} size={30} color="green" style={styles.icon} onPress={() => uploadphoto()} />
+                <Icon name="pen" rotate={70} size={30} color={globalStyle.greenPrimary} style={styles.icon} onPress={() => uploadphoto()} />
             </View>
             <View style={styles.containerinput}>
                 <TextInput style={styles.input} placeholder="Firstname" onChangeText={(value) => setFirstname(value)} value={firstname}></TextInput>
@@ -52,11 +52,11 @@ export default function UserScreen(props) {
             </View >
             <View style={styles.containerswitch}>
                 <View style={styles.switch}>
-                    <Switch trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={'green'} onValueChange={value => setToggleDogSitter(value)} value={toggleDogSitter} />
+                    <Switch trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setToggleDogSitter(value)} value={toggleDogSitter} />
                     <Text style={styles.textswitch}>Je suis un Dogsitter</Text>
                 </View>
                 <View style={styles.switch}>
-                    <Switch trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={'green'} onValueChange={value => setToggleSearchDogSitter(value)}
+                    <Switch trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setToggleSearchDogSitter(value)}
                         value={toggleSearchDogSitter} />
                     <Text style={styles.textswitch}>Je cherche un Dogsitter</Text>
                 </View>
