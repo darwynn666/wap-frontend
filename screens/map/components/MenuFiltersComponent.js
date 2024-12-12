@@ -27,8 +27,11 @@ import {
   IconToiletBlue,
   IconToiletGrayLight,
   IconMapRegular,
+  IconMapRegularGray,
   IconMapHybrid,
+  IconMapHybridGray,
   IconMapSatellite,
+  IconMapSatelliteGray
 } from "../../../globalComponents/Icons";
 import {
   setUsersDisplayIgnored,
@@ -120,16 +123,15 @@ export default function MenuFiltersComponent(props) {
     }
   };
 
-
   // Map filter display
   //
   //
   const MapDisplayIgnoredCheckIfIsInStore = (filterName) => {
-    return mapDisplayIgnored.some((x) => x === filterName);
+    return mapDisplayIgnored === filterName;
   };
 
   const MapDisplayIgnoredItemOnPress = (data) => {
-      dispatch(setMapDisplayIgnored(data));
+    dispatch(setMapDisplayIgnored(data));
   };
 
   return (
@@ -139,26 +141,43 @@ export default function MenuFiltersComponent(props) {
         onRequestClose={() => setModalVisibility(false)}
       >
         {/* main content */}
-        <Text>{settings.mapDisplayIgnored}</Text>
 
         <View style={styles.content}>
           <View style={[styles.usersFilterView]}>
             <Text style={styles.filterTitle}>Carte</Text>
             <View style={styles.itemsView}>
               <MenuBottomItem
-                srcIsActive={<IconMapRegular />}
+                srcIsActive={
+                  MapDisplayIgnoredCheckIfIsInStore("regular") ? (
+                    <IconMapRegular />
+                  ) : (
+                    <IconMapRegularGray />
+                  )
+                }
                 label="normal"
                 onPressed={MapDisplayIgnoredItemOnPress}
                 statusValue={"regular"}
               />
               <MenuBottomItem
-                srcIsActive={<IconMapHybrid />}
+                srcIsActive={
+                  MapDisplayIgnoredCheckIfIsInStore("hybrid") ? (
+                    <IconMapHybrid />
+                  ) : (
+                    <IconMapHybridGray />
+                  )
+                }
                 label="hybride"
                 onPressed={MapDisplayIgnoredItemOnPress}
                 statusValue={"hybrid"}
               />
               <MenuBottomItem
-                srcIsActive={<IconMapSatellite />}
+                srcIsActive={
+                  MapDisplayIgnoredCheckIfIsInStore("satellite") ? (
+                    <IconMapSatellite />
+                  ) : (
+                    <IconMapSatelliteGray />
+                  )
+                }
                 label="satellite"
                 onPressed={MapDisplayIgnoredItemOnPress}
                 statusValue={"satellite"}

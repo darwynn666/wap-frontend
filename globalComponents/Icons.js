@@ -75,12 +75,24 @@ const IconMapRegular = () => {
   return <Image source={require('../assets/icons/map_regular.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
 };
 
+const IconMapRegularGray = () => {
+  return <Image source={require('../assets/icons/map_regular_gray.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
+};
+
 const IconMapHybrid = () => {
   return <Image source={require('../assets/icons/map_hybrid.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
 };
 
+const IconMapHybridGray = () => {
+  return <Image source={require('../assets/icons/map_hybrid_gray.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
+};
+
 const IconMapSatellite = () => {
   return <Image source={require('../assets/icons/map_satellite.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
+};
+
+const IconMapSatelliteGray = () => {
+  return <Image source={require('../assets/icons/map_satellite_gray.png')} style={{resizeMode:"cover", width:globalStyle.iconSize ,height:globalStyle.iconSize}}></Image>
 };
 
 module.exports = {
@@ -101,6 +113,9 @@ module.exports = {
   IconToiletGrayLight,
   IconMapRegular,
   IconMapHybrid,
-  IconMapSatellite
+  IconMapSatellite,
+  IconMapRegularGray,
+  IconMapHybridGray,
+  IconMapSatelliteGray
 
 };
