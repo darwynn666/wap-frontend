@@ -4,7 +4,7 @@ const initialState = {
   value: {
     usersDisplayIgnored: [],
     placesDisplayIgnored: [],
-    mapDisplayIgnored:"regular",
+    mapDisplayIgnored:"standard",
   },
 };
 

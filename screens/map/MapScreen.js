@@ -39,6 +39,7 @@ export default function MapScreen2() {
   const [visibleRegion, setVisibleRegion] = useState(null);
 
   const user = useSelector((state) => state.user.value);
+  const settings = useSelector((state) => state.settings.value);
 
   // force position
   const [forcePosition, setForcePosition] = useState();
@@ -186,7 +187,7 @@ export default function MapScreen2() {
             latitudeDelta: 0.05, //0.05 equivaut à environ 5km
             longitudeDelta: 0.05,
           }}
-          type={mapType}
+          mapType={settings.mapDisplayIgnored}
           style={{ width: "100%", height: "100%" }}
           showsUserLocation={!forcePosition}
           showsMyLocationButton={!forcePosition}

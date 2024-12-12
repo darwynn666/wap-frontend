@@ -148,7 +148,7 @@ export default function MenuFiltersComponent(props) {
             <View style={styles.itemsView}>
               <MenuBottomItem
                 srcIsActive={
-                  MapDisplayIgnoredCheckIfIsInStore("regular") ? (
+                  MapDisplayIgnoredCheckIfIsInStore("standard") ? (
                     <IconMapRegular />
                   ) : (
                     <IconMapRegularGray />
@@ -156,7 +156,7 @@ export default function MenuFiltersComponent(props) {
                 }
                 label="normal"
                 onPressed={MapDisplayIgnoredItemOnPress}
-                statusValue={"regular"}
+                statusValue={"standard"}
               />
               <MenuBottomItem
                 srcIsActive={
