@@ -17,12 +17,14 @@ import {
   IconDogGreen,
   IconDogRed,
 } from "../../../globalComponents/Icons";
+import { setUsersDisplayIgnored } from "../../../reducers/settings";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
+import { useSelector, useDispatch } from "react-redux";
 
 const MainButton = ({ color, onPressCallBack }) => {
   return (
@@ -45,6 +47,10 @@ export default function MenuFiltersComponent(props) {
   const navigation = useNavigation();
   const route = useRoute();
 
+  const dispatch = useDispatch();
+  const settings = useSelector((state) => state.settings.value);
+  const userDisplayIgnored = settings.userDisplayIgnored;
+
   const [modalVisibility, setModalVisibility] = useState(false);
   // filters is an array of elements to ignore
   const [filters, setFilters] = useState([]);
@@ -54,15 +60,22 @@ export default function MenuFiltersComponent(props) {
   };
 
   const checkIfIsInFilters = (filterName) => {
-    return filters.some((x) => x === filterName);
+    // return filters.some((x) => x === filterName);
+    return userDisplayIgnored.some((x) => x === filterName);
   };
 
   const MenuBottomItemOnPress = (data) => {
     console.log(data);
     //if already in filter, remove
-    if (checkIfIsInFilters(data)) setFilters(filters.filter((x) => x !== data));
+    if (checkIfIsInFilters(data)) {
+      dispatch(
+        setUsersDisplayIgnored(userDisplayIgnored.filter((x) => x !== data))
+      );
+    }
     //else add
-    else setFilters([...filters, data]);
+    else {
+      dispatch(setUsersDisplayIgnored([...userDisplayIgnored, data]));
+    }
   };
 
   return (
@@ -72,7 +85,11 @@ export default function MenuFiltersComponent(props) {
         onRequestClose={() => setModalVisibility(false)}
       >
         {/* main content */}
+        <Text>{settings.userDisplayIgnored}</Text>
         <View style={styles.content}>
+          <View style={styles.usersFilterView}>
+            <Text style={styles.filterTitle}>Utilisateurs</Text>
+          </View>
           {/* user filter View */}
           <View style={styles.usersFilterView}>
             <Text style={styles.filterTitle}>Utilisateurs</Text>
@@ -80,7 +97,7 @@ export default function MenuFiltersComponent(props) {
               <MenuBottomItem
                 srcIsActive={
                   checkIfIsInFilters("friends") ? (
-                    <IconDogGrayLight/>
+                    <IconDogGrayLight />
                   ) : (
                     <IconDogGreen />
                   )
@@ -92,7 +109,7 @@ export default function MenuFiltersComponent(props) {
               <MenuBottomItem
                 srcIsActive={
                   checkIfIsInFilters("unknows") ? (
-                    <IconDogGrayLight/>
+                    <IconDogGrayLight />
                   ) : (
                     <IconDogGray />
                   )
@@ -104,7 +121,7 @@ export default function MenuFiltersComponent(props) {
               <MenuBottomItem
                 srcIsActive={
                   checkIfIsInFilters("blocked") ? (
-                    <IconDogGrayLight/>
+                    <IconDogGrayLight />
                   ) : (
                     <IconDogRed />
                   )

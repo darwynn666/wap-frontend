@@ -1,18 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    value: {usersFilters:[]},
+    value: {userDisplayIgnored:[]},
 }
 
 export const settingsSlice = createSlice({
     name: 'settings',
     initialState,
     reducers: {
-        setSettings: (state, action) => {
-            state.value = action.payload
+        setUsersDisplayIgnored: (state, action) => {
+            state.value.userDisplayIgnored=action.payload
         }
     },
 })
 
-export const { setSettings,setSettingsStatus } = settingsSlice.actions
+export const { setUsersDisplayIgnored } = settingsSlice.actions
 export default settingsSlice.reducer
