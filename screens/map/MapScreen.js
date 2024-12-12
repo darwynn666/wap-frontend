@@ -40,6 +40,8 @@ export default function MapScreen2() {
 
   const user = useSelector((state) => state.user.value);
   const settings = useSelector((state) => state.settings.value);
+  const usersDisplayIgnored = settings.usersDisplayIgnored
+  const placesDisplayIgnored = settings.placesDisplayIgnored
 
   // force position
   const [forcePosition, setForcePosition] = useState();
@@ -96,14 +98,22 @@ export default function MapScreen2() {
   // markers users
   const getUsers = async () => {
     console.log("getUsers");
-    const usersResponse = await fetch(`${BACKEND_URL}/users`);
+    //get viewInfos
+    const { longitude, latitude, longitudeDelta, latitudeDelta } =
+      visibleRegion;
+    // const usersResponse = await fetch(
+    //   `${BACKEND_URL}/users/?longitude=${longitude}&latitude=${latitude}&longitudeDelta=${longitudeDelta}&latitudeDelta=${latitudeDelta}`
+    // );
+    const usersResponse = await fetch(
+      `${BACKEND_URL}/users`
+    );
     const usersData = await usersResponse.json();
     if (usersData.result) {
       //filter valid coordinate
       setUsersMarkers(
         usersData.data.filter((x) => {
           return (
-            x.currentLocation.coordinates[0] && x.currentLocation.coordinates[1]
+            (x.currentLocation.coordinates[0] && x.currentLocation.coordinates[1])
           );
         })
       );
@@ -115,12 +125,19 @@ export default function MapScreen2() {
     const placesResponse = await fetch(`${BACKEND_URL}/places`);
     const placesData = await placesResponse.json();
     if (placesData.result) {
-      setPlacesMarkers(placesData.data);
+      //filter places
+      const dataFilter = placesData.data.filter(place=>!placesDisplayIgnored.some(filter=>filter==place.type))
+      
+      setPlacesMarkers(dataFilter);
     }
   };
 
   useEffect(() => {
     getPlaces();
+
+  }, [visibleRegion,placesDisplayIgnored]);
+
+  useEffect(() => {
     getUsers();
   }, [visibleRegion]);
 
@@ -161,8 +178,6 @@ export default function MapScreen2() {
     let icon = require("../../assets/icons/icon_dog_gray.png");
     //need to check if friends or blocked
 
-
-    
     return (
       <Marker
         key={i}
