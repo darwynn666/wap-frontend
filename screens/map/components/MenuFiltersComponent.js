@@ -10,6 +10,13 @@ import { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import { globalStyle } from "../../../config";
+import MenuBottomItem from "./MenuBottomItem";
+import {
+  IconDogGray,
+  IconDogGrayLight,
+  IconDogGreen,
+  IconDogRed,
+} from "../../../globalComponents/Icons";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +24,6 @@ import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import ButtonPrimary from "../../../globalComponents/ButtonPrimary";
 import ButtonSecondary from "../../../globalComponents/ButtonSecondary";
 
-// layer-group
 const MainButton = ({ color, onPressCallBack }) => {
   return (
     <TouchableOpacity
@@ -40,9 +46,23 @@ export default function MenuFiltersComponent(props) {
   const route = useRoute();
 
   const [modalVisibility, setModalVisibility] = useState(false);
+  // filters is an array of elements to ignore
+  const [filters, setFilters] = useState([]);
 
   const MainButtonHandle = () => {
     setModalVisibility(!modalVisibility);
+  };
+
+  const checkIfIsInFilters = (filterName) => {
+    return filters.some((x) => x === filterName);
+  };
+
+  const MenuBottomItemOnPress = (data) => {
+    console.log(data);
+    //if already in filter, remove
+    if (checkIfIsInFilters(data)) setFilters(filters.filter((x) => x !== data));
+    //else add
+    else setFilters([...filters, data]);
   };
 
   return (
@@ -53,8 +73,47 @@ export default function MenuFiltersComponent(props) {
       >
         {/* main content */}
         <View style={styles.content}>
-          <View>
-            <Text>Utilisateurs</Text>
+          {/* user filter View */}
+          <View style={styles.usersFilterView}>
+            <Text style={styles.filterTitle}>Utilisateurs</Text>
+            <View style={styles.itemsView}>
+              <MenuBottomItem
+                srcIsActive={
+                  checkIfIsInFilters("friends") ? (
+                    <IconDogGrayLight/>
+                  ) : (
+                    <IconDogGreen />
+                  )
+                }
+                label="amis"
+                onPressed={MenuBottomItemOnPress}
+                statusValue={"friends"}
+              ></MenuBottomItem>
+              <MenuBottomItem
+                srcIsActive={
+                  checkIfIsInFilters("unknows") ? (
+                    <IconDogGrayLight/>
+                  ) : (
+                    <IconDogGray />
+                  )
+                }
+                label="inconnus"
+                onPressed={MenuBottomItemOnPress}
+                statusValue={"unknows"}
+              ></MenuBottomItem>
+              <MenuBottomItem
+                srcIsActive={
+                  checkIfIsInFilters("blocked") ? (
+                    <IconDogGrayLight/>
+                  ) : (
+                    <IconDogRed />
+                  )
+                }
+                label="bloqués"
+                onPressed={MenuBottomItemOnPress}
+                statusValue={"blocked"}
+              ></MenuBottomItem>
+            </View>
           </View>
         </View>
         {/* bottom button */}
@@ -84,8 +143,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   content: {
+    width: "100%",
     minHeight: 50,
     marginBottom: 20,
+    alignItems: "center",
     gap: 15,
+    paddingHorizontal: globalStyle.mainContainerPaddingHor,
+  },
+  usersFilterView: {
+    width: "100%",
+    gap: 30,
+    paddingBottom: 15,
+  },
+  filterTitle: {
+    textAlign: "center",
+    fontSize: globalStyle.h4,
+  },
+  itemsView: {
+    flexDirection: "row",
+    justifyContent: "space-around",
   },
 });
