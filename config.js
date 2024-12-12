@@ -5,6 +5,7 @@ import { faDog } from "@fortawesome/free-solid-svg-icons";
 
 const greenPrimary ="#44CD6F";
 const grayPrimary = "#A19D9D";
+const grayLight = "#D9D9D9";
 const bluePrimary = "#5F9CE1";
 const redPrimary = "#DF4141";
 
@@ -15,14 +16,20 @@ export const globalStyle  = {
     h2:25,
     h3:20,
     h4:15,
-    h5:10,
+    h5:12,
     backgroundColor:'#fff',
     padding:20,
+
+    //container
+    mainContainerPaddingHor: 30,
 
     //colors
     greenPrimary:greenPrimary,
     grayPrimary:grayPrimary,
+    grayPrimary:grayPrimary,
+    grayLight:grayLight,
     bluePrimary:bluePrimary,
+    redPrimary:redPrimary,
 
     // buttons
     buttonPrimaryBackgroundColor:greenPrimary, // background
@@ -30,7 +37,8 @@ export const globalStyle  = {
     buttonSecondaryYesColor:greenPrimary, // text & border
     buttonSecondaryNoColor:grayPrimary, // text & border
 
-    //
+    //icon
+    iconSize:30
    
     
 }

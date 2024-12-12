@@ -1,4 +1,5 @@
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import { globalStyle } from "../../../config";
 
 export default MenuBottomItem = ({ label, srcIsActive, onPressed ,statusValue}) => {
   return (
@@ -12,9 +13,12 @@ export default MenuBottomItem = ({ label, srcIsActive, onPressed ,statusValue}) 
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
-    alignItems:"center"
+    alignItems:"center",
+    minWidth:60
   },
   label: {
     textAlign: "center",
+    marginTop:2,
+    fontSize:globalStyle.h5
   },
 });
