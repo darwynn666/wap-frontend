@@ -137,16 +137,32 @@ export default function MapScreen2() {
     console.log(`Execution Time Places filtering: ${end - start} ms`);
   };
 
+  const isAccepted = (id) => {
+    return user.friends.accepted.some((friend) => friend == id);
+  };
+
+  const isBlocked = (id) => {
+    return user.friends.blocked.some((friend) => friend == id);
+  };
+
   const filterUsers = () => {
     //filter places
     console.log("filter users");
     const start = Date.now(); // Début du chronométrage
     setUsersDataFiltered(
-      usersData.filter(
-        (users) => {
-          //case
-        }
-      )
+      usersData.filter((userData) => {
+        const _isAccepted = isAccepted(userData._id);
+        const _isBlocked = isBlocked(userData._id);
+        const _unkow = !(_isAccepted || _isBlocked);
+        let isShown =true;
+        if (usersDisplayIgnored.includes("friends"))
+          isShown =  isShown && !_isAccepted
+        if (usersDisplayIgnored.includes("blocked"))
+          isShown =  isShown && !_isBlocked
+        if (usersDisplayIgnored.includes("unknows"))
+          isShown =  isShown && !_unkow
+        return isShown;
+      })
     );
     const end = Date.now(); // Fin du chronométrage
     console.log(`Execution Time Places filtering: ${end - start} ms`);
@@ -163,20 +179,10 @@ export default function MapScreen2() {
   useEffect(() => {
     getUsers();
   }, []);
-  
+
   useEffect(() => {
     filterUsers();
-  }, [usersData,usersDisplayIgnored]);
-
-  const isFriend = (id) =>
-  {
-    return user.friends.accepted.some(friend=>friend==id)
-  }
-  
-  const isBlocked = (id) =>
-    {
-      return user.friends.blocked.some(friend=>friend==id)
-    }
+  }, [usersData, usersDisplayIgnored]);
 
   const places = placesDataFiltered.map((e, i) => {
     let icon = "";
@@ -211,10 +217,10 @@ export default function MapScreen2() {
     );
   });
 
-  const users = usersData.map((e, i) => {
+  const users = usersDataFiltered.map((e, i) => {
     let icon = require("../../assets/icons/icon_dog_gray.png");
     //need to check if friends or blocked
-    if (isFriend(e._id))
+    if (isAccepted(e._id))
       icon = require("../../assets/icons/icon_dog_green.png");
     else if (isBlocked(e._id))
       icon = require("../../assets/icons/icon_dog_red.png");
