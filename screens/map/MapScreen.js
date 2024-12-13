@@ -40,8 +40,8 @@ export default function MapScreen2() {
 
   const user = useSelector((state) => state.user.value);
   const settings = useSelector((state) => state.settings.value);
-  const usersDisplayIgnored = settings.usersDisplayIgnored
-  const placesDisplayIgnored = settings.placesDisplayIgnored
+  const usersDisplayIgnored = settings.usersDisplayIgnored;
+  const placesDisplayIgnored = settings.placesDisplayIgnored;
 
   // force position
   const [forcePosition, setForcePosition] = useState();
@@ -98,48 +98,43 @@ export default function MapScreen2() {
   // markers users
   const getUsers = async () => {
     console.log("getUsers");
+    const start = Date.now(); // Début du chronométrage
     //get viewInfos
-    const { longitude, latitude, longitudeDelta, latitudeDelta } =
-      visibleRegion;
     // const usersResponse = await fetch(
     //   `${BACKEND_URL}/users/?longitude=${longitude}&latitude=${latitude}&longitudeDelta=${longitudeDelta}&latitudeDelta=${latitudeDelta}`
     // );
-    const usersResponse = await fetch(
-      `${BACKEND_URL}/users`
-    );
+    const usersResponse = await fetch(`${BACKEND_URL}/users`);
     const usersData = await usersResponse.json();
     if (usersData.result) {
       //filter valid coordinate
-      setUsersMarkers(
-        usersData.data.filter((x) => {
-          return (
-            (x.currentLocation.coordinates[0] && x.currentLocation.coordinates[1])
-          );
-        })
-      );
+      setUsersMarkers(usersData.data);
+      const end = Date.now(); // Fin du chronométrage
+      console.log(`Execution Time user: ${end - start} ms`);
     }
   };
 
   // markers places
   const getPlaces = async () => {
+    console.log("get places");
+    const start = Date.now(); // Début du chronométrage
     const placesResponse = await fetch(`${BACKEND_URL}/places`);
     const placesData = await placesResponse.json();
     if (placesData.result) {
-      //filter places
-      const dataFilter = placesData.data.filter(place=>!placesDisplayIgnored.some(filter=>filter==place.type))
-      
-      setPlacesMarkers(dataFilter);
+      // //filter places
+      // const dataFilter = placesData.data.filter(place=>!placesDisplayIgnored.some(filter=>filter==place.type))
+      setPlacesMarkers(placesData.data);
+      const end = Date.now(); // Fin du chronométrage
+      console.log(`Execution Time Places: ${end - start} ms`);
     }
   };
 
   useEffect(() => {
     getPlaces();
-
-  }, [visibleRegion,placesDisplayIgnored]);
+  }, []);
 
   useEffect(() => {
     getUsers();
-  }, [visibleRegion]);
+  }, []);
 
   const places = placesMarkers.map((e, i) => {
     let icon = "";
