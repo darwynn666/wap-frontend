@@ -144,7 +144,7 @@ export default function MapScreen2() {
     setUsersDataFiltered(
       usersData.filter(
         (users) => {
-          //
+          //case
         }
       )
     );
@@ -167,7 +167,16 @@ export default function MapScreen2() {
   useEffect(() => {
     filterUsers();
   }, [usersData,usersDisplayIgnored]);
+
+  const isFriend = (id) =>
+  {
+    return user.friends.accepted.some(friend=>friend==id)
+  }
   
+  const isBlocked = (id) =>
+    {
+      return user.friends.blocked.some(friend=>friend==id)
+    }
 
   const places = placesDataFiltered.map((e, i) => {
     let icon = "";
@@ -205,6 +214,10 @@ export default function MapScreen2() {
   const users = usersData.map((e, i) => {
     let icon = require("../../assets/icons/icon_dog_gray.png");
     //need to check if friends or blocked
+    if (isFriend(e._id))
+      icon = require("../../assets/icons/icon_dog_green.png");
+    else if (isBlocked(e._id))
+      icon = require("../../assets/icons/icon_dog_red.png");
 
     return (
       <Marker
