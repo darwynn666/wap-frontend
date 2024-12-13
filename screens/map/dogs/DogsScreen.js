@@ -13,10 +13,10 @@ export default function DogsScreen({ navigation }) {
     const user = useSelector((state) => state.user.value);
     const [doglist,setDoglist]=useState([]);
 
-    // console.log(user.data.token);
+    console.log(user.token);
     //console.log(user.data.dogs);
 useEffect (() => {
-    fetch(`https://wap-backend.vercel.app/dogs/${user.data.token}`)
+    fetch(`https://wap-backend.vercel.app/dogs/${user.token}`)
         .then(response => response.json())
         .then(data => {
           // console.log(data.data)
