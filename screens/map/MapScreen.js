@@ -41,10 +41,11 @@ export default function MapScreen2() {
   const usersDisplayIgnored = settings.usersDisplayIgnored;
   const placesDisplayIgnored = settings.placesDisplayIgnored;
 
-  const [usersMarkers, setUsersMarkers] = useState([]);
-
   const [placesData, setPlacesData] = useState([]);
   const [placesDataFiltered, setPlacesDataFiltered] = useState([]);
+
+  const [usersData, setUsersData] = useState([]);
+  const [usersDataFiltered, setUsersDataFiltered] = useState([]);
 
   // force position
   const [forcePosition, setForcePosition] = useState();
@@ -104,7 +105,7 @@ export default function MapScreen2() {
     const usersData = await usersResponse.json();
     if (usersData.result) {
       //filter valid coordinate
-      setUsersMarkers(usersData.data);
+      setUsersData(usersData.data);
       const end = Date.now(); // Fin du chronométrage
       console.log(`Execution Time user: ${end - start} ms`);
     }
@@ -136,15 +137,37 @@ export default function MapScreen2() {
     console.log(`Execution Time Places filtering: ${end - start} ms`);
   };
 
+  const filterUsers = () => {
+    //filter places
+    console.log("filter users");
+    const start = Date.now(); // Début du chronométrage
+    setUsersDataFiltered(
+      usersData.filter(
+        (users) => {
+          //
+        }
+      )
+    );
+    const end = Date.now(); // Fin du chronométrage
+    console.log(`Execution Time Places filtering: ${end - start} ms`);
+  };
+
   useEffect(() => {
     getPlaces();
   }, []);
 
-  useEffect(() => {filterPlaces()}, [placesData, placesDisplayIgnored]);
+  useEffect(() => {
+    filterPlaces();
+  }, [placesData, placesDisplayIgnored]);
 
   useEffect(() => {
     getUsers();
   }, []);
+  
+  useEffect(() => {
+    filterUsers();
+  }, [usersData,usersDisplayIgnored]);
+  
 
   const places = placesDataFiltered.map((e, i) => {
     let icon = "";
@@ -179,7 +202,7 @@ export default function MapScreen2() {
     );
   });
 
-  const users = usersMarkers.map((e, i) => {
+  const users = usersData.map((e, i) => {
     let icon = require("../../assets/icons/icon_dog_gray.png");
     //need to check if friends or blocked
 
