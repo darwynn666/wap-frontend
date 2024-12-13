@@ -66,7 +66,7 @@ const StackLogin = () => {
 // TUTO
 const StackTuto = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="MarkersTuto" component={MarkersTutoScreen} />
       <Stack.Screen name="FiltersTuto" component={FiltersTutoScreen} />
       <Stack.Screen name="StatusTuto" component={StatusTutoScreen} />

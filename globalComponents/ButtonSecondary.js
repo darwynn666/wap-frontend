@@ -6,9 +6,7 @@ import { globalStyle } from '../config'
 
 export default function ButtonSecondary(props) {
 
-    let color=''
-    if(props.status==='yes') { color=globalStyle.buttonSecondaryYesColor}
-    if(props.status==='no') { color=globalStyle.buttonSecondaryNoColor}
+    const color=props.status ? globalStyle.buttonSecondaryYesColor : globalStyle.buttonSecondaryNoColor
     
     return (
         <TouchableOpacity onPress={props.onPress} style={[styles.button, { borderColor: color }]}>
@@ -22,7 +20,7 @@ const styles = StyleSheet.create({
     button: {
         backgroundColor: globalStyle.buttonSecondaryBackgroundColor,
         height: 30,
-        width: '80%',
+        width: 100,
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 40,

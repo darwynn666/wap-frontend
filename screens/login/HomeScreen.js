@@ -17,7 +17,6 @@ export default function HomeScreen(props) {
         navigation.navigate('SignIn')
     }
 
-    console.log(route.name)
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>

@@ -2,6 +2,7 @@ import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
+import BottomMenu from './components/BottomMenu'
 
 
 
@@ -9,10 +10,11 @@ export default function MarkersTutoScreen(props) {
     const navigation = useNavigation()
     const route = useRoute()
 
+
     return (
         <View style={styles.container}>
-            <Text>Component : MarkersTutoScreen</Text>
             <Text>Route : {route.name}</Text>
+            <BottomMenu />
         </View>
     )
 }

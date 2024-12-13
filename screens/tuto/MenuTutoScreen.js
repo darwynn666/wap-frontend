@@ -2,6 +2,7 @@ import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
+import BottomMenu from './components/BottomMenu'
 
 
 
@@ -11,8 +12,8 @@ export default function MenuTutoScreen(props) {
 
     return (
         <View style={styles.container}>
-            <Text>Component : MenuTutoScreen</Text>
             <Text>Route : {route.name}</Text>
+            <BottomMenu navigateTo='Map'/>
         </View>
     )
 }
