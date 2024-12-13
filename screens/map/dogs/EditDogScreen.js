@@ -13,7 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 export default function EditDogScreen() {
     const route = useRoute();
     const user = useSelector((state) => state.user.value); // Pour un éventuel usage
-console.log(user.data)
+console.log(user.token)
     // Initialisation des états avec les paramètres passés
     const { name, sex, race, birthday, chipid, status, _id } = route.params;
     const [nom, setNom] = useState(name || '');
@@ -36,7 +36,7 @@ console.log(user.data)
             return;
         }
 
-        fetch(`https://wap-backend.vercel.app/dogs/${user.data.token}`, {
+        fetch(`https://wap-backend.vercel.app/dogs/${user.token}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
