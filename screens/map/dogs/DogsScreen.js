@@ -13,27 +13,26 @@ export default function DogsScreen({ navigation }) {
     const user = useSelector((state) => state.user.value);
     const [doglist,setDoglist]=useState([]);
 
-    // console.log(user.data.token);
+    console.log(user.token);
     //console.log(user.data.dogs);
 useEffect (() => {
-    fetch(`https://wap-backend.vercel.app/dogs/${user.data.token}`)
+    fetch(`https://wap-backend.vercel.app/dogs/${user.token}`)
         .then(response => response.json())
         .then(data => {
-          // console.log(data.data)
+          
            setDoglist(data.data)
            
         });
     }, []);
        // console.log(doglist)
        const dogs=doglist.map((data, i) => {
-            console.log(data.name);
+           // console.log(data);
         return (
             <View key={i} style={styles.containerlist}>
-                <TouchableOpacity onPress={() => navigation.navigate('Mes chiens', { screen: 'EditDog' })}>
+                <TouchableOpacity onPress={() => navigation.navigate('Mes chiens', { screen: 'EditDog', params:data })}>
                     <Image style={styles.image} source={require('../../../assets/avatar.jpg')} />
                 </TouchableOpacity>
                 <Text style={styles.text} >{data.name}</Text>
-
                 <TouchableOpacity onPress={() => navigation.navigate('Mes chiens', { screen: 'DeleteDog' })}>
                     <Icon name="trash" size={30} color={globalStyle.greenPrimary} style={styles.icon} />
                 </TouchableOpacity>
@@ -80,9 +79,10 @@ const styles = StyleSheet.create({
     },
     containerlist: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'space-around',
         alignItems: 'center',
-        margin: 5,
+        margin: 15,
+        width: '95%',
     },
     containerplus: {
         alignItems: 'flex-end',
