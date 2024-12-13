@@ -1,49 +1,51 @@
 // backend
-export const BACKEND_URL='https://wap-backend.vercel.app'
+export const BACKEND_URL = 'https://wap-backend.vercel.app'
 
 import { faDog } from "@fortawesome/free-solid-svg-icons";
 
-const greenPrimary ="#44CD6F";
+const greenPrimary = "#44CD6F";
 const grayPrimary = "#A19D9D";
 const grayLight = "#D9D9D9";
 const bluePrimary = "#5F9CE1";
 const redPrimary = "#DF4141";
 
 // global style properties
-export const globalStyle  = {
+export const globalStyle = {
 
-    h1:30,
-    h2:25,
-    h3:20,
-    h4:15,
-    h5:12,
-    backgroundColor:'#fff',
-    padding:20,
+    h1: 30,
+    h2: 25,
+    h3: 20,
+    h4: 15,
+    h5: 12,
+    h6: 10,
+    backgroundColor: '#fff',
+    padding: 20,
 
     //container
     mainContainerPaddingHor: 30,
 
     //colors
-    greenPrimary:greenPrimary,
-    grayPrimary:grayPrimary,
-    grayPrimary:grayPrimary,
-    grayLight:grayLight,
-    bluePrimary:bluePrimary,
-    redPrimary:redPrimary,
+    greenPrimary: greenPrimary,
+    grayPrimary: grayPrimary,
+    grayPrimary: grayPrimary,
+    grayLight: grayLight,
+    bluePrimary: bluePrimary,
+    redPrimary: redPrimary,
 
     // buttons
-    buttonPrimaryBackgroundColor:greenPrimary, // background
-    buttonPrimaryColor:'white', // text
-    buttonSecondaryYesColor:greenPrimary, // text & border
-    buttonSecondaryNoColor:grayPrimary, // text & border
+    buttonPrimaryBackgroundColor: greenPrimary, // background
+    buttonPrimaryColor: 'white', // text
+    buttonSecondaryYesColor: greenPrimary, // text & border
+    buttonSecondaryNoColor: grayPrimary, // text & border
 
     //icon
-    iconSize:30
-   
-    
+    iconSize: 30
+
+
 }
 
 
 
 export const userAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078126/avatar_g55kvf.jpg'
 export const dogAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078252/avatar_xmojsb.jpg'
+export const logoHomeUrl = '' // à définir et uploader sur cloudinary

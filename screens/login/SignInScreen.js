@@ -3,30 +3,30 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
-import ButtonPrimary from '../../globalComponents/ButtonPrimary'
 import { BACKEND_URL } from '../../config'
 import { setUser } from '../../reducers/user'
+import ButtonPrimary from '../../globalComponents/ButtonPrimary'
+import InputFullSize from '../../globalComponents/InputFullSize'
+import { userAvatarUrl } from '../../config'
 
 
 export default function SignIn(props) {
     const [email, setEmail] = useState(null)
     const [password, setPassword] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
-    const [title,setTitle]=useState()
+    const [title, setTitle] = useState()
     const navigation = useNavigation()
     const route = useRoute()
 
-    console.log(route.params)
-
-    useEffect(()=>{
-        if(route.params) {
+    useEffect(() => {
+        if (route.params) {
             setTitle(route.params.message)
             setEmail(route.params.email)
         }
         else {
             setTitle('Connecte-toi')
         }
-    },[])
+    }, [])
 
     const dispatch = useDispatch()
 
@@ -56,37 +56,35 @@ export default function SignIn(props) {
 
 
     return (
-        <ScrollView>
-            <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <ScrollView style={{height:'1%'}}>
 
-                <View style={styles.titleContainer}>
-                    <Text style={styles.titleText}>{title}</Text>
+                <View style={styles.imageContainer}>
+                    {/* <Image></Image> */}
+                    <Text>Image Logo</Text>
                 </View>
 
-                <View style={styles.avatarContainer}>
-                    <ImageBackground source={require('../../assets/avatar.jpg')} resizeMode="cover"></ImageBackground>
-                </View>
-
-                <View style={styles.inputsContainer}>
-                    <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(value) => setEmail(value)} value={email} style={styles.input} placeholder='Email'></TextInput>
+                <View style={styles.formContainer}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.titleText}>{title}</Text>
                     </View>
 
-                    <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(value) => setPassword(value)} value={password} style={styles.input} placeholder='Mot de passe (> 8 car)' secureTextEntry={true}></TextInput>
+                    <View style={styles.inputsContainer}>
+                        <InputFullSize onChangeText={(value) => setEmail(value)} value={email} placeholder='Email' />
+                        <InputFullSize onChangeText={(value) => setPassword(value)} value={password} placeholder='Mot de passe' secureTextEntry={true} />
+                    </View>
+
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>{errorMessage}</Text>
                     </View>
                 </View>
 
-                <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>{errorMessage}</Text>
-                </View>
+            </ScrollView>
+            <View style={styles.bottomControls}>
+                <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' />
+            </View>
 
-                <View style={styles.bottomControls}>
-                    <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' />
-                </View>
-
-            </SafeAreaView>
-        </ScrollView>
+        </SafeAreaView>
     )
 }
 
@@ -95,11 +93,21 @@ import { globalStyle } from '../../config'
 const styles = StyleSheet.create({
     container: {
         backgroundColor: globalStyle.backgroundColor,
-        padding: globalStyle.padding,
+        padding: 0,
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'space-between',
         paddingTop: 20,
+    },
+    imageContainer: {
+        backgroundColor: '#eeeeee',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '400',
+    },
+    formContainer:{
+        padding:globalStyle.padding,
     },
     titleContainer: {
         // backgroundColor:'red',
@@ -117,15 +125,17 @@ const styles = StyleSheet.create({
         borderRadius: Dimensions.get('window').width * 0.4,
         marginBottom: 10,
     },
-    avatar: {},
+    avatar: {
+        backgroundColor: '#cccccc',
+        width: Dimensions.get('window').width * 0.4,
+        height: Dimensions.get('window').width * 0.4,
+        borderRadius: Dimensions.get('window').width * 0.4,
+        marginTop: 20,
+        // marginBottom: 20,
+    },
     inputsContainer: {
         // backgroundColor:'#999999',
         width: '100%',
-    },
-    inputContainer: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#999999',
-        marginBottom: 5,
     },
     errorContainer: {
         width: '100%',
@@ -135,10 +145,11 @@ const styles = StyleSheet.create({
         color: 'red',
         textAlign: 'center',
     },
-    input: {},
     bottomControls: {
         // backgroundColor: 'yellow',
         width: '100%',
         alignItems: 'center',
+        justifyContent: 'center',
+        height: '60',
     },
 })

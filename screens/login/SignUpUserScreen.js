@@ -1,11 +1,13 @@
-import { StyleSheet, Text, TextInput, View, Image, Dimensions, ImageBackground, SafeAreaView, ScrollView } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Image, Dimensions, ImageBackground, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
-import ButtonPrimary from '../../globalComponents/ButtonPrimary'
 import { BACKEND_URL } from '../../config'
 import { setUser } from '../../reducers/user'
+import ButtonPrimary from '../../globalComponents/ButtonPrimary'
+import InputFullSize from '../../globalComponents/InputFullSize'
+import { userAvatarUrl } from '../../config'
 
 
 export default function SignUpUserScreen(props) {
@@ -17,12 +19,17 @@ export default function SignUpUserScreen(props) {
     const [password2, setPassword2] = useState(null)
     const [errorMessage, setErrorMessage] = useState(null)
     const [disableButton, setDisableButton] = useState(false)
+    const [opacity, setOpacity] = useState(0)
     const navigation = useNavigation()
 
+    
     const dispatch = useDispatch()
 
     const handleSubmit = async () => {
         setErrorMessage(null)
+
+        // navigation.navigate('SignUpDog', { firstname: firstname, lastname: lastname, email: email, telephone: telephone, password: password1 })
+        // return
 
         console.log('check form')
         if (!firstname || !lastname) { setErrorMessage('Nom et prénom obligatoires'); return }
@@ -55,48 +62,36 @@ export default function SignUpUserScreen(props) {
 
 
     return (
-        <ScrollView>
-            <SafeAreaView style={styles.container}>
-
-                <View style={styles.titleContainer}>
-                    <Text style={styles.titleText}>On a besoin d'un peu d'infos pour te créer un compte !</Text>
-                </View>
-
-                <View style={styles.avatarContainer}>
-                    <ImageBackground source={require('../../assets/avatar.jpg')} resizeMode="cover"></ImageBackground>
-                </View>
-
-                <View style={styles.inputsContainer}>
-                    <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(value) => setFirstname(value)} value={firstname} style={styles.input} placeholder='Prénom'></TextInput>
+        <SafeAreaView style={styles.container}>
+            <ScrollView>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.titleText}>On a besoin d'un peu d'infos pour te créer un compte !</Text>
                     </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(value) => setLastname(value)} value={lastname} style={styles.input} placeholder='Nom'></TextInput>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(value) => setEmail(value)} value={email} style={styles.input} placeholder='Email'></TextInput>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(value) => setTelephone(value)} value={telephone} style={styles.input} placeholder='Tél portable'></TextInput>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(value) => setPassword1(value)} value={password1} style={styles.input} placeholder='Mot de passe (> 8 car)' secureTextEntry={true}></TextInput>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <TextInput onChangeText={(value) => setPassword2(value)} value={password2} style={styles.input} placeholder='Confirmer le mot de passe' secureTextEntry={true}></TextInput>
-                    </View>
-                </View>
 
-                <View style={styles.errorContainer}>
-                    <Text style={styles.errorText}>{errorMessage}</Text>
-                </View>
+                    <TouchableOpacity style={styles.avatarContainer} onPressIn={() => setOpacity(1)} onPressOut={() => setOpacity(0)}>
+                        <Image source={{ uri: userAvatarUrl }} style={styles.avatar} ></Image>
+                    </TouchableOpacity>
+                    <Text style={[styles.avatarText, { opacity: opacity }]}>Tu pourras ajouter ta photo plus tard</Text>
 
-                <View style={styles.bottomControls}>
-                    <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton}/>
-                </View>
+                    <View style={styles.inputsContainer}>
+                        <InputFullSize onChangeText={(value) => setFirstname(value)} value={firstname} placeholder='Prénom' />
+                        <InputFullSize onChangeText={(value) => setLastname(value)} value={lastname} placeholder='Nom' />
+                        <InputFullSize onChangeText={(value) => setEmail(value)} value={email} placeholder='Email' />
+                        <InputFullSize onChangeText={(value) => setTelephone(value)} value={telephone} placeholder='Téléphone' />
+                        <InputFullSize onChangeText={(value) => setPassword1(value)} value={password1} placeholder='Mot de passe' secureTextEntry={true} />
+                        <InputFullSize onChangeText={(value) => setPassword2(value)} value={password2} placeholder='Confirmer le mot de passe' secureTextEntry={true} />
+                    </View>
 
-            </SafeAreaView>
-        </ScrollView>
+
+            </ScrollView>
+                    <View style={styles.errorContainer}>
+                        <Text style={styles.errorText}>{errorMessage}</Text>
+                    </View>
+            <View style={styles.bottomControls}>
+                <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton} />
+            </View>
+
+        </SafeAreaView>
     )
 }
 
@@ -109,7 +104,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20,
+        paddingTop: 40,
     },
     titleContainer: {
         // backgroundColor:'red',
@@ -121,22 +116,28 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     avatarContainer: {
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    avatar: {
         backgroundColor: '#cccccc',
         width: Dimensions.get('window').width * 0.4,
         height: Dimensions.get('window').width * 0.4,
         borderRadius: Dimensions.get('window').width * 0.4,
-        marginBottom: 10,
+        marginTop: 20,
+        // marginBottom: 20,
     },
-    avatar: {},
+    avatarText: {
+        fontSize: globalStyle.h5,
+        color: '#999999',
+        height: 20,
+        textAlign:'center',
+    },
     inputsContainer: {
         // backgroundColor:'#999999',
         width: '100%',
     },
-    inputContainer: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#999999',
-        marginBottom: 5,
-    },
+
     errorContainer: {
         width: '100%',
         height: 40,
@@ -145,10 +146,10 @@ const styles = StyleSheet.create({
         color: 'red',
         textAlign: 'center',
     },
-    input: {},
     bottomControls: {
         // backgroundColor: 'yellow',
         width: '100%',
         alignItems: 'center',
+        justifyContent:'center',
     },
 })

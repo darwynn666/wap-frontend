@@ -54,7 +54,7 @@ const Tab = createBottomTabNavigator() // bottom tabs are for dev only, to be re
 // LOGIN
 const StackLogin = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUpUser" component={SignUpUserScreen} />

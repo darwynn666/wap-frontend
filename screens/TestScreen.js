@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import ButtonPrimary from '../globalComponents/ButtonPrimary'
 import ButtonSecondary from '../globalComponents/ButtonSecondary'
+import InputFullSize from '../globalComponents/InputFullSize'
 
 export default function TestScreen(props) {
     const navigation = useNavigation()
@@ -19,11 +20,16 @@ export default function TestScreen(props) {
         <ScrollView>
 
             <View style={styles.container}>
+
                 <ButtonPrimary title='Button Primary' />
                 <ButtonSecondary title='Secondary status=yes' status='yes' />
                 <ButtonSecondary title='Secondary status=no' status='no' />
-                <Text>REDUCER : user {JSON.stringify(user, null, 2)}</Text>
-                <Text>REDUCER : settings {JSON.stringify(settings, null, 2)}</Text>
+                <InputFullSize placeholder='sample text...' secureTextEntry={true}/>
+                <View style={styles.reducers}>
+                    <Text>REDUCERS</Text>
+                    <Text style={styles.reducer}>user {JSON.stringify(user, null, 2)}</Text>
+                    <Text style={styles.reducer}>settings {JSON.stringify(settings, null, 2)}</Text>
+                </View>
             </View>
 
         </ScrollView>
@@ -38,6 +44,16 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20,
+        padding:20,
+    },
+    reducers:{
+        width:'100%',
+    },
+    reducer: {
+        width:'100%',
+        backgroundColor:'#eeeeee',
+        padding:5,
+        marginTop:5,
+        marginBottom:5,
     },
 })

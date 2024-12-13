@@ -1,10 +1,14 @@
-import { StyleSheet, Text, TextInput, View, ScrollView, SafeAreaView, ImageBackground, Dimensions, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TextInput, View, ScrollView, SafeAreaView, Image, Dimensions, TouchableOpacity, Pressable } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
-import ButtonPrimary from '../../globalComponents/ButtonPrimary'
 import { setUser } from '../../reducers/user'
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faDog } from "@fortawesome/free-solid-svg-icons";
+import ButtonPrimary from '../../globalComponents/ButtonPrimary'
+import InputFullSize from '../../globalComponents/InputFullSize'
+import { dogAvatarUrl } from '../../config'
 
 import { BACKEND_URL } from '../../config'
 // const BACKEND_URL = 'http://10.1.1.56:3000'
@@ -14,8 +18,9 @@ export default function SignUpDogScreen(props) {
     const route = useRoute()
     const { firstname, lastname, email, telephone, password } = route.params
     const [name, setName] = useState()
-    const [sex, setSex] = useState()
+    const [sex, setSex] = useState('female')
     const [errorMessage, setErrorMessage] = useState()
+    const [opacity, setOpacity] = useState(0)
     const dispatch = useDispatch()
     console.log('route params', route.params)
 
@@ -57,29 +62,33 @@ export default function SignUpDogScreen(props) {
     }
 
 
+
+
     return (
-        <ScrollView>
-            <SafeAreaView style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <ScrollView>
 
-                <View style={styles.titleContainer}>
-                    <Text style={styles.titleText}>Ajoute ton chien</Text>
-                </View>
+                <Text style={styles.titleText}>Ajoute ton chien</Text>
 
-                <View style={styles.avatarContainer}>
-                    <ImageBackground source={require('../../assets/avatar.jpg')} resizeMode="cover"></ImageBackground>
-                </View>
+                <TouchableOpacity style={styles.avatarContainer} onPressIn={() => setOpacity(1)} onPressOut={() => setOpacity(0)}>
+                    <Image source={{ uri: dogAvatarUrl }} style={styles.avatar} ></Image>
+                </TouchableOpacity>
+                <Text style={[styles.avatarText, { opacity: opacity }]}>Tu pourras ajouter sa photo plus tard</Text>
 
                 <View style={styles.inputsContainer}>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.titleText}>Son nom</Text>
-                        <TextInput onChangeText={(value) => setName(value)} value={name} style={styles.input} placeholder='Nom de ton chien'></TextInput>
-                    </View>
-                    <View style={styles.inputContainer}>
-                        <Text style={styles.titleText}>Son sexe</Text>
-                        <View style={styles.optionsContainer}>
-                            <TouchableOpacity onPress={() => setSex('female')} style={[styles.optionFemale, sex === 'female' && styles.optionSelected]}></TouchableOpacity>
-                            <TouchableOpacity onPress={() => setSex('male')} style={[styles.optionMale, sex === 'male' && styles.optionSelected]}></TouchableOpacity>
-                        </View>
+                    <Text style={styles.titleText}>Son nom</Text>
+                    <InputFullSize onChangeText={(value) => setName(value)} value={name} placeholder='Nom de ton chien' />
+                    <Text></Text>
+                    <Text></Text>
+
+                    <Text style={styles.titleText}>Son sexe</Text>
+                    <View style={styles.sexContainer}>
+                        <TouchableOpacity onPress={() => setSex('female')} style={sex === 'female' && styles.dogSelected}>
+                            <FontAwesomeIcon icon={faDog} style={styles.dogFemale} size={sex === 'female' ? 70 : 50}></FontAwesomeIcon>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => setSex('male')} style={sex === 'male' && styles.dogSelected}>
+                            <FontAwesomeIcon icon={faDog} style={styles.dogMale} size={sex === 'male' ? 70 : 50}></FontAwesomeIcon>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -91,13 +100,14 @@ export default function SignUpDogScreen(props) {
                     <Text style={styles.info}>Tu pourras jouter d'autres informations ultérieurement</Text>
                 </View>
 
-                <View style={styles.bottomControls}>
-                    {/* <ButtonPrimary  title='Ajouter un autre chien' /> */}
-                    <ButtonPrimary onPress={() => handleSubmit(true)} title='Terminer mon inscription' />
-                </View>
+            </ScrollView>
 
-            </SafeAreaView>
-        </ScrollView>
+            <View style={styles.bottomControls}>
+                {/* <ButtonPrimary  title='Ajouter un autre chien' /> */}
+                <ButtonPrimary onPress={() => handleSubmit(true)} title='Terminer mon inscription' />
+            </View>
+
+        </SafeAreaView>
     )
 }
 
@@ -110,58 +120,66 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20,
+        paddingTop: 40,
     },
-    titleContainer: {
-        // backgroundColor:'red',
-        width: '100%',
+    // titleContainer: {
+    //     // backgroundColor:'red',
+    //     width: '100%',
+    //     marginBottom: 20,
+    // },
+    titleText: {
+        fontSize: globalStyle.h2,
+        textAlign: 'center',
         marginBottom: 10,
     },
-    titleText: {
-        fontSize: globalStyle.h3,
-        textAlign: 'center',
-    },
     avatarContainer: {
+        justifyContent:'center',
+        alignItems:'center',
+    },
+    avatar: {
         backgroundColor: '#cccccc',
         width: Dimensions.get('window').width * 0.4,
         height: Dimensions.get('window').width * 0.4,
         borderRadius: Dimensions.get('window').width * 0.4,
-        marginBottom: 10,
+        marginTop: 20,
+        // marginBottom: 20,
     },
-    avatar: {},
+    avatarText: {
+        fontSize: globalStyle.h5,
+        color: '#999999',
+        height: 20,
+        textAlign:'center',
+    },
     inputsContainer: {
         // backgroundColor:'#999999',
         width: '100%',
     },
-    inputContainer: {
-        width: '100%',
-        borderBottomWidth: 1,
-        borderBottomColor: '#999999',
-        marginBottom: 5,
-    },
-    optionsContainer: {
-        // backgroundColor:'yellow',
-        // width: '100%',
+    sexContainer: {
+        height: 100,
         flexDirection: 'row',
         justifyContent: 'center',
+        alignItems: 'flex-end',
     },
-    optionFemale: {
-        backgroundColor: '#ff9999',
+    dogFemale: {
+        // backgroundColor: '#ff9999',
+        color: '#FFC0CB',
         width: 50,
         height: 50,
         borderRadius: 50,
         margin: 10,
     },
-    optionMale: {
-        backgroundColor: '#9999ff',
+    dogMale: {
+        // backgroundColor: '#9999ff',
+        color: '#87CEEB',
         width: 50,
         height: 50,
         borderRadius: 50,
         margin: 10,
     },
-    optionSelected: {
-        borderWidth: 3,
-        borderColor: '#333333',
+    dogSelected: {
+        // backgroundColor:'#eeeeee',
+        borderBottomWidth: 3,
+        borderBottomColor: globalStyle.greenPrimary,
     },
     errorContainer: {
         width: '100%',
@@ -171,7 +189,6 @@ const styles = StyleSheet.create({
         color: 'red',
         textAlign: 'center',
     },
-    input: {},
     info: {
         textAlign: 'center',
         margin: 10,
@@ -180,5 +197,6 @@ const styles = StyleSheet.create({
         // backgroundColor: 'yellow',
         width: '100%',
         alignItems: 'center',
+        justifyContent: 'center',
     },
 })

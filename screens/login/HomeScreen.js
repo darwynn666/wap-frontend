@@ -22,7 +22,7 @@ export default function HomeScreen(props) {
         <View style={styles.container}>
             <View style={styles.imageContainer}>
                 {/* <Image></Image> */}
-                <Text>aaa</Text>
+                <Text>Image Logo</Text>
             </View>
             <View style={styles.buttonsContainer}>
                 <ButtonPrimary onPress={() => handleSignUp()} title='Sign Up' />
@@ -43,17 +43,17 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     imageContainer: {
-        backgroundColor: '#999999',
+        backgroundColor: '#eeeeee',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: '70%',
+        height: '85%',
     },
     buttonsContainer: {
         // backgroundColor:'red',
         alignItems: 'center',
         justifyContent: 'space-around',
         width: '100%',
-        height: '20%',
+        height: '15%',
     },
 })
