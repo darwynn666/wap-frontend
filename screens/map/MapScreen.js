@@ -34,14 +34,17 @@ export default function MapScreen2() {
   const [currentPosition, setCurrentPosition] = useState(false);
   const [positionMarker, setPositionMarker] = useState();
   const [mapType, setMapType] = useState("standard");
-  const [placesMarkers, setPlacesMarkers] = useState([]);
-  const [usersMarkers, setUsersMarkers] = useState([]);
   const [visibleRegion, setVisibleRegion] = useState(null);
 
   const user = useSelector((state) => state.user.value);
   const settings = useSelector((state) => state.settings.value);
   const usersDisplayIgnored = settings.usersDisplayIgnored;
   const placesDisplayIgnored = settings.placesDisplayIgnored;
+
+  const [usersMarkers, setUsersMarkers] = useState([]);
+
+  const [placesData, setPlacesData] = useState([]);
+  const [placesDataFiltered, setPlacesDataFiltered] = useState([]);
 
   // force position
   const [forcePosition, setForcePosition] = useState();
@@ -52,8 +55,6 @@ export default function MapScreen2() {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        // const location = await Location.getCurrentPositionAsync({})
-        // setCurrentPosition(location.coords)
         Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
           setCurrentPosition(location.coords);
         });
@@ -99,10 +100,6 @@ export default function MapScreen2() {
   const getUsers = async () => {
     console.log("getUsers");
     const start = Date.now(); // Début du chronométrage
-    //get viewInfos
-    // const usersResponse = await fetch(
-    //   `${BACKEND_URL}/users/?longitude=${longitude}&latitude=${latitude}&longitudeDelta=${longitudeDelta}&latitudeDelta=${latitudeDelta}`
-    // );
     const usersResponse = await fetch(`${BACKEND_URL}/users`);
     const usersData = await usersResponse.json();
     if (usersData.result) {
@@ -120,23 +117,36 @@ export default function MapScreen2() {
     const placesResponse = await fetch(`${BACKEND_URL}/places`);
     const placesData = await placesResponse.json();
     if (placesData.result) {
-      // //filter places
-      // const dataFilter = placesData.data.filter(place=>!placesDisplayIgnored.some(filter=>filter==place.type))
-      setPlacesMarkers(placesData.data);
+      setPlacesData(placesData.data);
       const end = Date.now(); // Fin du chronométrage
       console.log(`Execution Time Places: ${end - start} ms`);
     }
+  };
+
+  const filterPlaces = () => {
+    //filter places
+    console.log("filter places");
+    const start = Date.now(); // Début du chronométrage
+    setPlacesDataFiltered(
+      placesData.filter(
+        (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
+      )
+    );
+    const end = Date.now(); // Fin du chronométrage
+    console.log(`Execution Time Places filtering: ${end - start} ms`);
   };
 
   useEffect(() => {
     getPlaces();
   }, []);
 
+  useEffect(() => {filterPlaces()}, [placesData, placesDisplayIgnored]);
+
   useEffect(() => {
     getUsers();
   }, []);
 
-  const places = placesMarkers.map((e, i) => {
+  const places = placesDataFiltered.map((e, i) => {
     let icon = "";
     switch (e.type) {
       case "restaurants":
