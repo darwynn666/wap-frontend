@@ -42,3 +42,8 @@ export const globalStyle  = {
    
     
 }
+
+
+
+export const userAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078126/avatar_g55kvf.jpg'
+export const dogAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078252/avatar_xmojsb.jpg'

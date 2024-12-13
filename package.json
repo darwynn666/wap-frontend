@@ -4,7 +4,6 @@
   "main": "index.js",
   "scripts": {
     "tunel": "expo start --tunnel",
-    "tunel": "expo start --tunnel",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -15,8 +14,8 @@
     "@fortawesome/free-brands-svg-icons": "^6.7.1",
     "@fortawesome/free-regular-svg-icons": "^6.7.1",
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
-    "@fortawesome/react-native-fontawesome": "^0.3.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@fortawesome/react-native-fontawesome": "^0.3.2",
     "@react-navigation/bottom-tabs": "6",
     "@react-navigation/drawer": "6",
     "@react-navigation/native": "6",
