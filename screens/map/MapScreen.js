@@ -73,9 +73,7 @@ export default function MapScreen2() {
   const handleRegionChange = (region) => {
     console.log(region)
     // console.log('marker 0', markers[0])
-    
-    setVisibleRegion(region);
-    setPlacesDataRegionFilter()
+    region.latitude && setVisibleRegion(region);
   };
 
   const toggleForcePosition = () => {
@@ -142,40 +140,13 @@ export default function MapScreen2() {
     return user.friends.blocked.some((friend) => friend == id);
   };
 
-  const filterUsers = () => {
-    //filter places
-    console.log("filter users");
-    const start = Date.now(); // Début du chronométrage
-    setUsersDataFiltered(
-      usersData.filter((userData) => {
-        const _isAccepted = isAccepted(userData._id);
-        const _isBlocked = isBlocked(userData._id);
-        const _unkow = !(_isAccepted || _isBlocked);
-        let isShown =true;
-        if (usersDisplayIgnored.includes("friends"))
-          isShown =  isShown && !_isAccepted
-        if (usersDisplayIgnored.includes("blocked"))
-          isShown =  isShown && !_isBlocked
-        if (usersDisplayIgnored.includes("unknows"))
-          isShown =  isShown && !_unkow
-        return isShown;
-      })
-    );
-    const end = Date.now(); // Fin du chronométrage
-    console.log(`Execution Time Places filtering: ${end - start} ms`);
-  };
-
   useEffect(() => {
     getPlaces();
   }, []);
 
-  // useEffect(() => {
-  //   getUsers();
-  // }, []);
-
-  // useEffect(() => {
-  //   filterUsers();
-  // }, [usersData, usersDisplayIgnored]);
+  useEffect(() => {
+    getUsers();
+  }, []);
 
    const filteredMarkers = placesData
    .filter((marker) => 
@@ -227,7 +198,33 @@ export default function MapScreen2() {
     );
   });
 
-  const users = usersDataFiltered.map((e, i) => {
+  const filteredUsers = usersData
+  .filter((marker) => 
+    {
+     if (visibleRegion.latitude)
+     {
+       return marker.currentLocation.coordinates[1] >= visibleRegion.latitude - visibleRegion.latitudeDelta / 2 &&
+       marker.currentLocation.coordinates[1] <= visibleRegion.latitude + visibleRegion.latitudeDelta / 2 &&
+       marker.currentLocation.coordinates[0] >= visibleRegion.longitude - visibleRegion.longitudeDelta / 2 &&
+       marker.currentLocation.coordinates[0] <= visibleRegion.longitude + visibleRegion.longitudeDelta / 2
+     }
+    }
+   )
+   .filter((userData) => {
+    const _isAccepted = isAccepted(userData._id);
+    const _isBlocked = isBlocked(userData._id);
+    const _unkow = !(_isAccepted || _isBlocked);
+    let isShown =true;
+    if (usersDisplayIgnored.includes("friends"))
+      isShown =  isShown && !_isAccepted
+    if (usersDisplayIgnored.includes("blocked"))
+      isShown =  isShown && !_isBlocked
+    if (usersDisplayIgnored.includes("unknows"))
+      isShown =  isShown && !_unkow
+    return isShown;
+  })
+
+  const users = filteredUsers.map((e, i) => {
     let icon = require("../../assets/icons/icon_dog_gray.png");
     //need to check if friends or blocked
     if (isAccepted(e._id))
