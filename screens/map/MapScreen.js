@@ -34,7 +34,7 @@ export default function MapScreen2() {
   const [currentPosition, setCurrentPosition] = useState(false);
   const [positionMarker, setPositionMarker] = useState();
   const [mapType, setMapType] = useState("standard");
-  const [visibleRegion, setVisibleRegion] = useState(null);
+  const [visibleRegion, setVisibleRegion] = useState();
 
   const user = useSelector((state) => state.user.value);
   const settings = useSelector((state) => state.settings.value);
@@ -42,6 +42,7 @@ export default function MapScreen2() {
   const placesDisplayIgnored = settings.placesDisplayIgnored;
 
   const [placesData, setPlacesData] = useState([]);
+  const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
   const [placesDataFiltered, setPlacesDataFiltered] = useState([]);
 
   const [usersData, setUsersData] = useState([]);
@@ -58,14 +59,23 @@ export default function MapScreen2() {
       if (status === "granted") {
         Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
           setCurrentPosition(location.coords);
+          setVisibleRegion({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.05, //0.05 equivaut à environ 5km
+            longitudeDelta: 0.05,
+          })
         });
       }
     })();
   }, []);
 
   const handleRegionChange = (region) => {
+    console.log(region)
     // console.log('marker 0', markers[0])
+    
     setVisibleRegion(region);
+    setPlacesDataRegionFilter()
   };
 
   const toggleForcePosition = () => {
@@ -124,19 +134,6 @@ export default function MapScreen2() {
     }
   };
 
-  const filterPlaces = () => {
-    //filter places
-    console.log("filter places");
-    const start = Date.now(); // Début du chronométrage
-    setPlacesDataFiltered(
-      placesData.filter(
-        (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
-      )
-    );
-    const end = Date.now(); // Fin du chronométrage
-    console.log(`Execution Time Places filtering: ${end - start} ms`);
-  };
-
   const isAccepted = (id) => {
     return user.friends.accepted.some((friend) => friend == id);
   };
@@ -172,19 +169,32 @@ export default function MapScreen2() {
     getPlaces();
   }, []);
 
-  useEffect(() => {
-    filterPlaces();
-  }, [placesData, placesDisplayIgnored]);
+  // useEffect(() => {
+  //   getUsers();
+  // }, []);
 
-  useEffect(() => {
-    getUsers();
-  }, []);
+  // useEffect(() => {
+  //   filterUsers();
+  // }, [usersData, usersDisplayIgnored]);
 
-  useEffect(() => {
-    filterUsers();
-  }, [usersData, usersDisplayIgnored]);
+   const filteredMarkers = placesData
+   .filter((marker) => 
+   {
+    if (visibleRegion.latitude)
+    {
+      return marker.location.coordinates[1] >= visibleRegion.latitude - visibleRegion.latitudeDelta / 2 &&
+      marker.location.coordinates[1] <= visibleRegion.latitude + visibleRegion.latitudeDelta / 2 &&
+      marker.location.coordinates[0] >= visibleRegion.longitude - visibleRegion.longitudeDelta / 2 &&
+      marker.location.coordinates[0] <= visibleRegion.longitude + visibleRegion.longitudeDelta / 2
+    }
+   }
+  )
+  .filter(
+    (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
+  )
+  
 
-  const places = placesDataFiltered.map((e, i) => {
+  const places = filteredMarkers.map((e, i) => {
     let icon = "";
     switch (e.type) {
       case "restaurants":
@@ -241,14 +251,9 @@ export default function MapScreen2() {
   // console.log('current position', currentPosition)
   return (
     <View style={styles.container}>
-      {currentPosition && (
+      { (
         <MapView
-          initialRegion={{
-            latitude: currentPosition.latitude,
-            longitude: currentPosition.longitude,
-            latitudeDelta: 0.05, //0.05 equivaut à environ 5km
-            longitudeDelta: 0.05,
-          }}
+          initialRegion={visibleRegion}
           mapType={settings.mapDisplayIgnored}
           style={{ width: "100%", height: "100%" }}
           showsUserLocation={!forcePosition}
