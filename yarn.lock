@@ -4894,6 +4894,11 @@ react-native-svg@^15.10.1:
     css-tree "^1.1.3"
     warn-once "0.1.1"
 
+react-native-swipe-gesture-handler@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-swipe-gesture-handler/-/react-native-swipe-gesture-handler-1.0.6.tgz#9fc1785e95ebe68571fc3e21ae1966dd549c82d0"
+  integrity sha512-wlbeZkD8F/WENgUJSoLtPZIa0pxLvWb65GzgzSBB9LDdc0PtrGo/77/ATRbhUl82GiJK7UQ6jZDZxxeKIsejPg==
+
 react-native-vector-icons@^10.2.0:
   version "10.2.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-10.2.0.tgz#f438f2ca16f7d6be658fd6ec8f0d2b7e2132b91c"
