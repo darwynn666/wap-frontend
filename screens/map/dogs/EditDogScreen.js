@@ -1,14 +1,15 @@
-import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Dimensions } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Dimensions, Alert } from 'react-native'
 import { useEffect, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
+import { useRoute, useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
+import ButtonSecondary from '../../../globalComponents/ButtonSecondary'
 import { useSelector, useDispatch } from 'react-redux';
 import { dogAvatarUrl } from '../../../config'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faPen, faDog } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faDog, faHourglass2 } from '@fortawesome/free-solid-svg-icons'
 import InputFullSize from '../../../globalComponents/InputFullSize';
+import { setUserDogs } from '../../../reducers/user';
 
 
 // import { BACKEND_URL } from '../../../config'
@@ -17,6 +18,8 @@ const BACKEND_URL = 'http://192.168.1.147:3000'
 
 export default function EditDogScreen() {
     const route = useRoute();
+    const navigation = useNavigation()
+    const dispatch = useDispatch()
     const user = useSelector((state) => state.user.value); // Pour un éventuel usage
     console.log(route.params)
     // Initialisation des états avec les paramètres passés
@@ -50,14 +53,15 @@ export default function EditDogScreen() {
             const response = await fetch(url, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ _id: _id, name: dogName, sex: dogSex, race: dogRace, birthday: dogBirthday, chipid: dogChipid})
+                body: JSON.stringify({ _id: _id, name: dogName, sex: dogSex, race: dogRace, birthday: dogBirthday, chipid: dogChipid })
             })
             const data = await response.json()
             setDisableButton(false)
             console.log('data.dog', data.dog)
             if (data.result) {
                 setErrorMessage('Modifications enregistrées')
-                // dispatch(setUserInfos({ firstname, lastname, telephone, email, isDogSitter, isSearchingDogSitter }))
+                dispatch(setUserDogs(user.dogs))
+                navigation.navigate('Dogs', { reload: true })
             }
             else {
                 setErrorMessage(data.error)
@@ -70,10 +74,46 @@ export default function EditDogScreen() {
         }
     }
 
+    const confirmDeleteDog = () => {
+        Alert.alert('Supprimer ' + route.params.name + ' ?', 'Cette action est irreversible', [
+            { text: 'Cancel' },
+            { text: 'OK', onPress: () => deleteDog() },
+        ])
+    }
+
+    const deleteDog = async () => {
+        setErrorMessage(null)
+        setDisableButton(true)
+        try {
+            const url = `${BACKEND_URL}/dogs/${user.token}`
+            console.log('DELETE', url)
+            const response = await fetch(url, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ _id: _id })
+            })
+            const data = await response.json()
+            console.log(data)
+            if(data.userDogs) {
+                setErrorMessage('Chien supprimé')
+                dispatch(setUserDogs(user.dogs))
+                navigation.navigate('Dogs', { reload: true })
+            }
+            else {
+
+            }
+        }
+        catch (error) {
+            console.log(error)
+            setDisableButton(false)
+            setErrorMessage('Erreur lors de l\'enregistrement des modifications')
+        }
+    }
 
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
+            <Text style={styles.title}>{route.params.name}</Text>
             <TouchableOpacity style={styles.avatarContainer} >
                 <Image source={{ uri: dogAvatarUrl }} style={styles.avatar} ></Image>
                 <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
@@ -100,6 +140,7 @@ export default function EditDogScreen() {
 
             <View style={styles.bottomControls}>
                 <ButtonPrimary onPress={() => handleSubmit()} title='Enregistrer' disabled={disableButton} />
+                <ButtonSecondary onPress={() => confirmDeleteDog()} title='Supprimer' status={false} />
             </View>
         </KeyboardAvoidingView>
     );
@@ -115,9 +156,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: globalStyle.padding,
-        paddingTop: 40,
+        // paddingTop: 20,
     },
-
+    title: {
+        fontSize: globalStyle.h2,
+    },
     inputContainer: {
         width: '100%',
     },
@@ -188,8 +231,9 @@ const styles = StyleSheet.create({
     bottomControls: {
         // backgroundColor: 'yellow',
         width: '100%',
+        height:80,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
     },
 
 

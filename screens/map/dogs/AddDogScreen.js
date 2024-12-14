@@ -19,7 +19,7 @@ export default function AddDogScreen(props) {
     const navigation = useNavigation()
     const route = useRoute()
     const user = useSelector(state => state.user.value)
-    const dispatch=useDispatch()
+    const dispatch = useDispatch()
     const [name, setName] = useState('');
     const [sex, setSex] = useState('female');
     const [race, setRace] = useState('');
@@ -66,7 +66,7 @@ export default function AddDogScreen(props) {
                 if (userData.result) {
                     // update user reducer
                     dispatch(setUserDogs(userData.data))
-                    navigation.navigate('Dogs',{refresh:true})
+                    navigation.navigate('Dogs', { reload: true })
                 }
 
 

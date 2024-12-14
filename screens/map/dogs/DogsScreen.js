@@ -4,7 +4,7 @@ import { useRoute, useNavigation } from '@react-navigation/native'
 import { globalStyle } from '../../../config'
 import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faDog, faCircle } from '@fortawesome/free-solid-svg-icons'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { dogAvatarUrl } from '../../../config'
 
@@ -15,23 +15,27 @@ const BACKEND_URL = 'http://192.168.1.147:3000'
 
 export default function DogsScreen({ navigation }) {
     // const navigation = useNavigation()
-    const route = useRoute();
-    const dispatch = useDispatch();
-    const user = useSelector((state) => state.user.value);
-    const [doglist, setDoglist] = useState([]);
+    const route = useRoute()
+    const dispatch = useDispatch()
+    const user = useSelector((state) => state.user.value)
+    const [doglist, setDoglist] = useState([])
 
-    console.log(user.token);
+    console.log(user.token)
     //console.log(user.data.dogs);
-    useEffect(() => {
+    const getDogs = () => {
         fetch(`${BACKEND_URL}/dogs/${user.token}`)
             .then(response => response.json())
-            .then(data => {setDoglist(data.data)});
-    }, []);
-    useEffect(() => {
-        fetch(`${BACKEND_URL}/dogs/${user.token}`)
-            .then(response => response.json())
-            .then(data => {setDoglist(data.data)});
-    }, [user.dogs]);
+            .then(data => { setDoglist(data.data) })
+    }
+    useEffect(() => { // load dogs list
+        getDogs()
+    }, [])
+
+    useEffect(() => { // reload dogs list if needed (after edit, add and delete)
+        getDogs()
+        navigation.setParams({ reload: false })
+    }, [route.params?.reload])
+
 
     // console.log(doglist)
     const dogs = doglist.map((data, i) => {
@@ -39,7 +43,10 @@ export default function DogsScreen({ navigation }) {
         return (
             <TouchableOpacity key={i} style={styles.dogContainer} onPress={() => navigation.navigate('EditDog', { ...data })} >
                 <Image style={styles.image} source={{ uri: dogAvatarUrl }} />
-                <Text style={styles.text} >{data.name}</Text>
+                <View style={styles.dogName}>
+                    <FontAwesomeIcon icon={faCircle} size={15} style={{ color: data.sex === 'male' ? '#87CEEB' : '#FFC0CB' }}></FontAwesomeIcon>
+                    <Text style={styles.text} >{data.name}</Text>
+                </View>
             </TouchableOpacity>
         )
     })
@@ -55,7 +62,7 @@ export default function DogsScreen({ navigation }) {
                 <TouchableOpacity onPress={() => navigation.navigate('Mes chiens', { screen: 'AddDog' })}>
                     {/* <Icon name="plus-circle" size={30} color={globalStyle.greenPrimary} style={styles.addDogIcon} /> */}
                     <View style={styles.addDogIcon}>
-                        <FontAwesomeIcon icon={faPlus} size={30} color='white'></FontAwesomeIcon>
+                        <FontAwesomeIcon icon={faPlus} size={20} color='white'></FontAwesomeIcon>
                     </View>
                 </TouchableOpacity>
             </View>
@@ -96,8 +103,15 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         marginTop: 15,
     },
+    dogName: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        // width:'100%',
+        // justifyContent:'space-around'
+    },
     text: {
-        fontSize: globalStyle.h3
+        fontSize: globalStyle.h3,
+        margin: 10,
     },
 
     addDogContainer: {
