@@ -20,6 +20,7 @@ import {
   faCircleChevronRight,
   faLocationCrosshairs,
   faMapMarker,
+  faBars
 } from "@fortawesome/free-solid-svg-icons";
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
@@ -268,7 +269,7 @@ export default function MapScreen2() {
         style={styles.menuButton}
         onPress={() => navigation.openDrawer()}
       >
-        <FontAwesomeIcon icon={faCircleChevronRight} color="black" size={30} />
+        <FontAwesomeIcon icon={faBars} color="black" size={30} />
       </TouchableOpacity>
 
       <TouchableOpacity

@@ -103,7 +103,7 @@ const StackDogs = () => {
 }
 const StackFriends = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Friends" component={FriendsScreen} />
       <Stack.Screen name="BlockFriend" component={BlockFriendScreen} />
       <Stack.Screen name="DeleteFriend" component={DeleteFriendScreen} />

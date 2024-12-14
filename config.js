@@ -1,5 +1,7 @@
 // backend
-export const BACKEND_URL = 'https://wap-backend.vercel.app'
+// export const BACKEND_URL = 'https://wap-backend.vercel.app'
+export const BACKEND_URL = 'http://192.168.1.147:3000'
+
 
 import { faDog } from "@fortawesome/free-solid-svg-icons";
 
@@ -43,7 +45,6 @@ export const globalStyle = {
 
 
 }
-
 
 
 export const userAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078126/avatar_g55kvf.jpg'

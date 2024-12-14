@@ -9,8 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { dogAvatarUrl } from '../../../config'
 
 
-// import { BACKEND_URL } from '../../../config'
-const BACKEND_URL = 'http://192.168.1.147:3000'
+import { BACKEND_URL } from '../../../config'
 
 
 export default function DogsScreen({ navigation }) {

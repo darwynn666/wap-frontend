@@ -11,7 +11,6 @@ import { faPen } from '@fortawesome/free-solid-svg-icons'
 import { setUserInfos } from '../../../reducers/user'
 
 import { BACKEND_URL } from '../../../config'
-// const BACKEND_URL = 'http://192.168.1.147:3000'
 
 
 export default function UserScreen(props) {

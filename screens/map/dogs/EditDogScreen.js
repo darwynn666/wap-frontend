@@ -12,8 +12,7 @@ import InputFullSize from '../../../globalComponents/InputFullSize';
 import { setUserDogs } from '../../../reducers/user';
 
 
-// import { BACKEND_URL } from '../../../config'
-const BACKEND_URL = 'http://192.168.1.147:3000'
+import { BACKEND_URL } from '../../../config'
 
 
 export default function EditDogScreen() {

@@ -1,52 +1,119 @@
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView } from 'react-native'
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Dimensions, SafeAreaView } from 'react-native'
 import { useEffect, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
+import { useRoute, useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
-import { globalStyle } from '../../../config'
-import { useSelector,useDispatch } from 'react-redux';
+import ButtonSecondary from '../../../globalComponents/ButtonSecondary'
+import { BACKEND_URL, globalStyle } from '../../../config'
+import { useSelector, useDispatch } from 'react-redux';
+import { userAvatarUrl } from '../../../config';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faCircle } from '@fortawesome/free-solid-svg-icons'
+
 
 export default function FriendsScreen(props) {
     const dispatch = useDispatch();
-    const user=useSelector((state)=>state.user.value);
+    const user = useSelector((state) => state.user.value);
     const navigation = useNavigation()
     const route = useRoute()
 
-console.log(user)
+    // console.log(user.friends.accepted)
 
-    const addFriend = () => {
-        console.log("accepter")
-    };
-    const declineFriend = () => {
-        console.log('refuser')
+    const getFriend = async (_id) => {
+        const response = await fetch(`${BACKEND_URL}/users/${_id}`)
+        const friend = await response.json()
+        return (friend.data)
     }
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Ma liste d'amis</Text>
+    const friends = user.friends.accepted.map(async (_id, i) => {
+        const friend = await getFriend(_id)
+        let statusColor = null
+        switch (friend.status) {
+            case 'off': statusColor = globalStyle.grayLight; break
+            case 'walk': statusColor = globalStyle.greenPrimary; break
+            case 'pause': statusColor = globalStyle.bluePrimary; break
+        }
+        return (
+            <TouchableOpacity key={i} style={styles.friendContainer} >
+                <Image style={[styles.friendAvatar,{borderColor:statusColor}]} source={{ uri: userAvatarUrl }} />
+                <Text style={styles.friendName} >{friend.infos.firstname} </Text>
+                <Text style={styles.friendName} >{friend.infos.lastname}</Text>
+                {/* <FontAwesomeIcon icon={faCircle} size={15} style={{ borderColor: statusColor }}></FontAwesomeIcon> */}
+            </TouchableOpacity >
+        )
+    })
 
-            <TouchableOpacity style={styles.containerlist} onPress={() => navigation.navigate('Mes amis', { screen: 'InfosFriend' })}>
-                <Image style={styles.image} source={require('../../../assets/avatar.jpg')} />
-                <Text style={styles.text} >nom d'ami</Text>
-            </TouchableOpacity>
-
-            <View style={styles.containerdemandes}>
-                <Text style={styles.title}>Demandes en attente:</Text>
-                <View style={styles.waitingfriends}>
-                    <Image style={styles.image} source={require('../../../assets/avatar.jpg')} />
-                    <View>
-                        <Text style={styles.text} >nom d'ami</Text>
-                        <Text style={styles.paragraph}>delais de demandes</Text>
-                    </View>
-                    <View style={styles.containerbutton}>
-                        <ButtonPrimary style={styles.button} onPress={() => addFriend()} title='Accepter'></ButtonPrimary>
-                        <ButtonPrimary style={styles.button} onPress={() => declineFriend()} title='Refuser'></ButtonPrimary>
-                    </View>
+    const friendsIncoming = user.friends.incoming.map(async (_id, i) => {
+        const friend = await getFriend(_id)
+        console.log('friend incoming', friend)
+        return (
+            <View key={i} style={styles.friendIncomingContainer} >
+                <Image style={styles.friendIncomingAvatar} source={{ uri: userAvatarUrl }} />
+                <Text style={styles.friendIncomingName} >{friend.infos.firstname} {friend.infos.lastname}</Text>
+                <View>
+                    <ButtonSecondary title='Accepter' status={true} />
+                    <ButtonSecondary title='Refuser' status={false} />
                 </View>
             </View>
-        </View>
+        )
+    })
 
+    const friendsOutcoming = user.friends.outcoming.map(async (_id, i) => {
+        const friend = await getFriend(_id)
+        console.log('friend outcoming', friend)
+        return (
+            <View key={i} style={styles.friendOutcomingContainer} >
+                <Image style={styles.friendOutcomingAvatar} source={{ uri: userAvatarUrl }} />
+                <Text style={styles.friendOutcomingName} >{friend.infos.firstname} {friend.infos.lastname}</Text>
+                <ButtonSecondary title='Annuler' status={true} />
+            </View>
+        )
+    })
+
+    const usersBlocked = user.friends.blocked.map(async (_id, i) => {
+        const friend = await getFriend(_id)
+        console.log('users blocked', friend)
+        return (
+            <View key={i} style={styles.usersBlockedContainer} >
+                <Image style={styles.usersBlockedAvatar} source={{ uri: userAvatarUrl }} />
+                <Text style={styles.usersBlockedName} >{friend.infos.firstname} {friend.infos.lastname}</Text>
+                <ButtonSecondary title='Annuler' status={true} />
+            </View>
+        )
+    })
+
+    return (
+        <SafeAreaView>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                <ScrollView>
+                    <View style={styles.container}>
+
+                        <Text style={styles.textDefaut}>Tu peux acceder à des informations détaillées sur la carte lorsque tes amis sont en ballade</Text>
+
+                        <Text style={styles.title}>Mes amis</Text>
+                        <View style={styles.friendsContainer}>
+                            {user.friends.accepted.length ? friends : <Text style={styles.textDefaut}>Vous n'avez pas d'ami</Text>}
+                        </View>
+
+                        <Text style={styles.title}>Demandes en attente</Text>
+                        <View style={styles.friendsIncomingContainer}>
+                            {user.friends.incoming.length ? friendsIncoming : <Text style={styles.textDefaut}>Vous n'avez envoyé aucune demande</Text>}
+                        </View>
+
+                        <Text style={styles.title}>Demandes envoyées</Text>
+                        <View style={styles.friendsOutcomingContainer}>
+                            {user.friends.outcoming.length ? friendsOutcoming : <Text style={styles.textDefaut}>Vous n'avez envoyé aucune demande</Text>}
+                        </View>
+
+                        <Text style={styles.title}>Personnes bloquées</Text>
+                        <View style={styles.usersBlockedContainer}>
+                            {user.friends.blocked.length ? usersBlocked : <Text style={styles.textDefaut}>Vous n'avez bloqué personne</Text>}
+                        </View>
+
+                    </View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
 
     )
 }
@@ -54,64 +121,123 @@ console.log(user)
 
 // STYLES
 const styles = StyleSheet.create({
-
     container: {
         backgroundColor: globalStyle.backgroundColor,
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20,
-
-
-    },
-    containerlist: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        margin: 5,
-        width: '95%',
+        padding: globalStyle.padding,
+        // paddingTop: 20,
     },
 
-    image: {
-        height: "70",
-        width: "70",
-        borderRadius: 50,
-        marginTop: 15,
-    },
-    text: {
-        fontSize: globalStyle.h3
-    },
-    containerdemandes: {
-        flexDirection: 'column',
+    title: {
+        width: '100%',
+        fontSize: globalStyle.h3,
         marginTop: 20,
-        width: '90%',
-        alignItems: 'center',
+        marginBottom: 10,
+        // color:globalStyle.grayPrimary,
+        borderBottomColor: '#cccccc',
+        borderBottomWidth: 1,
     },
-    waitingfriends: {
+    textDefaut: {
+        width: '100%',
+        color: globalStyle.grayPrimary,
+    },
+
+    // accepted
+    friendsContainer: {
+        // backgroundColor: 'yellow',
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        margin: 5,
-        width: '95%',
+        width: '100%',
+        flexWrap: 'wrap',
     },
-    title: {
-        fontSize: globalStyle.h2,
-    },
-    paragraph: {
-        fontSize: globalStyle.h4,
-
-    },
-    containerbutton: {
-        width: '27%',
+    friendContainer: {
+        width: '30%',
+        // flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
-
+        marginBottom: 20,
     },
-    button: {
-    // justifyContent: 'space-around',
-    // alignItems:'stretch'
+    friendAvatar: {
+        width: Dimensions.get('window').width * 0.2,
+        height: Dimensions.get('window').width * 0.2,
+        borderRadius: 50,
+        borderWidth:5,
+    },
+    friendName: {
+        fontSize: globalStyle.h4,
     },
 
+    // incoming
+    friendsIncomingContainer: {
+        // backgroundColor: 'yellow',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
+    friendIncomingContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    friendIncomingAvatar: {
+        height: 30,
+        width: 30,
+        borderRadius: 50,
+    },
+    friendIncomingName: {
+        fontSize: globalStyle.h4,
+    },
 
+    // outcoming
+    friendsOutcomingContainer: {
+        // backgroundColor: 'yellow',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
+    friendOutcomingContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    friendOutcomingAvatar: {
+        height: 30,
+        width: 30,
+        borderRadius: 50,
+    },
+    friendOutcomingName: {
+        fontSize: globalStyle.h4,
+    },
+
+    // blocked
+    usersBlockedContainer: {
+        // backgroundColor: 'yellow',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+    },
+    usersBlockedContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    usersBlockedAvatar: {
+        height: 30,
+        width: 30,
+        borderRadius: 50,
+    },
+    usersBlockedName: {
+        fontSize: globalStyle.h4,
+    },
 
 })
 
