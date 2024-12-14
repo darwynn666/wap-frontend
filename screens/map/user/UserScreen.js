@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
         height: 40,
     },
     errorText: {
-        color: 'red',
+        color: '#cccccc',
         textAlign: 'center',
     },
 

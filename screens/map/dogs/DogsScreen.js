@@ -23,17 +23,21 @@ export default function DogsScreen({ navigation }) {
     console.log(user.token);
     //console.log(user.data.dogs);
     useEffect(() => {
-        fetch(`https://wap-backend.vercel.app/dogs/${user.token}`)
+        fetch(`${BACKEND_URL}/dogs/${user.token}`)
             .then(response => response.json())
-            .then(data => {
-                setDoglist(data.data)
-            });
+            .then(data => {setDoglist(data.data)});
     }, []);
+    useEffect(() => {
+        fetch(`${BACKEND_URL}/dogs/${user.token}`)
+            .then(response => response.json())
+            .then(data => {setDoglist(data.data)});
+    }, [user.dogs]);
+
     // console.log(doglist)
     const dogs = doglist.map((data, i) => {
-        // console.log(data);
+        console.log(data);
         return (
-            <TouchableOpacity key={i} style={styles.dogContainer} >
+            <TouchableOpacity key={i} style={styles.dogContainer} onPress={() => navigation.navigate('EditDog', { ...data })} >
                 <Image style={styles.image} source={{ uri: dogAvatarUrl }} />
                 <Text style={styles.text} >{data.name}</Text>
             </TouchableOpacity>
@@ -98,9 +102,9 @@ const styles = StyleSheet.create({
 
     addDogContainer: {
         // backgroundColor:'red',
-        position:'absolute',
-        right:globalStyle.padding,
-        bottom:globalStyle.padding,
+        position: 'absolute',
+        right: globalStyle.padding,
+        bottom: globalStyle.padding,
         // alignItems: 'flex-end',
         // justifyContent: 'flex-end',
         // alignSelf: 'flex-end',

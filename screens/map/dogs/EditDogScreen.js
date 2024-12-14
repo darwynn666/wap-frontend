@@ -1,27 +1,34 @@
-import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Dimensions } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
 import { useSelector, useDispatch } from 'react-redux';
+import { dogAvatarUrl } from '../../../config'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faPen, faDog } from '@fortawesome/free-solid-svg-icons'
+import InputFullSize from '../../../globalComponents/InputFullSize';
 
 
-//export default function EditDogScreen({ navigation }) {
-//  const navigation = useNavigation()
-// const doginfos = (navigation.getState().routes.find(e => e.name == 'EditDog'))
+// import { BACKEND_URL } from '../../../config'
+const BACKEND_URL = 'http://192.168.1.147:3000'
+
+
 export default function EditDogScreen() {
     const route = useRoute();
     const user = useSelector((state) => state.user.value); // Pour un éventuel usage
-console.log(user.token)
+    console.log(route.params)
     // Initialisation des états avec les paramètres passés
-    const { name, sex, race, birthday, chipid, status, _id } = route.params;
-    const [nom, setNom] = useState(name || '');
-    const [sexe, setSexe] = useState(sex || '');
+    const { name, sex, race, birthday, chipid, _id } = route.params;
+    const [dogName, setDogName] = useState(name || '');
+    const [dogSex, setDogSex] = useState(sex || 'female');
     const [dogRace, setDogRace] = useState(race || '');
     const [dogBirthday, setDogBirthday] = useState(birthday || '');
     const [dogChipid, setDogChipid] = useState(chipid || '');
-    const [dogStatus, setDogStatus] = useState(status || '');
+    const [errorMessage, setErrorMessage] = useState(null)
+    const [disableButton, setDisableButton] = useState(false)
+
 
     // Fonction pour mettre à jour la photo (à implémenter)
     const uploadphoto = () => {
@@ -29,114 +36,70 @@ console.log(user.token)
     };
 
     // Gestion de la soumission
-    const handleSubmit = () => {
-        // Validation rapide
-        if (!nom || !sexe) {
-            alert('Veuillez renseigner au moins le nom et le sexe.');
-            return;
-        }
+    const handleSubmit = async () => {
+        setErrorMessage(null)
 
-        fetch(`https://wap-backend.vercel.app/dogs/${user.token}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                _id:_id,
-                name:nom,
-                sex: sexe,
-                race: dogRace,
-                chipid: dogChipid,
-                birthday: dogBirthday,
-                status: dogStatus,
-            }),
-        })
-            .then((response) => {
-            //     console.log(response)
-            //     if (!response.ok) {
-            //         throw new Error('Erreur lors de la mise à jour');
-              //  }
-                return response.json();
+        console.log('check form')
+        if (!dogName) { setErrorMessage('Nom obligatoire'); return }
+
+        // update dog infos
+        try {
+            const url = `${BACKEND_URL}/dogs/${user.token}`
+            console.log('PUT', url)
+            setDisableButton(true)
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ _id: _id, name: dogName, sex: dogSex, race: dogRace, birthday: dogBirthday, chipid: dogChipid})
             })
-            .then((data) => {
-                console.log('Mise à jour réussie :', data);
-                alert('Les informations du chien ont été mises à jour avec succès.');
-            })
-            .catch((error) => {
-                console.error('Erreur détectée :', error);
-                alert('Une erreur est survenue. Veuillez réessayer.');
-            });
-    };
+            const data = await response.json()
+            setDisableButton(false)
+            console.log('data.dog', data.dog)
+            if (data.result) {
+                setErrorMessage('Modifications enregistrées')
+                // dispatch(setUserInfos({ firstname, lastname, telephone, email, isDogSitter, isSearchingDogSitter }))
+            }
+            else {
+                setErrorMessage(data.error)
+            }
+        }
+        catch (error) {
+            console.log(error)
+            setDisableButton(false)
+            setErrorMessage('Erreur lors de l\'enregistrement des modifications')
+        }
+    }
 
 
 
     return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-            <View style={styles.containerimage}>
-                <Image style={styles.image} source={require('../../../assets/avatar.jpg')} />
-                <Icon
-                    name="pen"
-                    rotate={70}
-                    size={30}
-                    color="#32CD32"
-                    style={styles.icon}
-                    onPress={uploadphoto}
-                />
-            </View>
-            <View style={styles.containerinput}>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nom"
-                    onChangeText={setNom}
-                    value={nom}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Race"
-                    onChangeText={setDogRace}
-                    value={dogRace}
-                />
-                <View style={styles.inputContainer}>
-                    <Text style={styles.text}>Sexe</Text>
-                    <View style={styles.optionsContainer}>
-                        <TouchableOpacity
-                            onPress={() => setSexe('female')}
-                            style={[
-                                styles.optionFemale,
-                                sexe === 'female' && styles.optionSelected,
-                            ]}
-                        />
-                        <TouchableOpacity
-                            onPress={() => setSexe('male')}
-                            style={[
-                                styles.optionMale,
-                                sexe === 'male' && styles.optionSelected,
-                            ]}
-                        />
-                    </View>
+        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
+            <TouchableOpacity style={styles.avatarContainer} >
+                <Image source={{ uri: dogAvatarUrl }} style={styles.avatar} ></Image>
+                <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
+            </TouchableOpacity>
+
+            <View style={styles.inputContainer}>
+                <InputFullSize onChangeText={(value) => setDogName(value)} value={dogName} placeholder='Son nom' />
+                <InputFullSize onChangeText={(value) => setDogRace(value)} value={dogRace} placeholder='Sa race' />
+                <InputFullSize onChangeText={(value) => setDogBirthday(value)} value={dogBirthday} placeholder='Son anniversaire' />
+                <InputFullSize onChangeText={(value) => setDogChipid(value)} value={dogChipid} placeholder='Son numéro de puce' />
+                <View style={styles.sexContainer}>
+                    <TouchableOpacity onPress={() => setDogSex('female')} style={dogSex === 'female' && styles.dogSelected}>
+                        <FontAwesomeIcon icon={faDog} style={styles.dogFemale} size={dogSex === 'female' ? 70 : 50}></FontAwesomeIcon>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setDogSex('male')} style={dogSex === 'male' && styles.dogSelected}>
+                        <FontAwesomeIcon icon={faDog} style={styles.dogMale} size={dogSex === 'male' ? 70 : 50}></FontAwesomeIcon>
+                    </TouchableOpacity>
                 </View>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Date de naissance"
-                    onChangeText={setDogBirthday}
-                    value={dogBirthday}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Numéro de puce"
-                    onChangeText={setDogChipid}
-                    value={dogChipid}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Statut (malade, en chaleur, ...)"
-                    onChangeText={setDogStatus}
-                    value={dogStatus}
-                />
+
             </View>
-            <View style={styles.containerbouton}>
-                <ButtonPrimary onPress={handleSubmit} title="Enregistrer" />
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+
+            <View style={styles.bottomControls}>
+                <ButtonPrimary onPress={() => handleSubmit()} title='Enregistrer' disabled={disableButton} />
             </View>
         </KeyboardAvoidingView>
     );
@@ -151,14 +114,12 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20,
+        padding: globalStyle.padding,
+        paddingTop: 40,
     },
-    titre: {
-        fontSize: globalStyle.h2
-    },
-    containerinput: {
-        height: '60%',
-        width: '90%',
+
+    inputContainer: {
+        width: '100%',
     },
     input: {
         height: 50,
@@ -167,53 +128,70 @@ const styles = StyleSheet.create({
         padding: 10,
         borderColor: 'black',
     },
-    image: {
-        height: "90",
-        width: "90",
-        borderRadius: 50,
-        marginTop: 15,
+
+    avatarContainer: {
+        // backgroundColor:'red',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    containerimage: {
-        marginBottom: 30,
-        marginTop: 2,
+    avatar: {
+        backgroundColor: '#cccccc',
+        width: Dimensions.get('window').width * 0.4,
+        height: Dimensions.get('window').width * 0.4,
+        borderRadius: Dimensions.get('window').width * 0.4,
+        // marginTop: 20,
+        // marginBottom: 20,
     },
     icon: {
-        marginLeft: 70,
+        marginLeft: '40%',
         marginTop: -20,
+    },
 
-    },
-    containerbouton: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        height: '20%',
-    },
-    optionFemale: {
-        backgroundColor: '#ff9999',
-        width: 50,
-        height: 50,
-        borderRadius: 50,
-        margin: 10,
-    },
-    optionMale: {
-        backgroundColor: '#9999ff',
-        width: 50,
-        height: 50,
-        borderRadius: 50,
-        margin: 10,
-    },
-    optionSelected: {
-        borderWidth: 3,
-        borderColor: '#333333',
-    },
-    optionsContainer: {
+
+    sexContainer: {
+        height: 100,
         flexDirection: 'row',
         justifyContent: 'center',
+        alignItems: 'flex-end',
     },
-    text: {
-        fontSize: globalStyle.h4,
-        textAlign: 'center'
+    dogFemale: {
+        // backgroundColor: '#ff9999',
+        color: '#FFC0CB',
+        width: 50,
+        height: 50,
+        borderRadius: 50,
+        margin: 10,
     },
+    dogMale: {
+        // backgroundColor: '#9999ff',
+        color: '#87CEEB',
+        width: 50,
+        height: 50,
+        borderRadius: 50,
+        margin: 10,
+    },
+    dogSelected: {
+        // backgroundColor:'#eeeeee',
+        borderBottomWidth: 3,
+        borderBottomColor: globalStyle.greenPrimary,
+    },
+
+    errorContainer: {
+        width: '100%',
+        height: 40,
+    },
+    errorText: {
+        color: '#cccccc',
+        textAlign: 'center',
+    },
+
+    bottomControls: {
+        // backgroundColor: 'yellow',
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
 
 })
 
