@@ -1,69 +1,112 @@
-import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, Button, Platform, Image, KeyboardAvoidingView } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, Button, Platform, Image, KeyboardAvoidingView, ScrollView, Dimensions } from 'react-native'
 import { useEffect, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useRoute, useNavigation } from '@react-navigation/native'
+import { useSelector, useDispatch } from 'react-redux'
+import { globalStyle } from '../../../config'
 import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
+import InputFullSize from '../../../globalComponents/InputFullSize';
+import { userAvatarUrl } from '../../../config'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faPen } from '@fortawesome/free-solid-svg-icons'
+import { setUserInfos } from '../../../reducers/user'
 
+import { BACKEND_URL } from '../../../config'
+// const BACKEND_URL = 'http://192.168.1.147:3000'
 
 
 export default function UserScreen(props) {
-    //const dispatch = useDispatch();
-    // const user = useSelector((state) => state.user.value); 
+    const user = useSelector(state => state.user.value)
     const navigation = useNavigation()
     const route = useRoute()
-    const [toggleDogSitter, setToggleDogSitter] = useState(false);
-    const [toggleSearchDogSitter, setToggleSearchDogSitter] = useState(false);
-    const [firstname, setFirstname] = useState('');
-    const [lastname, setLastname] = useState('');
-    const [telephone, setTelephone] = useState('');
-    const [email, setEmail] = useState('');
-    const [Password, setPassword] = useState('');
+    const [isDogSitter, setIsDogSitter] = useState(false)
+    const [isSearchingDogSitter, setIsSearchingDogSitter] = useState(false)
+    const [firstname, setFirstname] = useState(user.infos.firstname)
+    const [lastname, setLastname] = useState(user.infos.lastname)
+    const [email, setEmail] = useState(user.infos.email)
+    const [telephone, setTelephone] = useState(user.infos.telephone)
+    const [password1, setPassword1] = useState('')
+    const [password2, setPassword2] = useState('')
+    const [errorMessage, setErrorMessage] = useState(null)
+    const [disableButton, setDisableButton] = useState(false)
 
     const uploadphoto = () => {
         console.log(uploadphoto)
-    };
-    const handleSubmit = () => {
-        console.log('enregister')
     }
-    // console.log(toggleDogSitter)
-    // console.log(toggleSearchDogSitter)
-    // console.log(firstname)
-    // console.log(lastname)
-    // console.log(telephone)
-    // console.log(email)
-    // console.log(Password)
 
+    const dispatch = useDispatch()
+    const handleSubmit = async () => {
+        setErrorMessage(null)
 
+        console.log('check form')
+        if (!firstname || !lastname) { setErrorMessage('Nom et prénom obligatoires'); return }
+        const emailPattern = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'g')
+        if (!email || !emailPattern.test(email)) { setErrorMessage('Email invalide'); return }
+        const telPattern = new RegExp(/^((\+|00)33\s?|0)[67](\s?\d{2}){4}$/, 'g')
+        if (!telephone || !telPattern.test(telephone)) { setErrorMessage('Numéro de téléphone invalide'); return }
+        if (password1 && password1.length < 8) { setErrorMessage('Mot de passe trop court'); return }
+        if (password1 !== password2) { setErrorMessage('Mots de passe différents'); return }
+        console.log('form ok')
 
+        try {
+            const url = `${BACKEND_URL}/users/${user.token}`
+            console.log('PUT', url)
+            setDisableButton(true)
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ firstname, lastname, telephone, email, isDogSitter, isSearchingDogSitter, password: password1 })
+            })
+            const data = await response.json()
+            setDisableButton(false)
+            console.log('data', data)
+            if (data) {
+                setErrorMessage('Modifications enregistrées')
+                dispatch(setUserInfos({ firstname, lastname, telephone, email, isDogSitter, isSearchingDogSitter }))
+            }
+        }
+        catch (error) {
+            console.log(error)
+            setDisableButton(false)
+            setErrorMessage('Erreur lors de l\'enregistrement des modifications')
+        }
+
+    }
 
     return (
+
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <View style={styles.containerimage}>
-                <Image style={styles.image} source={require('../../../assets/avatar.jpg')} />
-                <Icon name="pen" rotate={70} size={30} color={globalStyle.greenPrimary} style={styles.icon} onPress={() => uploadphoto()} />
-            </View>
-            <View style={styles.containerinput}>
-                <TextInput style={styles.input} placeholder="Firstname" onChangeText={(value) => setFirstname(value)} value={firstname}></TextInput>
-                <TextInput style={styles.input} placeholder="Lastname" onChangeText={(value) => setLastname(value)} value={lastname}></TextInput>
-                <TextInput style={styles.input} placeholder="email" onChangeText={(value) => setEmail(value)} value={email}></TextInput>
-                <TextInput style={styles.input} placeholder="Telephone" onChangeText={(value) => setTelephone(value)} value={telephone}></TextInput>
-                <TextInput style={styles.input} type="password" placeholder="Password" onChangeText={(value) => setPassword(value)} value={Password} secureTextEntry={true}></TextInput>
+
+            <TouchableOpacity style={styles.avatarContainer} >
+                <Image source={{ uri: userAvatarUrl }} style={styles.avatar} ></Image>
+                <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
+            </TouchableOpacity>
+
+            <View style={styles.inputContainer}>
+                <InputFullSize onChangeText={(value) => setFirstname(value)} value={firstname} placeholder='Prénom' />
+                <InputFullSize onChangeText={(value) => setLastname(value)} value={lastname} placeholder='Nom' />
+                <InputFullSize onChangeText={(value) => setEmail(value)} value={email} placeholder='Email' />
+                <InputFullSize onChangeText={(value) => setTelephone(value)} value={telephone} placeholder='Email' />
+                <InputFullSize onChangeText={(value) => setPassword1(value)} value={password1} placeholder='Nouveau mot de passe' secureTextEntry={true} />
+                <InputFullSize onChangeText={(value) => setPassword2(value)} value={password2} placeholder='Confirmer le mot de passe' secureTextEntry={true} />
             </View >
-            <View style={styles.containerswitch}>
-                <View style={styles.switch}>
-                    <Switch trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setToggleDogSitter(value)} value={toggleDogSitter} />
+
+            <View style={styles.switchsContainer}>
+                <View style={styles.switchContainer}>
+                    <Switch style={styles.switch} trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setIsDogSitter(value)} value={isDogSitter} />
                     <Text style={styles.textswitch}>Je suis un Dogsitter</Text>
                 </View>
-                <View style={styles.switch}>
-                    <Switch trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setToggleSearchDogSitter(value)}
-                        value={toggleSearchDogSitter} />
+                <View style={styles.switchContainer}>
+                    <Switch style={styles.switch} trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setIsSearchingDogSitter(value)} value={isSearchingDogSitter} />
                     <Text style={styles.textswitch}>Je cherche un Dogsitter</Text>
                 </View>
             </View>
-            <View style={styles.containerbouton}>
-                <ButtonPrimary onPress={() => handleSubmit()} title='Enregistrer'>
-                </ButtonPrimary>
+
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+
+            <View style={styles.bottomControls}>
+                <ButtonPrimary onPress={() => handleSubmit()} title='Enregistrer' disabled={disableButton} />
             </View>
 
         </KeyboardAvoidingView>
@@ -71,7 +114,6 @@ export default function UserScreen(props) {
     )
 }
 
-import { globalStyle } from '../../../config'
 //import { normalizeColor } from 'react-native-reanimated/lib/typescript/Colors'
 // STYLES
 const styles = StyleSheet.create({
@@ -81,12 +123,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: 20,
-
+        padding: globalStyle.padding
     },
 
-    containerinput: {
-        height: '60%',
-        width: '90%',
+    inputContainer: {
+        width: '100%',
     },
 
     input: {
@@ -97,44 +138,55 @@ const styles = StyleSheet.create({
         borderColor: 'black',
 
     },
-    containerswitch: {
 
-    },
-
-
-    switch: {
-        width: '80%',
+    avatarContainer: {
+        // backgroundColor:'red',
+        justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'row',
+    },
+    avatar: {
+        backgroundColor: '#cccccc',
+        width: Dimensions.get('window').width * 0.4,
+        height: Dimensions.get('window').width * 0.4,
+        borderRadius: Dimensions.get('window').width * 0.4,
+        // marginTop: 20,
+        // marginBottom: 20,
+    },
+    icon: {
+        marginLeft: '40%',
+        marginTop: -20,
     },
 
+    switchsContainer: {
+        width: '100%',
+    },
+    switchContainer: {
+        // backgroundColor: 'yellow',
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     textswitch: {
+        width: 'auto'
+        // textAlign: 'center',
+    },
+    switch: {
+        width: '30%',
+    },
+    errorContainer: {
+        width: '100%',
+        height: 40,
+    },
+    errorText: {
+        color: 'red',
         textAlign: 'center',
     },
 
-    image: {
-        height: "90",
-        width: "90",
-        borderRadius: 50,
-    },
-
-    containerimage: {
-
-        marginBottom: 30,
-        marginTop: 2,
-    },
-    icon: {
-
-        marginLeft: 80,
-        marginTop: -30,
-
-    },
-
-    containerbouton: {
+    bottomControls: {
+        // backgroundColor: 'yellow',
+        width: '100%',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '100%',
-        height: '20%',
     },
 
 })

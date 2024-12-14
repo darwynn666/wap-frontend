@@ -86,14 +86,14 @@ const StackMap = () => {
 }
 const StackUser = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="User" component={UserScreen} />
     </Stack.Navigator>
   )
 }
 const StackDogs = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Dogs" component={DogsScreen} />
       <Stack.Screen name="EditDog" component={EditDogScreen} />
       <Stack.Screen name="DeleteDog" component={DeleteDogScreen} />

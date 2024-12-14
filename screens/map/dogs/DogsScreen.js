@@ -1,57 +1,61 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, ScrollView, Dimensions } from 'react-native'
 import { useEffect, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { useRoute, useNavigation } from '@react-navigation/native'
 import { globalStyle } from '../../../config'
 import { useSelector, useDispatch } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import { dogAvatarUrl } from '../../../config'
+
+
+// import { BACKEND_URL } from '../../../config'
+const BACKEND_URL = 'http://192.168.1.147:3000'
+
 
 export default function DogsScreen({ navigation }) {
     // const navigation = useNavigation()
     const route = useRoute();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.user.value);
-    const [doglist,setDoglist]=useState([]);
+    const [doglist, setDoglist] = useState([]);
 
     console.log(user.token);
     //console.log(user.data.dogs);
-useEffect (() => {
-    fetch(`https://wap-backend.vercel.app/dogs/${user.token}`)
-        .then(response => response.json())
-        .then(data => {
-          
-           setDoglist(data.data)
-           
-        });
+    useEffect(() => {
+        fetch(`https://wap-backend.vercel.app/dogs/${user.token}`)
+            .then(response => response.json())
+            .then(data => {
+                setDoglist(data.data)
+            });
     }, []);
-       // console.log(doglist)
-       const dogs=doglist.map((data, i) => {
-           // console.log(data);
+    // console.log(doglist)
+    const dogs = doglist.map((data, i) => {
+        // console.log(data);
         return (
-            <View key={i} style={styles.containerlist}>
-                <TouchableOpacity onPress={() => navigation.navigate('Mes chiens', { screen: 'EditDog', params:data })}>
-                    <Image style={styles.image} source={require('../../../assets/avatar.jpg')} />
-                </TouchableOpacity>
+            <TouchableOpacity key={i} style={styles.dogContainer} >
+                <Image style={styles.image} source={{ uri: dogAvatarUrl }} />
                 <Text style={styles.text} >{data.name}</Text>
-                <TouchableOpacity onPress={() => navigation.navigate('Mes chiens', { screen: 'DeleteDog' })}>
-                    <Icon name="trash" size={30} color={globalStyle.greenPrimary} style={styles.icon} />
-                </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
         )
     })
-;
-    return (
 
-        <View style={styles.container}>
-            {dogs}
-            <View style={styles.containerplus}>
+    return (
+        <KeyboardAvoidingView style={styles.container}>
+            <ScrollView>
+                <View style={styles.dogsContainer}>
+                    {dogs}
+                </View>
+            </ScrollView>
+            <View style={styles.addDogContainer}>
                 <TouchableOpacity onPress={() => navigation.navigate('Mes chiens', { screen: 'AddDog' })}>
-                    <Icon name="plus-circle" size={30} color={globalStyle.greenPrimary} style={styles.icon} />
+                    {/* <Icon name="plus-circle" size={30} color={globalStyle.greenPrimary} style={styles.addDogIcon} /> */}
+                    <View style={styles.addDogIcon}>
+                        <FontAwesomeIcon icon={faPlus} size={30} color='white'></FontAwesomeIcon>
+                    </View>
                 </TouchableOpacity>
             </View>
-        </View>
-
-
+        </KeyboardAvoidingView>
     )
 }
 
@@ -63,33 +67,50 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingTop: 20,
-
-
+        padding: globalStyle.padding,
+        paddingTop: 40,
     },
 
+    dogsContainer: {
+        // backgroundColor: 'yellow',
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'flex-start',
+        flexWrap: 'wrap',
+    },
+    dogContainer: {
+        // backgroundColor: 'green',
+        width: '45%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
     image: {
-        height: "70",
-        width: "70",
-        borderRadius: 50,
+        width: Dimensions.get('window').width * 0.3,
+        height: Dimensions.get('window').width * 0.3,
+        borderRadius: 100,
         marginTop: 15,
     },
     text: {
-        fontSize: globalStyle.h2
+        fontSize: globalStyle.h3
     },
-    containerlist: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
+
+    addDogContainer: {
+        // backgroundColor:'red',
+        position:'absolute',
+        right:globalStyle.padding,
+        bottom:globalStyle.padding,
+        // alignItems: 'flex-end',
+        // justifyContent: 'flex-end',
+        // alignSelf: 'flex-end',
+    },
+    addDogIcon: {
+        backgroundColor: globalStyle.greenPrimary,
+        width: 60,
+        height: 60,
+        borderRadius: 60,
         alignItems: 'center',
-        margin: 15,
-        width: '95%',
+        justifyContent: 'center',
     },
-    containerplus: {
-        alignItems: 'flex-end',
-        justifyContent: 'flex-end',
-        alignSelf: 'flex-end',
-        width: 80,
-        height: 500,
-        marginRight: 15,
-    }
 })

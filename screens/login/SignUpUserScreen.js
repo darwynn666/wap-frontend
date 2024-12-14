@@ -22,7 +22,7 @@ export default function SignUpUserScreen(props) {
     const [opacity, setOpacity] = useState(0)
     const navigation = useNavigation()
 
-    
+
     const dispatch = useDispatch()
 
     const handleSubmit = async () => {
@@ -64,29 +64,29 @@ export default function SignUpUserScreen(props) {
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
-                    <View style={styles.titleContainer}>
-                        <Text style={styles.titleText}>On a besoin d'un peu d'infos pour te créer un compte !</Text>
-                    </View>
+                <View style={styles.titleContainer}>
+                    <Text style={styles.titleText}>On a besoin d'un peu d'infos pour te créer un compte !</Text>
+                </View>
 
-                    <TouchableOpacity style={styles.avatarContainer} onPressIn={() => setOpacity(1)} onPressOut={() => setOpacity(0)}>
-                        <Image source={{ uri: userAvatarUrl }} style={styles.avatar} ></Image>
-                    </TouchableOpacity>
-                    <Text style={[styles.avatarText, { opacity: opacity }]}>Tu pourras ajouter ta photo plus tard</Text>
+                <TouchableOpacity style={styles.avatarContainer} onPressIn={() => setOpacity(1)} onPressOut={() => setOpacity(0)}>
+                    <Image source={{ uri: userAvatarUrl }} style={styles.avatar} ></Image>
+                </TouchableOpacity>
+                <Text style={[styles.avatarText, { opacity: opacity }]}>Tu pourras ajouter ta photo plus tard</Text>
 
-                    <View style={styles.inputsContainer}>
-                        <InputFullSize onChangeText={(value) => setFirstname(value)} value={firstname} placeholder='Prénom' />
-                        <InputFullSize onChangeText={(value) => setLastname(value)} value={lastname} placeholder='Nom' />
-                        <InputFullSize onChangeText={(value) => setEmail(value)} value={email} placeholder='Email' />
-                        <InputFullSize onChangeText={(value) => setTelephone(value)} value={telephone} placeholder='Téléphone' />
-                        <InputFullSize onChangeText={(value) => setPassword1(value)} value={password1} placeholder='Mot de passe' secureTextEntry={true} />
-                        <InputFullSize onChangeText={(value) => setPassword2(value)} value={password2} placeholder='Confirmer le mot de passe' secureTextEntry={true} />
-                    </View>
+                <View style={styles.inputsContainer}>
+                    <InputFullSize onChangeText={(value) => setFirstname(value)} value={firstname} placeholder='Prénom' />
+                    <InputFullSize onChangeText={(value) => setLastname(value)} value={lastname} placeholder='Nom' />
+                    <InputFullSize onChangeText={(value) => setEmail(value)} value={email} placeholder='Email' />
+                    <InputFullSize onChangeText={(value) => setTelephone(value)} value={telephone} placeholder='Téléphone' />
+                    <InputFullSize onChangeText={(value) => setPassword1(value)} value={password1} placeholder='Mot de passe' secureTextEntry={true} />
+                    <InputFullSize onChangeText={(value) => setPassword2(value)} value={password2} placeholder='Confirmer le mot de passe' secureTextEntry={true} />
+                </View>
 
 
             </ScrollView>
-                    <View style={styles.errorContainer}>
-                        <Text style={styles.errorText}>{errorMessage}</Text>
-                    </View>
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
             <View style={styles.bottomControls}>
                 <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton} />
             </View>
@@ -116,8 +116,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     avatarContainer: {
-        justifyContent:'center',
-        alignItems:'center',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     avatar: {
         backgroundColor: '#cccccc',
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
         fontSize: globalStyle.h5,
         color: '#999999',
         height: 20,
-        textAlign:'center',
+        textAlign: 'center',
     },
     inputsContainer: {
         // backgroundColor:'#999999',
@@ -150,6 +150,6 @@ const styles = StyleSheet.create({
         // backgroundColor: 'yellow',
         width: '100%',
         alignItems: 'center',
-        justifyContent:'center',
+        justifyContent: 'center',
     },
 })

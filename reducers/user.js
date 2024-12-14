@@ -14,8 +14,12 @@ export const userSlice = createSlice({
         setUserStatus: (state, action) => {
             state.value.status = action.payload
         },
+        setUserInfos: (state, action) => {
+            console.log(action.payload)
+            state.value.infos = action.payload
+        },
     },
 })
 
-export const { setUser,setUserStatus } = userSlice.actions
+export const { setUser, setUserStatus, setUserInfos } = userSlice.actions
 export default userSlice.reducer

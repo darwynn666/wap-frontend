@@ -14,16 +14,19 @@ export default function TestScreen(props) {
     const route = useRoute()
     const user = useSelector(state => state.user.value)
     const settings = useSelector(state => state.settings.value)
-    console.log(user)
-    console.log(settings)
+    const [reloadTrigger,setReloadTrigger]=useState()
+
+    // console.log(user)
+    // console.log(settings)
+
     return (
         <ScrollView>
 
             <View style={styles.container}>
 
-                <ButtonPrimary title='Button Primary' />
-                <ButtonSecondary title='Secondary status=yes' status='yes' />
-                <ButtonSecondary title='Secondary status=no' status='no' />
+                <ButtonPrimary title='Reload' onPress={()=>setReloadTrigger(!reloadTrigger)}/>
+                <ButtonSecondary title='Secondary' status={true} />
+                <ButtonSecondary title='Secondary' status={false} />
                 <InputFullSize placeholder='sample text...' secureTextEntry={true}/>
                 <View style={styles.reducers}>
                     <Text>REDUCERS</Text>
@@ -44,7 +47,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding:20,
+        padding:globalStyle.padding,
+        paddingTop:40,
     },
     reducers:{
         width:'100%',

@@ -17,6 +17,7 @@ export default function SignIn(props) {
     const [title, setTitle] = useState()
     const navigation = useNavigation()
     const route = useRoute()
+    const [disableButton, setDisableButton] = useState(false)
 
     useEffect(() => {
         if (route.params) {
@@ -38,12 +39,14 @@ export default function SignIn(props) {
 
 
         console.log('fetch login')
+        setDisableButton(true)
         const response = await fetch(`${BACKEND_URL}/users/signin`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email, password: password })
         })
         const data = await response.json()
+        setDisableButton(false)
         if (data.result) {
             console.log('login ok')
             dispatch(setUser(data.data)) // à verifier
@@ -81,7 +84,7 @@ export default function SignIn(props) {
 
             </ScrollView>
             <View style={styles.bottomControls}>
-                <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' />
+                <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton} />
             </View>
 
         </SafeAreaView>
