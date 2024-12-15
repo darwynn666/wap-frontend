@@ -72,6 +72,18 @@ export default function MapScreen2() {
 
   const handleRegionChange = (region) => {
     console.log(region)
+    setPlacesDataRegionFilter(placesData
+      .filter((marker) => 
+      {
+       if (visibleRegion.latitude)
+       {
+         return marker.location.coordinates[1] >= region.latitude - region.latitudeDelta / 2 &&
+         marker.location.coordinates[1] <= region.latitude + region.latitudeDelta / 2 &&
+         marker.location.coordinates[0] >= region.longitude - region.longitudeDelta / 2 &&
+         marker.location.coordinates[0] <= region.longitude + region.longitudeDelta / 2
+       }
+      }
+     ))
     // console.log('marker 0', markers[0])
     region.latitude && setVisibleRegion(region);
   };
@@ -144,28 +156,22 @@ export default function MapScreen2() {
     getPlaces();
   }, []);
 
-  useEffect(() => {
-    getUsers();
-  }, []);
+  // useEffect(() => {
+  //   getUsers();
+  // }, []);
 
-   const filteredMarkers = placesData
-   .filter((marker) => 
-   {
-    if (visibleRegion.latitude)
-    {
-      return marker.location.coordinates[1] >= visibleRegion.latitude - visibleRegion.latitudeDelta / 2 &&
-      marker.location.coordinates[1] <= visibleRegion.latitude + visibleRegion.latitudeDelta / 2 &&
-      marker.location.coordinates[0] >= visibleRegion.longitude - visibleRegion.longitudeDelta / 2 &&
-      marker.location.coordinates[0] <= visibleRegion.longitude + visibleRegion.longitudeDelta / 2
-    }
-   }
-  )
+  //  const filteredMarkers = 
+
+  // .filter(
+  //   (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
+  // )
+  
+
+  const places = placesDataRegionFilter
   .filter(
     (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
   )
-  
-
-  const places = filteredMarkers.map((e, i) => {
+  .map((e, i) => {
     let icon = "";
     switch (e.type) {
       case "restaurants":
