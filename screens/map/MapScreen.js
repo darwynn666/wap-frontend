@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Marker, Callout } from "react-native-maps";
 import MapView from "react-native-maps";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
@@ -20,7 +20,7 @@ import {
   faCircleChevronRight,
   faLocationCrosshairs,
   faMapMarker,
-  faBars
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
@@ -32,6 +32,9 @@ import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
 // COMPONENT
 export default function MapScreen2() {
   const navigation = useNavigation();
+
+  const mapRef = useRef(null);
+
   const [currentPosition, setCurrentPosition] = useState(false);
   const [positionMarker, setPositionMarker] = useState();
   const [mapType, setMapType] = useState("standard");
@@ -64,40 +67,48 @@ export default function MapScreen2() {
             longitude: location.coords.longitude,
             latitudeDelta: 0.05, //0.05 equivaut à environ 5km
             longitudeDelta: 0.05,
-          })
+          });
         });
       }
     })();
   }, []);
 
   const handleRegionChange = (region) => {
-    console.log(region)
+    console.log(region);
     //filter places
-    setPlacesDataRegionFilter(placesData
-      .filter((marker) => 
-      {
-       if (visibleRegion.latitude)
-       {
-         return marker.location.coordinates[1] >= region.latitude - region.latitudeDelta / 2 &&
-         marker.location.coordinates[1] <= region.latitude + region.latitudeDelta / 2 &&
-         marker.location.coordinates[0] >= region.longitude - region.longitudeDelta / 2 &&
-         marker.location.coordinates[0] <= region.longitude + region.longitudeDelta / 2
-       }
-      }
-     ))
-     //filter users
-     setUsersDataRegionFilter(usersData
-      .filter((marker) => 
-        {
-         if (visibleRegion.latitude)
-         {
-           return marker.currentLocation.coordinates[1] >= region.latitude - region.latitudeDelta / 2 &&
-           marker.currentLocation.coordinates[1] <= region.latitude + region.latitudeDelta / 2 &&
-           marker.currentLocation.coordinates[0] >= region.longitude - region.longitudeDelta / 2 &&
-           marker.currentLocation.coordinates[0] <= region.longitude + region.longitudeDelta / 2
-         }
+    setPlacesDataRegionFilter(
+      placesData.filter((marker) => {
+        if (visibleRegion.latitude) {
+          return (
+            marker.location.coordinates[1] >=
+              region.latitude - region.latitudeDelta / 2 &&
+            marker.location.coordinates[1] <=
+              region.latitude + region.latitudeDelta / 2 &&
+            marker.location.coordinates[0] >=
+              region.longitude - region.longitudeDelta / 2 &&
+            marker.location.coordinates[0] <=
+              region.longitude + region.longitudeDelta / 2
+          );
         }
-       ))
+      })
+    );
+    //filter users
+    setUsersDataRegionFilter(
+      usersData.filter((marker) => {
+        if (visibleRegion.latitude) {
+          return (
+            marker.currentLocation.coordinates[1] >=
+              region.latitude - region.latitudeDelta / 2 &&
+            marker.currentLocation.coordinates[1] <=
+              region.latitude + region.latitudeDelta / 2 &&
+            marker.currentLocation.coordinates[0] >=
+              region.longitude - region.longitudeDelta / 2 &&
+            marker.currentLocation.coordinates[0] <=
+              region.longitude + region.longitudeDelta / 2
+          );
+        }
+      })
+    );
     // console.log('marker 0', markers[0])
     region.latitude && setVisibleRegion(region);
   };
@@ -174,83 +185,106 @@ export default function MapScreen2() {
     getUsers();
   }, []);
 
-  const places = placesDataRegionFilter
-  .filter(
-    (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
-  )
-  .map((e, i) => {
-    let icon = "";
-    switch (e.type) {
-      case "restaurants":
-        icon = require("../../assets/icons/icon_restaurant.png");
-        break;
-      case "bars":
-        icon = require("../../assets/icons/icon_bar.png");
-        break;
-      case "garbages":
-        icon = require("../../assets/icons/icon_toilet.png");
-        break;
-      case "shops":
-        icon = require("../../assets/icons/icon_shop.png");
-        break;
-      case "parks":
-        icon = require("../../assets/icons/icon_park.png");
-        break;
-      default:
-        icon = require("../../assets/icons/icon_location.png");
+  const onPlaceMarkerPress = (coordinate) => {
+    console.log("on place");
+    console.log(mapRef.current);
+    // Ajustement de la position pour décaler légèrement vers le bas
+    const adjustedRegion = {
+      latitude: coordinate.latitude + 0.01, // Décale la position vers le bas
+      longitude: coordinate.longitude,
+      latitudeDelta: 0.05,
+      longitudeDelta: 0.05,
+    };
+
+    // Animation de la carte vers la nouvelle région
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(adjustedRegion, 1000); // Durée de l'animation : 1000ms
     }
-    return (
-      <Marker
-        key={i}
-        coordinate={{
-          latitude: e.location.coordinates[1],
-          longitude: e.location.coordinates[0],
-        }}
-        image={icon}
-      />
-    );
-  });
+  };
+
+  const places = placesDataRegionFilter
+    .filter(
+      (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
+    )
+    .map((placesMarker, i) => {
+      let icon = "";
+      switch (placesMarker.type) {
+        case "restaurants":
+          icon = require("../../assets/icons/icon_restaurant.png");
+          break;
+        case "bars":
+          icon = require("../../assets/icons/icon_bar.png");
+          break;
+        case "garbages":
+          icon = require("../../assets/icons/icon_toilet.png");
+          break;
+        case "shops":
+          icon = require("../../assets/icons/icon_shop.png");
+          break;
+        case "parks":
+          icon = require("../../assets/icons/icon_park.png");
+          break;
+        default:
+          icon = require("../../assets/icons/icon_location.png");
+      }
+      return (
+        <Marker
+          key={i}
+          coordinate={{
+            latitude: placesMarker.location.coordinates[1],
+            longitude: placesMarker.location.coordinates[0],
+          }}
+          image={icon}
+          onPress={() =>
+            onPlaceMarkerPress({
+              latitude: placesMarker.location.coordinates[1],
+              longitude: placesMarker.location.coordinates[0],
+            })
+          }
+        />
+      );
+    });
 
   const users = usersDataRegionFilter
-  .filter((userData) => {
-    const _isAccepted = isAccepted(userData._id);
-    const _isBlocked = isBlocked(userData._id);
-    const _unkow = !(_isAccepted || _isBlocked);
-    let isShown =true;
-    if (usersDisplayIgnored.includes("friends"))
-      isShown =  isShown && !_isAccepted
-    if (usersDisplayIgnored.includes("blocked"))
-      isShown =  isShown && !_isBlocked
-    if (usersDisplayIgnored.includes("unknows"))
-      isShown =  isShown && !_unkow
-    return isShown;
-  })
-  .map((e, i) => {
-    let icon = require("../../assets/icons/icon_dog_gray.png");
-    //need to check if friends or blocked
-    if (isAccepted(e._id))
-      icon = require("../../assets/icons/icon_dog_green.png");
-    else if (isBlocked(e._id))
-      icon = require("../../assets/icons/icon_dog_red.png");
+    .filter((userData) => {
+      const _isAccepted = isAccepted(userData._id);
+      const _isBlocked = isBlocked(userData._id);
+      const _unkow = !(_isAccepted || _isBlocked);
+      let isShown = true;
+      if (usersDisplayIgnored.includes("friends"))
+        isShown = isShown && !_isAccepted;
+      if (usersDisplayIgnored.includes("blocked"))
+        isShown = isShown && !_isBlocked;
+      if (usersDisplayIgnored.includes("unknows")) isShown = isShown && !_unkow;
+      return isShown;
+    })
+    .map((e, i) => {
+      let icon = require("../../assets/icons/icon_dog_gray.png");
+      //need to check if friends or blocked
+      if (isAccepted(e._id))
+        icon = require("../../assets/icons/icon_dog_green.png");
+      else if (isBlocked(e._id))
+        icon = require("../../assets/icons/icon_dog_red.png");
 
-    return (
-      <Marker
-        key={i}
-        coordinate={{
-          latitude: e.currentLocation.coordinates[1],
-          longitude: e.currentLocation.coordinates[0],
-        }}
-        // pinColor="royalblue"
-        image={icon}
-      ></Marker>
-    );
-  });
+      return (
+        <Marker
+          key={i}
+          coordinate={{
+            latitude: e.currentLocation.coordinates[1],
+            longitude: e.currentLocation.coordinates[0],
+          }}
+          // pinColor="royalblue"
+          image={icon}
+        ></Marker>
+      );
+    });
 
   // console.log('current position', currentPosition)
   return (
     <View style={styles.container}>
-      { (
+      {
         <MapView
+          ref={mapRef}
           initialRegion={visibleRegion}
           mapType={settings.mapDisplayIgnored}
           style={{ width: "100%", height: "100%" }}
@@ -263,7 +297,7 @@ export default function MapScreen2() {
           {places}
           {users}
         </MapView>
-      )}
+      }
 
       <TouchableOpacity
         style={styles.menuButton}
