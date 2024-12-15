@@ -43,10 +43,9 @@ export default function MapScreen2() {
 
   const [placesData, setPlacesData] = useState([]);
   const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
-  const [placesDataFiltered, setPlacesDataFiltered] = useState([]);
 
   const [usersData, setUsersData] = useState([]);
-  const [usersDataFiltered, setUsersDataFiltered] = useState([]);
+  const [usersDataRegionFilter, setUsersDataRegionFilter] = useState([]);
 
   // force position
   const [forcePosition, setForcePosition] = useState();
@@ -72,6 +71,7 @@ export default function MapScreen2() {
 
   const handleRegionChange = (region) => {
     console.log(region)
+    //filter places
     setPlacesDataRegionFilter(placesData
       .filter((marker) => 
       {
@@ -84,6 +84,19 @@ export default function MapScreen2() {
        }
       }
      ))
+     //filter users
+     setUsersDataRegionFilter(usersData
+      .filter((marker) => 
+        {
+         if (visibleRegion.latitude)
+         {
+           return marker.currentLocation.coordinates[1] >= region.latitude - region.latitudeDelta / 2 &&
+           marker.currentLocation.coordinates[1] <= region.latitude + region.latitudeDelta / 2 &&
+           marker.currentLocation.coordinates[0] >= region.longitude - region.longitudeDelta / 2 &&
+           marker.currentLocation.coordinates[0] <= region.longitude + region.longitudeDelta / 2
+         }
+        }
+       ))
     // console.log('marker 0', markers[0])
     region.latitude && setVisibleRegion(region);
   };
@@ -156,16 +169,9 @@ export default function MapScreen2() {
     getPlaces();
   }, []);
 
-  // useEffect(() => {
-  //   getUsers();
-  // }, []);
-
-  //  const filteredMarkers = 
-
-  // .filter(
-  //   (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
-  // )
-  
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   const places = placesDataRegionFilter
   .filter(
@@ -204,19 +210,8 @@ export default function MapScreen2() {
     );
   });
 
-  const filteredUsers = usersData
-  .filter((marker) => 
-    {
-     if (visibleRegion.latitude)
-     {
-       return marker.currentLocation.coordinates[1] >= visibleRegion.latitude - visibleRegion.latitudeDelta / 2 &&
-       marker.currentLocation.coordinates[1] <= visibleRegion.latitude + visibleRegion.latitudeDelta / 2 &&
-       marker.currentLocation.coordinates[0] >= visibleRegion.longitude - visibleRegion.longitudeDelta / 2 &&
-       marker.currentLocation.coordinates[0] <= visibleRegion.longitude + visibleRegion.longitudeDelta / 2
-     }
-    }
-   )
-   .filter((userData) => {
+  const users = usersDataRegionFilter
+  .filter((userData) => {
     const _isAccepted = isAccepted(userData._id);
     const _isBlocked = isBlocked(userData._id);
     const _unkow = !(_isAccepted || _isBlocked);
@@ -229,8 +224,7 @@ export default function MapScreen2() {
       isShown =  isShown && !_unkow
     return isShown;
   })
-
-  const users = filteredUsers.map((e, i) => {
+  .map((e, i) => {
     let icon = require("../../assets/icons/icon_dog_gray.png");
     //need to check if friends or blocked
     if (isAccepted(e._id))
