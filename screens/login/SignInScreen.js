@@ -53,7 +53,7 @@ export default function SignIn(props) {
             navigation.navigate('Map')
         }
         else {
-            setErrorMessage('Cet email n\'existe pas')
+            setErrorMessage('Compte inconnu')
         }
     }
 

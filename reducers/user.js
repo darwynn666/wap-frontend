@@ -20,8 +20,12 @@ export const userSlice = createSlice({
         setUserDogs: (state, action) => {
             state.value.dogs = action.payload
         },
+        setUserFriends: (state, action) => {
+            console.log('action',action.payload)
+            state.value.friends = action.payload
+        },
     },
 })
 
-export const { setUser, setUserStatus, setUserInfos,setUserDogs } = userSlice.actions
+export const { setUser, setUserStatus, setUserInfos, setUserDogs, setUserFriends } = userSlice.actions
 export default userSlice.reducer

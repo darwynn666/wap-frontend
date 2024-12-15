@@ -75,7 +75,7 @@ export default function EditDogScreen() {
 
     const confirmDeleteDog = () => {
         Alert.alert('Supprimer ' + route.params.name + ' ?', 'Cette action est irreversible', [
-            { text: 'Cancel' },
+            { text: 'Annuler' },
             { text: 'OK', onPress: () => deleteDog() },
         ])
     }
