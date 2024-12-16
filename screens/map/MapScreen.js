@@ -35,7 +35,13 @@ import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
 
 import MapPopUpModal from "./components/MapPopUpModal";
 import MenuBottomItem from "./components/MenuBottomItem";
-import { IconDogGreen, IconDogRed, IconPhone, IconEmail ,IconMessage } from "../../globalComponents/Icons";
+import {
+  IconDogGreen,
+  IconDogRed,
+  IconPhone,
+  IconEmail,
+  IconMessage,
+} from "../../globalComponents/Icons";
 
 // COMPONENT
 export default function MapScreen2() {
@@ -462,18 +468,47 @@ export default function MapScreen2() {
       >
         {selectedUser.friendType == "accepted" && (
           <View style={{ width: "100%" }}>
-            <Text>amis</Text>
+            {/* header user info */}
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 5,
+                marginBottom: 10,
+              }}
+            >
+              <Image
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+                source={{ uri: selectedUser.infos.photo }}
+              />
+              <Text style={{ fontSize: globalStyle.h3 }}>
+                {selectedUser.infos.firstname} {selectedUser.infos.lastname}
+              </Text>
+            </View>
             <View style={styles.separator}></View>
-            <View style={{flexDirection:"row", justifyContent:"space-around", paddingTop:20}}>
-              <MenuBottomItem
-                srcIsActive={<IconMessage />}
-              ></MenuBottomItem>
-                            <MenuBottomItem
-                srcIsActive={<IconPhone />}
-              ></MenuBottomItem>
-                            <MenuBottomItem
-                srcIsActive={<IconEmail />}
-              ></MenuBottomItem>
+            {/* dogs view */}
+            <View style={{width:'100%',minHeight:'10', justifyContent:"space-around" , alignItems:"center"}}>
+              <View style={{justifyContent:"center", alignItems:"center", gap:10, marginVertical:10}}>
+              <Image
+                style={{ width: 60, height: 60, borderRadius: 30 }}
+                source={{ uri: selectedUser.infos.photo }}
+              />
+              <Text>test</Text>
+              </View>
+            </View>
+            <View style={styles.separator}></View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-around",
+                paddingTop: 20,
+              }}
+            >
+              <MenuBottomItem srcIsActive={<IconMessage />}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconPhone />}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconEmail />}></MenuBottomItem>
             </View>
           </View>
         )}

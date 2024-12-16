@@ -16,7 +16,7 @@ export const globalStyle = {
 
     h1: 30,
     h2: 25,
-    h3: 20,
+    h3: 18,
     h4: 15,
     h5: 12,
     h6: 10,
