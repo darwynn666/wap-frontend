@@ -263,10 +263,6 @@ export default function MapScreen2() {
 
   //popup button handler
   const handleOutcomingFriend = async (friendTo) => {
-    console.log(user.token);
-    console.log(user._id);
-    console.log(friendTo._id);
-
     setPopUpUsersVisibility(false);
 
     const request = await fetch(
@@ -302,6 +298,51 @@ export default function MapScreen2() {
         {
           text: "Oui",
           onPress: () => handleOutcomingFriend(selectedUser),
+        },
+      ]
+    );
+  };
+
+  const handleBlockFriend = async (friendTo) => {
+    console.log(user.token);
+    console.log(user._id);
+    console.log(friendTo._id);
+
+    setPopUpUsersVisibility(false);
+
+    const request = await fetch(
+      `${BACKEND_URL}/friends/${user.token}/block/`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          friendToBlock: friendTo._id,
+        }),
+      }
+    );
+    
+    const response = await request.json();
+    console.log("response bloc",response)
+    if (response.result) {
+      Alert.alert("Cet utilisateur est maintenant bloqué");
+      dispatch(setUserFriends(response.userFriends));
+    } else {
+      Alert.alert("Erreur lors de la demande de bloquage");
+    }
+
+  };
+
+  const blockFriendPress = async () => {
+    const firstname = selectedUser.infos.firstname;
+    const id = selectedUser;
+    Alert.alert(
+      `Bloquer ${firstname} ?`,
+      "Cet utilisateur ne pourra plus vous voir sur la carte.",
+      [
+        { text: "Non" ,  onPress: () => setPopUpUsersVisibility(false)},
+        {
+          text: "Oui",
+          onPress: () => handleBlockFriend(selectedUser),
         },
       ]
     );
@@ -456,6 +497,7 @@ export default function MapScreen2() {
               <MenuBottomItem
                 srcIsActive={<IconDogRed />}
                 label="bloquer une personne"
+                onPressed={() => blockFriendPress()}
               ></MenuBottomItem>
             </TouchableOpacity>
           </View>
