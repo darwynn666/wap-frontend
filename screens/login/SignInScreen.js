@@ -38,9 +38,10 @@ export default function SignIn(props) {
         if (!email || !password) { setErrorMessage('Email et mot de passe obligatoires'); return }
 
 
-        console.log('fetch login')
         setDisableButton(true)
-        const response = await fetch(`${BACKEND_URL}/users/signin`, {
+        const url=`${BACKEND_URL}/users/signin`
+        console.log('POST',url)
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: email, password: password })
@@ -53,6 +54,7 @@ export default function SignIn(props) {
             navigation.navigate('Map')
         }
         else {
+            // console.log(data)
             setErrorMessage('Compte inconnu')
         }
     }

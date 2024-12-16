@@ -12,8 +12,8 @@ import { dogAvatarUrl } from '../../../config'
 import { BACKEND_URL } from '../../../config'
 
 
-export default function DogsScreen({ navigation }) {
-    // const navigation = useNavigation()
+export default function DogsScreen() {
+    const navigation = useNavigation()
     const route = useRoute()
     const dispatch = useDispatch()
     const user = useSelector((state) => state.user.value)
