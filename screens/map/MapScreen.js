@@ -15,7 +15,7 @@ import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-import {setUserFriends} from '../../reducers/user'
+import { setUserFriends } from "../../reducers/user";
 
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
@@ -35,7 +35,7 @@ import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
 
 import MapPopUpModal from "./components/MapPopUpModal";
 import MenuBottomItem from "./components/MenuBottomItem";
-import { IconDogGreen, IconDogRed } from "../../globalComponents/Icons";
+import { IconDogGreen, IconDogRed, IconPhone, IconEmail ,IconMessage } from "../../globalComponents/Icons";
 
 // COMPONENT
 export default function MapScreen2() {
@@ -246,7 +246,7 @@ export default function MapScreen2() {
     setSelectedUser(userAllInfos);
 
     const adjustedRegion = {
-      latitude: coordinate.latitude + 0.015, // offset to show marker under marker
+      latitude: coordinate.latitude + 0.02, // offset to show marker under marker
       longitude: coordinate.longitude,
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
@@ -276,7 +276,7 @@ export default function MapScreen2() {
         }),
       }
     );
-    
+
     const response = await request.json();
     if (response.result) {
       Alert.alert("La demande a été envoyé");
@@ -284,7 +284,6 @@ export default function MapScreen2() {
     } else {
       Alert.alert("La demande a déjà été envoyée");
     }
-
   };
 
   const askFriendPress = async () => {
@@ -294,7 +293,7 @@ export default function MapScreen2() {
       `Demander ${firstname} en ami ?`,
       "Vous pourrez échanger vos informations et vous voir sur la carte",
       [
-        { text: "Non" ,  onPress: () => setPopUpUsersVisibility(false)},
+        { text: "Non", onPress: () => setPopUpUsersVisibility(false) },
         {
           text: "Oui",
           onPress: () => handleOutcomingFriend(selectedUser),
@@ -310,17 +309,14 @@ export default function MapScreen2() {
 
     setPopUpUsersVisibility(false);
 
-    const request = await fetch(
-      `${BACKEND_URL}/friends/${user.token}/block/`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          friendToBlock: friendTo._id,
-        }),
-      }
-    );
-    
+    const request = await fetch(`${BACKEND_URL}/friends/${user.token}/block/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        friendToBlock: friendTo._id,
+      }),
+    });
+
     const response = await request.json();
     if (response.result) {
       Alert.alert("Cet utilisateur est maintenant bloqué");
@@ -328,7 +324,6 @@ export default function MapScreen2() {
     } else {
       Alert.alert("Erreur lors de la demande de bloquage");
     }
-
   };
 
   const blockFriendPress = async () => {
@@ -338,7 +333,7 @@ export default function MapScreen2() {
       `Bloquer ${firstname} ?`,
       "Cet utilisateur ne pourra plus vous voir sur la carte.",
       [
-        { text: "Non" ,  onPress: () => setPopUpUsersVisibility(false)},
+        { text: "Non", onPress: () => setPopUpUsersVisibility(false) },
         {
           text: "Oui",
           onPress: () => handleBlockFriend(selectedUser),
@@ -466,15 +461,32 @@ export default function MapScreen2() {
         onRequestClose={() => setPopUpUsersVisibility(false)}
       >
         {selectedUser.friendType == "accepted" && (
-          <View>
+          <View style={{ width: "100%" }}>
             <Text>amis</Text>
+            <View style={styles.separator}></View>
+            <View style={{flexDirection:"row", justifyContent:"space-around", paddingTop:20}}>
+              <MenuBottomItem
+                srcIsActive={<IconMessage />}
+              ></MenuBottomItem>
+                            <MenuBottomItem
+                srcIsActive={<IconPhone />}
+              ></MenuBottomItem>
+                            <MenuBottomItem
+                srcIsActive={<IconEmail />}
+              ></MenuBottomItem>
+            </View>
           </View>
         )}
+
         {selectedUser.friendType == "blocked" && (
           <View>
-            <Text>Cet utilisateur est bloqué. Toutefois, vous pouvez le débloquer dans votre liste d'amis.</Text>
+            <Text>
+              Cet utilisateur est bloqué. Toutefois, vous pouvez le débloquer
+              dans votre liste d'amis.
+            </Text>
           </View>
         )}
+
         {selectedUser.friendType == "unknowed" && (
           <View
             style={{
@@ -598,4 +610,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   marker: {},
+  separator: {
+    borderBottomColor: globalStyle.grayPrimary,
+    borderBottomWidth: 1,
+    height: 1,
+    width: "100%",
+  },
 });
