@@ -1,6 +1,11 @@
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { globalStyle } from "../../../config";
 
+/**
+ * return an icon a label button
+ * label: is the text
+ * srcIsActive: is the icon
+ */
 export default MenuBottomItem = ({ label, srcIsActive, onPressed ,statusValue}) => {
   return (
     <TouchableOpacity style={styles.container} onPress={()=>{onPressed(statusValue)}}>
@@ -19,6 +24,7 @@ const styles = StyleSheet.create({
   label: {
     textAlign: "center",
     marginTop:2,
-    fontSize:globalStyle.h5
+    fontSize:globalStyle.h5,
+    maxWidth:75
   },
 });

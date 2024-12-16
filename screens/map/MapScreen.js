@@ -8,6 +8,7 @@ import {
   Pressable,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Marker, Callout } from "react-native-maps";
 import MapView from "react-native-maps";
@@ -30,6 +31,8 @@ import { BACKEND_URL } from "../../config";
 import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
 
 import MapPopUpModal from "./components/MapPopUpModal";
+import MenuBottomItem from "./components/MenuBottomItem";
+import { IconDogGreen, IconDogRed } from "../../globalComponents/Icons";
 
 // COMPONENT
 export default function MapScreen2() {
@@ -81,7 +84,7 @@ export default function MapScreen2() {
   }, []);
 
   const handleRegionChange = (region) => {
-    console.log(region);
+    // console.log(region);
     //filter places
     setPlacesDataRegionFilter(
       placesData.filter((marker) => {
@@ -213,21 +216,34 @@ export default function MapScreen2() {
 
   //users
   const onUsersMarkerPress = async (coordinate, user) => {
-    //set the selected user for the modal
+    // get user info by id
+    console.log("test");
+    const usersRequest = await fetch(`${BACKEND_URL}/users/${user._id}`);
+    const usersResponse = await usersRequest.json();
+    const usersData = usersResponse.data;
+    console.log(usersData);
+
     let _user = { friendType: "" };
-    //check status of user
+    //check status of user by id
     const friendType = [
       { name: "accepted", value: isAccepted(user._id) },
       { name: "blocked", value: isBlocked(user._id) },
-      { name: "unknowed", value: !(isAccepted(user._id) || isBlocked(user._id)) },
+      {
+        name: "unknowed",
+        value: !(isAccepted(user._id) || isBlocked(user._id)),
+      },
     ];
 
-    _user.friendType = friendType.filter((x) =>x.value===true).map(x=>x.name)[0]
+    _user.friendType = friendType
+      .filter((x) => x.value === true)
+      .map((x) => x.name)[0];
 
-    setSelectedUser(_user);
+    const userAllInfos = { ..._user, ...usersData };
+    console.log(userAllInfos);
+    setSelectedUser(userAllInfos);
 
     const adjustedRegion = {
-      latitude: coordinate.latitude + 0.02, // offset to show marker under marker
+      latitude: coordinate.latitude + 0.015, // offset to show marker under marker
       longitude: coordinate.longitude,
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
@@ -240,6 +256,23 @@ export default function MapScreen2() {
         setPopUpUsersVisibility(true);
       }, POP_UP_SPEED);
     }
+  };
+
+  //popup button handler
+  const askFriendPress = async () => {
+    const firstname = selectedUser.infos.firstname;
+    Alert.alert(
+      `Demander ${firstname} en ami ?`,
+      "Vous pourrez échanger vos informations et vous voir sur la carte",
+      [
+        { text: "Annuler" },
+        {
+          text: "Accepter",
+          onPress: () =>
+            console.log("add friend") /*handleIncomingFriend(_id, true)*/,
+        },
+      ]
+    );
   };
 
   //create markers
@@ -359,9 +392,41 @@ export default function MapScreen2() {
         visibility={popUpUsersVisibility}
         onRequestClose={() => setPopUpUsersVisibility(false)}
       >
-        {selectedUser.friendType=="accepted" && <Text>amis</Text>}
-        {selectedUser.friendType=="blocked" && <Text>bloqué</Text>}
-        {selectedUser.friendType=="unknowed" && <Text>inconnu</Text>}
+        {selectedUser.friendType == "accepted" && (
+          <View>
+            <Text>amis</Text>
+          </View>
+        )}
+        {selectedUser.friendType == "blocked" && (
+          <View>
+            <Text>bloqué</Text>
+          </View>
+        )}
+        {selectedUser.friendType == "unknowed" && (
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity>
+              {/* MenuBottomItem is a component with an icon, a label as in filtermenu */}
+              <MenuBottomItem
+                srcIsActive={<IconDogGreen />}
+                label="ajouter un ami"
+                onPressed={() => askFriendPress()}
+              ></MenuBottomItem>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <MenuBottomItem
+                srcIsActive={<IconDogRed />}
+                label="bloquer une personne"
+              ></MenuBottomItem>
+            </TouchableOpacity>
+          </View>
+        )}
       </MapPopUpModal>
 
       <TouchableOpacity
