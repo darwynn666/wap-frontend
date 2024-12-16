@@ -503,36 +503,40 @@ export default function MapScreen2() {
                   justifyContent: "center",
                   alignItems: "center",
                   gap: 15,
-                  marginVertical:10
+                  marginVertical: 10,
                 }}
               >
-                <View
-                  style={{
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    marginVertical: 10,
-                    borderRadius: 10,
-                    borderColor: globalStyle.grayPrimary,
-                    borderWidth: 1,
-                    padding: 10,
-                    height: 135,
-                    width: 80,
-                  }}
-                >
-                  <Image
-                    style={{ width: 60, height: 60, borderRadius: 30 }}
-                    source={{ uri: selectedUser.infos.photo }}
-                  />
-                  <Text
-                    style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
-                  >
-                    toutou
-                  </Text>
-                  <Text style={{ fontSize: globalStyle.h6 }}>
-                    Status du chien
-                  </Text>
-                </View>
-
+                {selectedUser.dogs.map((dog, i) => {
+                  return (
+                    <View
+                      key={i}
+                      style={{
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        marginVertical: 10,
+                        borderRadius: 10,
+                        borderColor: globalStyle.greenPrimary,
+                        borderWidth: 2,
+                        padding: 10,
+                        height: 135,
+                        width: 80,
+                      }}
+                    >
+                      <Image
+                        style={{ width: 60, height: 60, borderRadius: 30 }}
+                        source={{ uri: selectedUser.infos.photo }}
+                      />
+                      <Text
+                        style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
+                      >
+                        {dog.name}
+                      </Text>
+                      <Text style={{ fontSize: globalStyle.h6 }}>
+                        {dog.status}
+                      </Text>
+                    </View>
+                  );
+                })}
               </View>
             </ScrollView>
             <View style={styles.separator}></View>
