@@ -219,10 +219,10 @@ export default function MapScreen2() {
     const friendType = [
       { name: "accepted", value: isAccepted(user._id) },
       { name: "blocked", value: isBlocked(user._id) },
-      { name: "unknow", value: !(isAccepted(user._id) || isBlocked(user._id)) },
+      { name: "unknowed", value: !(isAccepted(user._id) || isBlocked(user._id)) },
     ];
 
-    _user = friendType.filter((x) =>x.value===true).map(x=>x.name)[0]
+    _user.friendType = friendType.filter((x) =>x.value===true).map(x=>x.name)[0]
 
     setSelectedUser(_user);
 
@@ -359,7 +359,9 @@ export default function MapScreen2() {
         visibility={popUpUsersVisibility}
         onRequestClose={() => setPopUpUsersVisibility(false)}
       >
-        <Text>{JSON.stringify(selectedUser)}</Text>
+        {selectedUser.friendType=="accepted" && <Text>amis</Text>}
+        {selectedUser.friendType=="blocked" && <Text>bloqué</Text>}
+        {selectedUser.friendType=="unknowed" && <Text>inconnu</Text>}
       </MapPopUpModal>
 
       <TouchableOpacity
