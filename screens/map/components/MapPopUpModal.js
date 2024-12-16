@@ -50,7 +50,8 @@ const styles = StyleSheet.create({
     padding: 10,
     width:"70%",
     minHeight:"10%",
-    borderRadius:10
+    borderRadius:10,
+    marginBottom:'75'
   },
   closeButton: {
     width: "100%",

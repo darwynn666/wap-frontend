@@ -253,7 +253,7 @@ export default function MapScreen2() {
     setSelectedUser(userAllInfos);
 
     const adjustedRegion = {
-      latitude: coordinate.latitude + 0.02, // offset to show marker under marker
+      latitude: coordinate.latitude + (isAccepted(user._id) ? 0.0325 : 0.01), // offset to show marker under marker
       longitude: coordinate.longitude,
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
@@ -490,18 +490,22 @@ export default function MapScreen2() {
             </View>
             <View style={styles.separator}></View>
             {/* dogs view */}
-            <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
-            <View
-              style={{
-                width: "100%",
-                minHeight: "10",
-                flexDirection: "row",
-                flexGrow: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 15,
-              }}
+            <ScrollView
+              horizontal={true}
+              contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
             >
+              <View
+                style={{
+                  width: "100%",
+                  minHeight: "10",
+                  flexDirection: "row",
+                  flexGrow: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 15,
+                  marginVertical:10
+                }}
+              >
                 <View
                   style={{
                     justifyContent: "flex-start",
@@ -528,60 +532,9 @@ export default function MapScreen2() {
                     Status du chien
                   </Text>
                 </View>
-                <View
-                  style={{
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    marginVertical: 10,
-                    borderRadius: 10,
-                    borderColor: globalStyle.grayPrimary,
-                    borderWidth: 1,
-                    padding: 10,
-                    height: 135,
-                    width: 80,
-                  }}
-                >
-                  <Image
-                    style={{ width: 60, height: 60, borderRadius: 30 }}
-                    source={{ uri: selectedUser.infos.photo }}
-                  />
-                  <Text
-                    style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
-                  >
-                    toutou
-                  </Text>
-                  <Text style={{ fontSize: globalStyle.h6 }}>
-                    Status du chien
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    marginVertical: 10,
-                    borderRadius: 10,
-                    borderColor: globalStyle.grayPrimary,
-                    borderWidth: 1,
-                    padding: 10,
-                    height: 135,
-                    width: 80,
-                  }}
-                >
-                  <Image
-                    style={{ width: 60, height: 60, borderRadius: 30 }}
-                    source={{ uri: selectedUser.infos.photo }}
-                  />
-                  <Text
-                    style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
-                  >
-                    toutou
-                  </Text>
-                  <Text style={{ fontSize: globalStyle.h6 }}>
-                    Status du chien
-                  </Text>
-                </View>
-            </View>
-              </ScrollView>
+
+              </View>
+            </ScrollView>
             <View style={styles.separator}></View>
             <View
               style={{
