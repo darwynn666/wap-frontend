@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Dimensions, Alert } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Dimensions, Alert, Modal } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -7,10 +7,11 @@ import ButtonSecondary from '../../../globalComponents/ButtonSecondary'
 import { useSelector, useDispatch } from 'react-redux';
 import { dogAvatarUrl } from '../../../config'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faPen, faDog, faHourglass2 } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faDog, faCamera, faFileImage } from '@fortawesome/free-solid-svg-icons'
 import InputFullSize from '../../../globalComponents/InputFullSize';
 import { setUserDogs } from '../../../reducers/user';
-
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 import { BACKEND_URL } from '../../../config'
 
@@ -20,9 +21,9 @@ export default function EditDogScreen() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const user = useSelector((state) => state.user.value); // Pour un éventuel usage
-    console.log(route.params)
+    console.log('params', route.params)
     // Initialisation des états avec les paramètres passés
-    const { name, sex, race, birthday, chipid, _id } = route.params;
+    const { name, sex, race, birthday, chipid, _id, photo } = route.params;
     const [dogName, setDogName] = useState(name || '');
     const [dogSex, setDogSex] = useState(sex || 'female');
     const [dogRace, setDogRace] = useState(race || '');
@@ -30,12 +31,9 @@ export default function EditDogScreen() {
     const [dogChipid, setDogChipid] = useState(chipid || '');
     const [errorMessage, setErrorMessage] = useState(null)
     const [disableButton, setDisableButton] = useState(false)
+    const [dogPhoto, setDogPhoto] = useState(photo ? photo : dogAvatarUrl)
+    const [modalVisible, setModalVisible] = useState(false)
 
-
-    // Fonction pour mettre à jour la photo (à implémenter)
-    const uploadphoto = () => {
-        console.log('Upload photo');
-    };
 
     // Gestion de la soumission
     const handleSubmit = async () => {
@@ -93,7 +91,7 @@ export default function EditDogScreen() {
             })
             const data = await response.json()
             console.log(data)
-            if(data.userDogs) {
+            if (data.userDogs) {
                 setErrorMessage('Chien supprimé')
                 dispatch(setUserDogs(user.dogs))
                 navigation.navigate('Dogs', { reload: true })
@@ -109,14 +107,83 @@ export default function EditDogScreen() {
         }
     }
 
+    // update photo
+    const pickPhoto = async (source) => {
+        let result = null
+        if (source === 'camera') {
+            result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ['images'],
+                quality: 0.8,
+            })
+        }
+        if (source === 'image') {
+            result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                quality: 0.8,
+            })
+        }
+        if (!result) return
+        // console.log(result);
+        if (!result.canceled) {
+            const originalUri = result.assets[0].uri
+            const resizedImage = await ImageManipulator.manipulateAsync( // { uri, width, height }
+                originalUri,
+                [{ resize: { width: 500 } }],
+                { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+            );
+            console.log('Image redimensionnée :', resizedImage)
+
+            setDogPhoto(resizedImage.uri)
+            uploadPhoto(resizedImage.uri)
+        }
+        setModalVisible(false)
+    }
+
+    const uploadPhoto = async (photo) => {
+        console.log(photo)
+        const formData = new FormData()
+        formData.append('photo', {
+            uri: photo,
+            name: 'photo.jpg',
+            type: 'image/jpeg',
+        })
+        try {
+            const url = `${BACKEND_URL}/dogs/${_id}/photo`
+            console.log('PUT', url)
+            const response = await fetch(url, {
+                method: 'PUT',
+                body: formData
+            })
+            const data = await response.json()
+            // console.log(data)
+        }
+        catch (error) { console.log(error) }
+    }
+
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
             <Text style={styles.title}>{route.params.name}</Text>
-            <TouchableOpacity style={styles.avatarContainer} >
-                <Image source={{ uri: dogAvatarUrl }} style={styles.avatar} ></Image>
+            <TouchableOpacity style={styles.avatarContainer} onPress={() => setModalVisible(true)} >
+                <Image source={{ uri: dogPhoto }} style={styles.avatar} ></Image>
                 <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
             </TouchableOpacity>
+
+            <Modal visible={modalVisible} transparent={true} style={{ flex: 1 }}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.title}>Choisissez une image à importer</Text>
+                    <View style={styles.buttonsAvatarContainer}>
+                        <TouchableOpacity onPress={() => pickPhoto('camera')}>
+                            <FontAwesomeIcon icon={faCamera} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => pickPhoto('image')}>
+                            <FontAwesomeIcon icon={faFileImage} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
+                        </TouchableOpacity>
+                    </View>
+                    <ButtonSecondary title='Annuler' onPress={() => setModalVisible(false)} />
+                </View>
+            </Modal>
+
 
             <View style={styles.inputContainer}>
                 <InputFullSize onChangeText={(value) => setDogName(value)} value={dogName} placeholder='Son nom' />
@@ -184,6 +251,24 @@ const styles = StyleSheet.create({
         // marginTop: 20,
         // marginBottom: 20,
     },
+    modalContainer: {
+        backgroundColor: 'white',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    buttonsAvatarContainer: {
+        // backgroundColor: 'yellow',
+        width: '60%',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'space-around',
+        margin: 20,
+        // height: 200,
+        // top: Dimensions.get('window').width * 0.2,
+    },
+
     icon: {
         marginLeft: '40%',
         marginTop: -20,
@@ -230,7 +315,7 @@ const styles = StyleSheet.create({
     bottomControls: {
         // backgroundColor: 'yellow',
         width: '100%',
-        height:80,
+        height: 80,
         alignItems: 'center',
         justifyContent: 'space-around',
     },

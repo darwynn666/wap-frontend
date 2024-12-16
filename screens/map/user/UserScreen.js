@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPen, faCamera, faFileImage } from '@fortawesome/free-solid-svg-icons'
 import { setUserInfos } from '../../../reducers/user'
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
+
 
 import { BACKEND_URL } from '../../../config'
 
@@ -29,14 +31,13 @@ export default function UserScreen(props) {
     const [password2, setPassword2] = useState('')
     const [errorMessage, setErrorMessage] = useState(null)
     const [disableButton, setDisableButton] = useState(false)
-    const [modalVisible, setModalVisible] = useState()
-
-
-    const uploadphoto = () => {
-        console.log(uploadphoto)
-    }
-
+    const [modalVisible, setModalVisible] = useState(false)
+    const [photo, setPhoto] = useState(user.infos.photo ? user.infos.photo : userAvatarUrl)
     const dispatch = useDispatch()
+
+
+
+
     const handleSubmit = async () => {
         setErrorMessage(null)
 
@@ -75,66 +76,85 @@ export default function UserScreen(props) {
 
     }
 
-    const openCamera = async () => {
-        console.log('open camera')
-        try {
+    // update photo
+    const pickPhoto = async (source) => {
+        let result = null
+        if (source === 'camera') {
+            result = await ImagePicker.launchCameraAsync({
+                mediaTypes: ['images'],
+                quality: 0.8,
+            })
+        }
+        if (source === 'image') {
+            result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ['images'],
+                quality: 0.8,
+            })
+        }
+        if (!result) return
+        // console.log(result);
+        if (!result.canceled) {
+            const originalUri = result.assets[0].uri
+            const resizedImage = await ImageManipulator.manipulateAsync( // { uri, width, height }
+                originalUri,
+                [{ resize: { width: 500 } }],
+                { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+            );
+            console.log('Image redimensionnée :', resizedImage)
 
-            const result = await launchCamera({ mediaType: 'photo' }, (response) => { console.log('photo', response) })
+            setPhoto(resizedImage.uri)
+            uploadPhoto(resizedImage.uri)
+        }
+        setModalVisible(false)
+    }
+
+    const uploadPhoto = async (photo) => {
+        console.log(photo)
+        const formData = new FormData()
+        formData.append('photo', {
+            uri: photo,
+            name: 'photo.jpg',
+            type: 'image/jpeg',
+        })
+        try {
+            const url = `${BACKEND_URL}/users/${user.token}/photo`
+            console.log('PUT', url)
+            const response = await fetch(url, {
+                method: 'PUT',
+                body: formData
+            })
+            const data = await response.json()
+            // console.log(data)
         }
         catch (error) { console.log(error) }
     }
 
-
-    const getFromGallery = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ['images'],
-            quality: 1,
-        });
-        console.log(result);
-        if (!result.canceled) { setImage(result.assets[0].uri) }
-    }
-
-    const getFromCamera = async () => {
-        let result = await ImagePicker.launchCameraAsync({
-            mediaTypes: ['images'],
-            quality: 1,
-        });
-        console.log(result);
-        if (!result.canceled) { setImage(result.assets[0].uri) }
-    }
-
-    //   return (
-    //     <View style={styles.container}>
-    //       <Button title="Pick an image from camera roll" onPress={pickImage} />
-    //       {image && <Image source={{ uri: image }} style={styles.image} />}
-    //     </View>
-    //   );
-
-
+    // console.log('local photo', photo)
     return (
 
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <Modal visible={modalVisible} transparent={true}>
-                <View style={styles.modalView}>
-                    <TouchableOpacity onPress={() => getFromCamera()}>
-                        <FontAwesomeIcon icon={faCamera} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => getFromGallery()}>
-                        <FontAwesomeIcon icon={faFileImage} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
-                    </TouchableOpacity>
 
-                </View>
-            </Modal>
 
-            <TouchableOpacity style={styles.avatarContainer} >
-                <Image source={{ uri: userAvatarUrl }} style={styles.avatar} ></Image>
+            <TouchableOpacity style={styles.avatarContainer} onPress={() => setModalVisible(true)}>
+                <Image source={{ uri: photo }} style={styles.avatar} ></Image>
                 <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
             </TouchableOpacity>
 
-            <View style={styles.buttonsAvatarContainer}>
+            <Modal visible={modalVisible} transparent={true} style={{ flex: 1 }}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.title}>Choisissez une image à importer</Text>
+                    <View style={styles.buttonsAvatarContainer}>
+                        <TouchableOpacity onPress={() => pickPhoto('camera')}>
+                            <FontAwesomeIcon icon={faCamera} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => pickPhoto('image')}>
+                            <FontAwesomeIcon icon={faFileImage} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
+                        </TouchableOpacity>
+                    </View>
+                    <ButtonSecondary title='Annuler' onPress={() => setModalVisible(false)} />
+                </View>
+            </Modal>
 
-
-            </View>
 
             <View style={styles.inputContainer}>
                 <InputFullSize onChangeText={(value) => setFirstname(value)} value={firstname} placeholder='Prénom' />
@@ -180,13 +200,21 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         padding: globalStyle.padding
     },
-
-    buttonsAvatarContainer: {
-        width: '30%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    modalContainer: {
+        backgroundColor: 'white',
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        // margin:10,
+    },
+    buttonsAvatarContainer: {
+        // backgroundColor: 'yellow',
+        width: '60%',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'space-around',
+        margin: 20,
+        // height: 200,
+        // top: Dimensions.get('window').width * 0.2,
     },
 
     inputContainer: {
