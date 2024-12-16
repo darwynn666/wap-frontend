@@ -42,6 +42,7 @@ import {
   IconEmail,
   IconMessage,
 } from "../../globalComponents/Icons";
+import { ScrollView } from "react-native-gesture-handler";
 
 // COMPONENT
 export default function MapScreen2() {
@@ -467,7 +468,7 @@ export default function MapScreen2() {
         onRequestClose={() => setPopUpUsersVisibility(false)}
       >
         {selectedUser.friendType == "accepted" && (
-          <View style={{ width: "100%" }}>
+          <View style={{ width: "90%" }}>
             {/* header user info */}
             <View
               style={{
@@ -476,7 +477,7 @@ export default function MapScreen2() {
                 justifyContent: "center",
                 alignItems: "center",
                 gap: 5,
-                marginBottom: 10,
+                marginVertical: 10,
               }}
             >
               <Image
@@ -489,57 +490,98 @@ export default function MapScreen2() {
             </View>
             <View style={styles.separator}></View>
             {/* dogs view */}
+            <ScrollView horizontal={true} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
             <View
               style={{
                 width: "100%",
                 minHeight: "10",
-                flexDirection:'row',
+                flexDirection: "row",
+                flexGrow: 1,
                 justifyContent: "center",
                 alignItems: "center",
-                gap:15
+                gap: 15,
               }}
             >
-              <View
-                style={{
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  marginVertical: 10,
-                  borderRadius:10,
-                  borderColor:globalStyle.grayPrimary,
-                  borderWidth:1,
-                  padding:10,
-                  height:135,
-                  width:80
-                }}
-              >
-                <Image
-                  style={{ width:60, height: 60, borderRadius: 30 }}
-                  source={{ uri: selectedUser.infos.photo }}
-                />
-                <Text style={{fontSize:globalStyle.h5, fontWeight:'bold'}}>toutou</Text>
-                <Text  style={{fontSize:globalStyle.h6}}>Status du chien</Text>
-              </View>
-              <View
-                style={{
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  marginVertical: 10,
-                  borderRadius:10,
-                  borderColor:globalStyle.grayPrimary,
-                  borderWidth:1,
-                  padding:10,
-                  height:135,
-                  width:80
-                }}
-              >
-                <Image
-                  style={{ width:60, height: 60, borderRadius: 30 }}
-                  source={{ uri: selectedUser.infos.photo }}
-                />
-                <Text style={{fontSize:globalStyle.h5, fontWeight:'bold'}}>toutou</Text>
-                <Text  style={{fontSize:globalStyle.h6}}>Status du chien</Text>
-              </View>
+                <View
+                  style={{
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    marginVertical: 10,
+                    borderRadius: 10,
+                    borderColor: globalStyle.grayPrimary,
+                    borderWidth: 1,
+                    padding: 10,
+                    height: 135,
+                    width: 80,
+                  }}
+                >
+                  <Image
+                    style={{ width: 60, height: 60, borderRadius: 30 }}
+                    source={{ uri: selectedUser.infos.photo }}
+                  />
+                  <Text
+                    style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
+                  >
+                    toutou
+                  </Text>
+                  <Text style={{ fontSize: globalStyle.h6 }}>
+                    Status du chien
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    marginVertical: 10,
+                    borderRadius: 10,
+                    borderColor: globalStyle.grayPrimary,
+                    borderWidth: 1,
+                    padding: 10,
+                    height: 135,
+                    width: 80,
+                  }}
+                >
+                  <Image
+                    style={{ width: 60, height: 60, borderRadius: 30 }}
+                    source={{ uri: selectedUser.infos.photo }}
+                  />
+                  <Text
+                    style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
+                  >
+                    toutou
+                  </Text>
+                  <Text style={{ fontSize: globalStyle.h6 }}>
+                    Status du chien
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    marginVertical: 10,
+                    borderRadius: 10,
+                    borderColor: globalStyle.grayPrimary,
+                    borderWidth: 1,
+                    padding: 10,
+                    height: 135,
+                    width: 80,
+                  }}
+                >
+                  <Image
+                    style={{ width: 60, height: 60, borderRadius: 30 }}
+                    source={{ uri: selectedUser.infos.photo }}
+                  />
+                  <Text
+                    style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
+                  >
+                    toutou
+                  </Text>
+                  <Text style={{ fontSize: globalStyle.h6 }}>
+                    Status du chien
+                  </Text>
+                </View>
             </View>
+              </ScrollView>
             <View style={styles.separator}></View>
             <View
               style={{
