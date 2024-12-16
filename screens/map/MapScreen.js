@@ -39,6 +39,7 @@ export default function MapScreen2() {
 
   const [popUpPlacesVisibility, setPopUpPlacesVisibility] = useState(false);
   const [popUpUsersVisibility, setPopUpUsersVisibility] = useState(false);
+  const POP_UP_SPEED = 500;
 
   const [currentPosition, setCurrentPosition] = useState(false);
   const [positionMarker, setPositionMarker] = useState();
@@ -202,10 +203,10 @@ export default function MapScreen2() {
 
     // move to marker
     if (mapRef.current) {
-      mapRef.current.animateToRegion(adjustedRegion, 1000);
+      mapRef.current.animateToRegion(adjustedRegion, POP_UP_SPEED);
       setTimeout(() => {
         setPopUpPlacesVisibility(true);
-      }, 1000);
+      }, POP_UP_SPEED);
     }
   };
 
@@ -220,10 +221,10 @@ export default function MapScreen2() {
 
     // move to marker
     if (mapRef.current) {
-      mapRef.current.animateToRegion(adjustedRegion, 1000);
+      mapRef.current.animateToRegion(adjustedRegion, POP_UP_SPEED);
       setTimeout(() => {
-        setPopUpPlacesVisibility(true);
-      }, 1000);
+        setPopUpUsersVisibility(true);
+      }, POP_UP_SPEED);
     }
   };
 
@@ -330,9 +331,16 @@ export default function MapScreen2() {
       </MapView>
 
       {/* popUp of marker */}
+      {/* places */}
       <MapPopUpModal
         visibility={popUpPlacesVisibility}
         onRequestClose={() => setPopUpPlacesVisibility(false)}
+      ></MapPopUpModal>
+
+      {/* users */}
+      <MapPopUpModal
+        visibility={popUpUsersVisibility}
+        onRequestClose={() => setPopUpUsersVisibility(false)}
       ></MapPopUpModal>
 
       <TouchableOpacity
