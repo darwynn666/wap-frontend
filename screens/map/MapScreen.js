@@ -29,11 +29,16 @@ import { BACKEND_URL } from "../../config";
 
 import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
 
+import MapPopUpModal from "./components/MapPopUpModal";
+
 // COMPONENT
 export default function MapScreen2() {
   const navigation = useNavigation();
 
   const mapRef = useRef(null);
+
+  const [popUpPlacesVisibility, setPopUpPlacesVisibility] = useState(false);
+  const [popUpUsersVisibility, setPopUpUsersVisibility] = useState(false);
 
   const [currentPosition, setCurrentPosition] = useState(false);
   const [positionMarker, setPositionMarker] = useState();
@@ -185,23 +190,44 @@ export default function MapScreen2() {
     getUsers();
   }, []);
 
+  //handle marker interaction
+  //places
   const onPlaceMarkerPress = (coordinate) => {
-    console.log("on place");
-    console.log(mapRef.current);
-    // Ajustement de la position pour décaler légèrement vers le bas
     const adjustedRegion = {
-      latitude: coordinate.latitude + 0.01, // Décale la position vers le bas
+      latitude: coordinate.latitude + 0.01, // offset to show marker under marker
       longitude: coordinate.longitude,
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
     };
 
-    // Animation de la carte vers la nouvelle région
+    // move to marker
     if (mapRef.current) {
-      mapRef.current.animateToRegion(adjustedRegion, 1000); // Durée de l'animation : 1000ms
+      mapRef.current.animateToRegion(adjustedRegion, 1000);
+      setTimeout(() => {
+        setPopUpPlacesVisibility(true);
+      }, 1000);
     }
   };
 
+  //users
+  const onUsersMarkerPress = (coordinate) => {
+    const adjustedRegion = {
+      latitude: coordinate.latitude + 0.01, // offset to show marker under marker
+      longitude: coordinate.longitude,
+      latitudeDelta: 0.05,
+      longitudeDelta: 0.05,
+    };
+
+    // move to marker
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(adjustedRegion, 1000);
+      setTimeout(() => {
+        setPopUpPlacesVisibility(true);
+      }, 1000);
+    }
+  };
+
+  //create markers
   const places = placesDataRegionFilter
     .filter(
       (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
@@ -258,23 +284,29 @@ export default function MapScreen2() {
       if (usersDisplayIgnored.includes("unknows")) isShown = isShown && !_unkow;
       return isShown;
     })
-    .map((e, i) => {
+    .map((user, i) => {
       let icon = require("../../assets/icons/icon_dog_gray.png");
       //need to check if friends or blocked
-      if (isAccepted(e._id))
+      if (isAccepted(user._id))
         icon = require("../../assets/icons/icon_dog_green.png");
-      else if (isBlocked(e._id))
+      else if (isBlocked(user._id))
         icon = require("../../assets/icons/icon_dog_red.png");
 
       return (
         <Marker
           key={i}
           coordinate={{
-            latitude: e.currentLocation.coordinates[1],
-            longitude: e.currentLocation.coordinates[0],
+            latitude: user.currentLocation.coordinates[1],
+            longitude: user.currentLocation.coordinates[0],
           }}
           // pinColor="royalblue"
           image={icon}
+          onPress={() =>
+            onUsersMarkerPress({
+              latitude: user.currentLocation.coordinates[1],
+              longitude: user.currentLocation.coordinates[0],
+            })
+          }
         ></Marker>
       );
     });
@@ -282,22 +314,26 @@ export default function MapScreen2() {
   // console.log('current position', currentPosition)
   return (
     <View style={styles.container}>
-      {
-        <MapView
-          ref={mapRef}
-          initialRegion={visibleRegion}
-          mapType={settings.mapDisplayIgnored}
-          style={{ width: "100%", height: "100%" }}
-          showsUserLocation={!forcePosition}
-          showsMyLocationButton={!forcePosition}
-          onPress={(region) => handlePress(region)}
-          onRegionChangeComplete={(region) => handleRegionChange(region)}
-        >
-          {forcePosition && positionMarker}
-          {places}
-          {users}
-        </MapView>
-      }
+      <MapView
+        ref={mapRef}
+        initialRegion={visibleRegion}
+        mapType={settings.mapDisplayIgnored}
+        style={{ width: "100%", height: "100%" }}
+        showsUserLocation={!forcePosition}
+        showsMyLocationButton={!forcePosition}
+        onPress={(region) => handlePress(region)}
+        onRegionChangeComplete={(region) => handleRegionChange(region)}
+      >
+        {forcePosition && positionMarker}
+        {places}
+        {users}
+      </MapView>
+
+      {/* popUp of marker */}
+      <MapPopUpModal
+        visibility={popUpPlacesVisibility}
+        onRequestClose={() => setPopUpPlacesVisibility(false)}
+      ></MapPopUpModal>
 
       <TouchableOpacity
         style={styles.menuButton}
