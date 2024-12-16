@@ -374,6 +374,7 @@ export default function MapScreen2() {
         showsMyLocationButton={!forcePosition}
         onPress={(region) => handlePress(region)}
         onRegionChangeComplete={(region) => handleRegionChange(region)}
+        moveOnMarkerPress={false}
       >
         {forcePosition && positionMarker}
         {places}
