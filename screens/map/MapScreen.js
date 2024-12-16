@@ -322,7 +322,6 @@ export default function MapScreen2() {
     );
     
     const response = await request.json();
-    console.log("response bloc",response)
     if (response.result) {
       Alert.alert("Cet utilisateur est maintenant bloqué");
       dispatch(setUserFriends(response.userFriends));
@@ -473,7 +472,7 @@ export default function MapScreen2() {
         )}
         {selectedUser.friendType == "blocked" && (
           <View>
-            <Text>bloqué</Text>
+            <Text>Cet utilisateur est bloqué. Toutefois, vous pouvez le débloquer dans votre liste d'amis.</Text>
           </View>
         )}
         {selectedUser.friendType == "unknowed" && (
