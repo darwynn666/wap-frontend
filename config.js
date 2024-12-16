@@ -1,6 +1,6 @@
 // backend
-// export const BACKEND_URL = 'https://wap-backend.vercel.app'
-export const BACKEND_URL = 'http://192.168.1.147:3000'
+export const BACKEND_URL = 'https://wap-backend.vercel.app'
+// export const BACKEND_URL = 'http://192.168.1.147:3000'
 
 
 import { faDog } from "@fortawesome/free-solid-svg-icons";
