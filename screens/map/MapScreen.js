@@ -56,6 +56,7 @@ export default function MapScreen2() {
 
   const [usersData, setUsersData] = useState([]);
   const [usersDataRegionFilter, setUsersDataRegionFilter] = useState([]);
+  const [selectedUser, setSelectedUser] = useState([]);
 
   // force position
   const [forcePosition, setForcePosition] = useState();
@@ -211,9 +212,22 @@ export default function MapScreen2() {
   };
 
   //users
-  const onUsersMarkerPress = (coordinate) => {
+  const onUsersMarkerPress = async (coordinate, user) => {
+    //set the selected user for the modal
+    let _user = { friendType: "" };
+    //check status of user
+    const friendType = [
+      { name: "accepted", value: isAccepted(user._id) },
+      { name: "blocked", value: isBlocked(user._id) },
+      { name: "unknow", value: !(isAccepted(user._id) || isBlocked(user._id)) },
+    ];
+
+    _user = friendType.filter((x) =>x.value===true).map(x=>x.name)[0]
+
+    setSelectedUser(_user);
+
     const adjustedRegion = {
-      latitude: coordinate.latitude + 0.01, // offset to show marker under marker
+      latitude: coordinate.latitude + 0.02, // offset to show marker under marker
       longitude: coordinate.longitude,
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
@@ -303,10 +317,13 @@ export default function MapScreen2() {
           // pinColor="royalblue"
           image={icon}
           onPress={() =>
-            onUsersMarkerPress({
-              latitude: user.currentLocation.coordinates[1],
-              longitude: user.currentLocation.coordinates[0],
-            })
+            onUsersMarkerPress(
+              {
+                latitude: user.currentLocation.coordinates[1],
+                longitude: user.currentLocation.coordinates[0],
+              },
+              user
+            )
           }
         ></Marker>
       );
@@ -341,7 +358,9 @@ export default function MapScreen2() {
       <MapPopUpModal
         visibility={popUpUsersVisibility}
         onRequestClose={() => setPopUpUsersVisibility(false)}
-      ></MapPopUpModal>
+      >
+        <Text>{JSON.stringify(selectedUser)}</Text>
+      </MapPopUpModal>
 
       <TouchableOpacity
         style={styles.menuButton}
