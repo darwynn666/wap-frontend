@@ -35,6 +35,14 @@
     },
     "updates": {
       "url": "https://u.expo.dev/aa556cc1-c7bb-4555-8401-6a028998e884"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Wap a besoin d'acceder à votre appareil photo"
+        }
+      ]
+    ]
   }
 }

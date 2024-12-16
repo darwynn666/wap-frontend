@@ -1,14 +1,16 @@
-import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, Button, Platform, Image, KeyboardAvoidingView, ScrollView, Dimensions } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, Button, Platform, Image, KeyboardAvoidingView, ScrollView, Dimensions, Modal } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { useSelector, useDispatch } from 'react-redux'
 import { globalStyle } from '../../../config'
 import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
+import ButtonSecondary from '../../../globalComponents/ButtonSecondary'
 import InputFullSize from '../../../globalComponents/InputFullSize';
 import { userAvatarUrl } from '../../../config'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faPen } from '@fortawesome/free-solid-svg-icons'
+import { faPen, faCamera, faFileImage } from '@fortawesome/free-solid-svg-icons'
 import { setUserInfos } from '../../../reducers/user'
+import * as ImagePicker from 'expo-image-picker';
 
 import { BACKEND_URL } from '../../../config'
 
@@ -27,6 +29,8 @@ export default function UserScreen(props) {
     const [password2, setPassword2] = useState('')
     const [errorMessage, setErrorMessage] = useState(null)
     const [disableButton, setDisableButton] = useState(false)
+    const [modalVisible, setModalVisible] = useState()
+
 
     const uploadphoto = () => {
         console.log(uploadphoto)
@@ -71,14 +75,66 @@ export default function UserScreen(props) {
 
     }
 
+    const openCamera = async () => {
+        console.log('open camera')
+        try {
+
+            const result = await launchCamera({ mediaType: 'photo' }, (response) => { console.log('photo', response) })
+        }
+        catch (error) { console.log(error) }
+    }
+
+
+    const getFromGallery = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            quality: 1,
+        });
+        console.log(result);
+        if (!result.canceled) { setImage(result.assets[0].uri) }
+    }
+
+    const getFromCamera = async () => {
+        let result = await ImagePicker.launchCameraAsync({
+            mediaTypes: ['images'],
+            quality: 1,
+        });
+        console.log(result);
+        if (!result.canceled) { setImage(result.assets[0].uri) }
+    }
+
+    //   return (
+    //     <View style={styles.container}>
+    //       <Button title="Pick an image from camera roll" onPress={pickImage} />
+    //       {image && <Image source={{ uri: image }} style={styles.image} />}
+    //     </View>
+    //   );
+
+
     return (
 
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <Modal visible={modalVisible} transparent={true}>
+                <View style={styles.modalView}>
+                    <TouchableOpacity onPress={() => getFromCamera()}>
+                        <FontAwesomeIcon icon={faCamera} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => getFromGallery()}>
+                        <FontAwesomeIcon icon={faFileImage} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
+                    </TouchableOpacity>
+
+                </View>
+            </Modal>
 
             <TouchableOpacity style={styles.avatarContainer} >
                 <Image source={{ uri: userAvatarUrl }} style={styles.avatar} ></Image>
                 <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
             </TouchableOpacity>
+
+            <View style={styles.buttonsAvatarContainer}>
+
+
+            </View>
 
             <View style={styles.inputContainer}>
                 <InputFullSize onChangeText={(value) => setFirstname(value)} value={firstname} placeholder='Prénom' />
@@ -119,10 +175,18 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: globalStyle.backgroundColor,
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         paddingTop: 20,
         padding: globalStyle.padding
+    },
+
+    buttonsAvatarContainer: {
+        width: '30%',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        // margin:10,
     },
 
     inputContainer: {
