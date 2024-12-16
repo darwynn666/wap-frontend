@@ -13,7 +13,10 @@ import {
 import { Marker, Callout } from "react-native-maps";
 import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+
+import {setUserFriends} from '../../reducers/user'
+
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -50,6 +53,9 @@ export default function MapScreen2() {
   const [visibleRegion, setVisibleRegion] = useState();
 
   const user = useSelector((state) => state.user.value);
+
+  const dispatch = useDispatch();
+
   const settings = useSelector((state) => state.settings.value);
   const usersDisplayIgnored = settings.usersDisplayIgnored;
   const placesDisplayIgnored = settings.placesDisplayIgnored;
@@ -217,11 +223,9 @@ export default function MapScreen2() {
   //users
   const onUsersMarkerPress = async (coordinate, user) => {
     // get user info by id
-    console.log("test");
     const usersRequest = await fetch(`${BACKEND_URL}/users/${user._id}`);
     const usersResponse = await usersRequest.json();
     const usersData = usersResponse.data;
-    console.log(usersData);
 
     let _user = { friendType: "" };
     //check status of user by id
@@ -239,7 +243,6 @@ export default function MapScreen2() {
       .map((x) => x.name)[0];
 
     const userAllInfos = { ..._user, ...usersData };
-    console.log(userAllInfos);
     setSelectedUser(userAllInfos);
 
     const adjustedRegion = {
@@ -259,17 +262,46 @@ export default function MapScreen2() {
   };
 
   //popup button handler
+  const handleOutcomingFriend = async (friendTo) => {
+    console.log(user.token);
+    console.log(user._id);
+    console.log(friendTo._id);
+
+    setPopUpUsersVisibility(false);
+
+    const request = await fetch(
+      `${BACKEND_URL}/friends/${user.token}/outcoming/`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          friendFrom: user._id,
+          friendTo: friendTo._id,
+        }),
+      }
+    );
+    
+    const response = await request.json();
+    if (response.result) {
+      Alert.alert("La demande a été envoyé");
+      dispatch(setUserFriends(response.userFromFriends));
+    } else {
+      Alert.alert("La demande a déjà été envoyée");
+    }
+
+  };
+
   const askFriendPress = async () => {
     const firstname = selectedUser.infos.firstname;
+    const id = selectedUser;
     Alert.alert(
       `Demander ${firstname} en ami ?`,
       "Vous pourrez échanger vos informations et vous voir sur la carte",
       [
-        { text: "Annuler" },
+        { text: "Non" ,  onPress: () => setPopUpUsersVisibility(false)},
         {
-          text: "Accepter",
-          onPress: () =>
-            console.log("add friend") /*handleIncomingFriend(_id, true)*/,
+          text: "Oui",
+          onPress: () => handleOutcomingFriend(selectedUser),
         },
       ]
     );
