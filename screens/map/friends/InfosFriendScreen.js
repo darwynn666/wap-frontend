@@ -18,14 +18,19 @@ export default function InfosFriendScreen(props) {
     const navigation = useNavigation()
     const route = useRoute()
     const user = useSelector(state => state.user.value)
-    const dispatch=useDispatch()
-
+    const dispatch = useDispatch()
+    
     const friend = route.params
     console.log(friend)
-
+    
+    
+    useEffect(()=>{
+        // fetch friends dogs
+    },[])
+    
+    console.log(friend.status)
     let statusText = null
     let statusColor = null
-    console.log(friend.status)
     switch (friend.status) {
         case 'off': statusText = 'Déconnecté'; statusColor = globalStyle.grayPrimary; break
         case 'walk': statusText = 'En ballade'; statusColor = globalStyle.greenPrimary; break
@@ -46,7 +51,7 @@ export default function InfosFriendScreen(props) {
         })
             .catch((err) => console.error(err))
     }
-
+    
     const smsNumber = (phoneNumber) => {
         const smsUrl = `sms:${phoneNumber}`
         Linking.canOpenURL(smsUrl).then((supported) => {
@@ -117,6 +122,7 @@ export default function InfosFriendScreen(props) {
         catch (error) { console.log(error) }
     }
 
+
     return (
         <View style={styles.container}>
 
@@ -132,35 +138,19 @@ export default function InfosFriendScreen(props) {
             </View>
 
 
-            {/* <View style={styles.phoneContainer}>
-                <View style={styles.phoneNumberContainer}>
-                    <Icon name="phone" color={globalStyle.greenPrimary} size={20} />
-                    <Text style={styles.phoneText}>{formatFrenchPhoneNumber(friend.infos.telephone)}</Text>
-                </View>
-
-                <View style={styles.phoneButtonsContainer}>
-                    <ButtonSecondary title='Appeler' onPress={() => callNumber(friend.infos.telephone)} status={true} />
-                    <ButtonSecondary title='SMS' onPress={() => smsNumber(friend.infos.telephone)} status={true} />
-                </View>
-            </View> */}
-
-            {/* <View style={styles.emailContainer}>
-                <View style={styles.emailTextContainer}>
-                    <Icon name="at" color={globalStyle.greenPrimary} size={20} />
-                    <Text style={styles.emailText}>{friend.infos.email.toLowerCase()}</Text>
-                </View>
-                <ButtonSecondary title='Email' onPress={() => sendEmail(friend.infos.email)} status={true} />
-            </View> */}
-
             <View style={styles.switchContainer}>
-                <View style={styles.switchItem}>
-                    <FontAwesomeIcon style={styles.iconSwitch} icon={isDogSitterIcon} size={20} color={isDogSitterColor}></FontAwesomeIcon>
-                    <Text style={styles.textSwitch}>Est un  Dogsitter</Text>
-                </View>
+                {friend.infos.isDogSitter &&
+                    <View style={styles.switchItem}>
+                        <FontAwesomeIcon style={styles.iconSwitch} icon={isDogSitterIcon} size={20} color={isDogSitterColor}></FontAwesomeIcon>
+                        <Text style={styles.textSwitch}>Cet ami est un  Dogsitter</Text>
+                    </View>
+                }
+                {friend.infos.isSearchingDogSitter &&
                 <View style={styles.switchItem}>
                     <FontAwesomeIcon style={styles.iconSwitch} icon={isSearchingDogSitterIcon} size={20} color={isSearchingDogSitterColor}></FontAwesomeIcon>
-                    <Text style={styles.textSwitch}>Recherche un  Dogsitter</Text>
+                    <Text style={styles.textSwitch}>Cet ami recherche un  Dogsitter</Text>
                 </View>
+                }
             </View >
 
 
