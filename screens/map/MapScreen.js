@@ -489,13 +489,55 @@ export default function MapScreen2() {
             </View>
             <View style={styles.separator}></View>
             {/* dogs view */}
-            <View style={{width:'100%',minHeight:'10', justifyContent:"space-around" , alignItems:"center"}}>
-              <View style={{justifyContent:"center", alignItems:"center", gap:10, marginVertical:10}}>
-              <Image
-                style={{ width: 60, height: 60, borderRadius: 30 }}
-                source={{ uri: selectedUser.infos.photo }}
-              />
-              <Text>test</Text>
+            <View
+              style={{
+                width: "100%",
+                minHeight: "10",
+                flexDirection:'row',
+                justifyContent: "center",
+                alignItems: "center",
+                gap:15
+              }}
+            >
+              <View
+                style={{
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  marginVertical: 10,
+                  borderRadius:10,
+                  borderColor:globalStyle.grayPrimary,
+                  borderWidth:1,
+                  padding:10,
+                  height:135,
+                  width:80
+                }}
+              >
+                <Image
+                  style={{ width:60, height: 60, borderRadius: 30 }}
+                  source={{ uri: selectedUser.infos.photo }}
+                />
+                <Text style={{fontSize:globalStyle.h5, fontWeight:'bold'}}>toutou</Text>
+                <Text  style={{fontSize:globalStyle.h6}}>Status du chien</Text>
+              </View>
+              <View
+                style={{
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  marginVertical: 10,
+                  borderRadius:10,
+                  borderColor:globalStyle.grayPrimary,
+                  borderWidth:1,
+                  padding:10,
+                  height:135,
+                  width:80
+                }}
+              >
+                <Image
+                  style={{ width:60, height: 60, borderRadius: 30 }}
+                  source={{ uri: selectedUser.infos.photo }}
+                />
+                <Text style={{fontSize:globalStyle.h5, fontWeight:'bold'}}>toutou</Text>
+                <Text  style={{fontSize:globalStyle.h6}}>Status du chien</Text>
               </View>
             </View>
             <View style={styles.separator}></View>
