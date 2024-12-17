@@ -109,40 +109,46 @@ export default function MapScreen2() {
 
   const handleRegionChange = (region) => {
     // console.log(region);
-    //filter places
-    setPlacesDataRegionFilter(
-      placesData.filter((marker) => {
-        if (visibleRegion.latitude) {
-          return (
-            marker.location.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
-            marker.location.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
-            marker.location.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
-            marker.location.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
-          );
-        }
-      })
-    );
-    //filter users
-    setUsersDataRegionFilter(
-      usersData.filter((marker) => {
-        if (visibleRegion.latitude) {
-          return (
-            marker.currentLocation.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
-            marker.currentLocation.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
-            marker.currentLocation.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
-            marker.currentLocation.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
-          );
-        }
-      })
-    );
+    // if dezoom
+    if (region.latitudeDelta > 1) {
+      setPlacesDataRegionFilter ([]);
+      setUsersDataRegionFilter ([]);
+    } else {
+      //filter places
+      setPlacesDataRegionFilter(
+        placesData.filter((marker) => {
+          if (visibleRegion.latitude) {
+            return (
+              marker.location.coordinates[1] >=
+                region.latitude - region.latitudeDelta / 2 &&
+              marker.location.coordinates[1] <=
+                region.latitude + region.latitudeDelta / 2 &&
+              marker.location.coordinates[0] >=
+                region.longitude - region.longitudeDelta / 2 &&
+              marker.location.coordinates[0] <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          }
+        })
+      );
+      //filter users
+      setUsersDataRegionFilter(
+        usersData.filter((marker) => {
+          if (visibleRegion.latitude) {
+            return (
+              marker.currentLocation.coordinates[1] >=
+                region.latitude - region.latitudeDelta / 2 &&
+              marker.currentLocation.coordinates[1] <=
+                region.latitude + region.latitudeDelta / 2 &&
+              marker.currentLocation.coordinates[0] >=
+                region.longitude - region.longitudeDelta / 2 &&
+              marker.currentLocation.coordinates[0] <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          }
+        })
+      );
+    }
     // console.log('marker 0', markers[0])
     region.latitude && setVisibleRegion(region);
   };
@@ -222,7 +228,7 @@ export default function MapScreen2() {
     if (!place) return false;
     else return place.users.includes(user_id);
     // console.log(place.users.includes(user_id))
-    // 
+    //
   };
 
   useEffect(() => {
@@ -396,8 +402,8 @@ export default function MapScreen2() {
       }),
     ]);
     //
-    const tmpPlaces = {...selectedPlace};
-    tmpPlaces.users=response.users ;
+    const tmpPlaces = { ...selectedPlace };
+    tmpPlaces.users = response.users;
     setSelectedPlace(tmpPlaces);
   };
 
@@ -508,51 +514,52 @@ export default function MapScreen2() {
         visibility={popUpPlacesVisibility}
         onRequestClose={() => setPopUpPlacesVisibility(false)}
       >
-        {selectedPlace && <View style={{width:"100%"}}>
-          <View>
-            <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
-              {selectedPlace.name}
-            </Text>
-          <Image
-            style={{ width: "100%", height: 175, resizeMode: "cover" }}
-            source={{
-              uri:
-                selectedPlace.photo != ""
-                  ? selectedPlace.photo
-                  : defaultPlaceUrl
-            }}
-          />
-          </View>
-          <Text
-            style={{
-              marginVertical: 5,
-              fontWeight: "bold",
-              fontSize: globalStyle.h6,
-            }}
-          >
-            {selectedPlace.houseNumber} {selectedPlace.street}{" "}
-            {selectedPlace.postcode} {selectedPlace.city}{" "}
-          </Text>
-          <Text style={{ fontSize: globalStyle.h5, marginVertical: 8 }}>
-            {selectedPlace.description}
-          </Text>
-          <View style={{ margin: 15 }}>
-            <MenuBottomItem
-              onPressed={() => {
-                ImHerePressed(user._id, selectedPlace._id);
+        {selectedPlace && (
+          <View style={{ width: "100%" }}>
+            <View>
+              <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
+                {selectedPlace.name}
+              </Text>
+              <Image
+                style={{ width: "100%", height: 175, resizeMode: "cover" }}
+                source={{
+                  uri:
+                    selectedPlace.photo != ""
+                      ? selectedPlace.photo
+                      : defaultPlaceUrl,
+                }}
+              />
+            </View>
+            <Text
+              style={{
+                marginVertical: 5,
+                fontWeight: "bold",
+                fontSize: globalStyle.h6,
               }}
-              srcIsActive={
-                isUserInPlace(user._id, selectedPlace) ? (
-                  <IconDogBlue />
-                ) : (
-                  <IconDogBlueLight />
-                )
-              }
-              label="J'y suis"
-            ></MenuBottomItem>
+            >
+              {selectedPlace.houseNumber} {selectedPlace.street}{" "}
+              {selectedPlace.postcode} {selectedPlace.city}{" "}
+            </Text>
+            <Text style={{ fontSize: globalStyle.h5, marginVertical: 8 }}>
+              {selectedPlace.description}
+            </Text>
+            <View style={{ margin: 15 }}>
+              <MenuBottomItem
+                onPressed={() => {
+                  ImHerePressed(user._id, selectedPlace._id);
+                }}
+                srcIsActive={
+                  isUserInPlace(user._id, selectedPlace) ? (
+                    <IconDogBlue />
+                  ) : (
+                    <IconDogBlueLight />
+                  )
+                }
+                label="J'y suis"
+              ></MenuBottomItem>
+            </View>
           </View>
-        </View>
-}
+        )}
       </MapPopUpModal>
 
       {/* users */}
