@@ -222,12 +222,12 @@ export default function App() {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Login" component={StackLogin} />
-            <Stack.Screen name="Tuto" component={StackTuto} />
-            <Stack.Screen name="Map" component={DrawerMap} />
-            <Stack.Screen name="Test" component={TestScreen} />
-          </Stack.Navigator>
+            <Tab.Screen name="Tuto" component={StackTuto} />
+            <Tab.Screen name="Map" component={DrawerMap} />
+            <Tab.Screen name="Test" component={TestScreen} />
+          </Tab.Navigator>
         </NavigationContainer>
       </PersistGate>
     </Provider>
