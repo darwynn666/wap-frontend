@@ -111,8 +111,8 @@ export default function MapScreen2() {
     // console.log(region);
     // if dezoom
     if (region.latitudeDelta > 1) {
-      setPlacesDataRegionFilter ([]);
-      setUsersDataRegionFilter ([]);
+      setPlacesDataRegionFilter([]);
+      setUsersDataRegionFilter([]);
     } else {
       //filter places
       setPlacesDataRegionFilter(
@@ -224,7 +224,7 @@ export default function MapScreen2() {
    * @returns
    */
   const isUserInPlace = (user_id, place) => {
-    console.log("selectedplace", place);
+    // console.log("selectedplace", place);
     if (!place) return false;
     else return place.users.includes(user_id);
     // console.log(place.users.includes(user_id))
@@ -436,12 +436,48 @@ export default function MapScreen2() {
       return (
         <Marker
           key={i}
+          anchor={{ x: 0.5, y: 0.5 }}
           coordinate={{
             latitude: placesMarker.location.coordinates[1],
             longitude: placesMarker.location.coordinates[0],
           }}
           image={icon}
           onPress={() => onPlaceMarkerPress(placesMarker)}
+        />
+      );
+    });
+
+  const placesUsersCounter = placesDataRegionFilter
+    .filter(
+      (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
+    )
+    .filter((place) => place.users.length > 0)
+    .map((placesMarker, i) => {
+      const nbUser = placesMarker.users.length;
+
+      const images = [
+        require(`../../assets/icons/icon_counter_0.png`),
+        require(`../../assets/icons/icon_counter_1.png`),
+        require(`../../assets/icons/icon_counter_2.png`),
+        require(`../../assets/icons/icon_counter_3.png`),
+        require(`../../assets/icons/icon_counter_4.png`),
+        require(`../../assets/icons/icon_counter_5.png`),
+        require(`../../assets/icons/icon_counter_6.png`),
+        require(`../../assets/icons/icon_counter_7.png`),
+        require(`../../assets/icons/icon_counter_8.png`),
+        require(`../../assets/icons/icon_counter_9.png`),
+        require(`../../assets/icons/icon_counter_10.png`),
+      ];
+
+      return (
+        <Marker
+          key={i}
+          anchor={{ x: 0, y: 0 }}
+          coordinate={{
+            latitude: placesMarker.location.coordinates[1],
+            longitude: placesMarker.location.coordinates[0],
+          }}
+          image={images[nbUser <= 10 ? nbUser : 10]}
         />
       );
     });
@@ -505,6 +541,7 @@ export default function MapScreen2() {
       >
         {forcePosition && positionMarker}
         {places}
+        {placesUsersCounter}
         {users}
       </MapView>
 
