@@ -15,8 +15,6 @@ import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-
-
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -34,16 +32,8 @@ import { BACKEND_URL } from "../../config";
 
 import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
 
-
-
-
-
 import MapPopUpPlace from "./components/MapPopUpPlace";
 import MapPopUpUser from "./components/MapPopUpUser";
-
-
-
-
 
 // COMPONENT
 export default function MapScreen2() {
@@ -353,6 +343,7 @@ export default function MapScreen2() {
             longitude: placesMarker.location.coordinates[0],
           }}
           image={images[nbUser <= 10 ? nbUser : 10]}
+          tappable={false}
         />
       );
     });
