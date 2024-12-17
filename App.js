@@ -61,6 +61,7 @@ import FriendsScreen from './screens/map/friends/FriendsScreen';
 import BlockFriendScreen from './screens/map/friends/BlockFriendScreen';
 import DeleteFriendScreen from './screens/map/friends/DeleteFriendScreen';
 import InfosFriendScreen from './screens/map/friends/InfosFriendScreen';
+import LogoutScreen from './screens/map/logout/LogoutScreen';
 import AreYouThereScreen from './screens/map/addplace/AreYouThereScreen';
 import ChoosePlaceCoordsScreen from './screens/map/addplace/ChoosePlaceCoordsScreen';
 import ChoosePlaceAddressScreen from './screens/map/addplace/ChoosePlaceAddressScreen';
@@ -136,6 +137,13 @@ const StackFriends = () => {
     </Stack.Navigator>
   )
 }
+const StackLogout = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="User" component={LogoutScreen} />
+    </Stack.Navigator>
+  )
+}
 const StackAddPlace = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: true }}>
@@ -161,6 +169,7 @@ const DrawerMap = () => {
       <Drawer.Screen name="Mon compte" component={StackUser} />
       <Drawer.Screen name="Mes chiens" component={StackDogs} />
       <Drawer.Screen name="Mes amis" component={StackFriends} />
+      <Drawer.Screen name="Deconnexion" component={StackLogout} />
       <Drawer.Screen name="_Map" component={StackMap} options={{ headerShown: false,  drawerItemStyle: { display: '_none' } }} />
       <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ drawerItemStyle: { display: '_none' } }} />
       <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: '_none' } }} />

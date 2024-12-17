@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Dimensions, SafeAreaView, Alert } from 'react-native'
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform, Dimensions, SafeAreaView, Alert, BackHandler } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -44,9 +44,13 @@ export default function FriendsScreen(props) {
     console.log(user.friends)
     console.log('friends', friendsOutcoming)
 
-    useEffect(() => { // load
-        fetchAllFriends()
-    }, [])
+    useEffect(() => {
+        fetchAllFriends() // load
+        const backAction = () => { navigation.navigate('_Map'); return true }// handle back button
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
+        return () => backHandler.remove();
+    }, []);
+
 
     useEffect(() => { // reload
         fetchAllFriends()
@@ -64,7 +68,7 @@ export default function FriendsScreen(props) {
         }
         return (
             <TouchableOpacity key={i} style={styles.friendContainer} onPress={() => navigation.navigate('InfosFriend', { ...friend })}>
-                <Image style={[styles.friendAvatar, { borderColor: statusColor }]} source={{ uri: userAvatarUrl }} />
+                <Image style={[styles.friendAvatar, { borderColor: statusColor }]} source={{ uri: friend.infos.photo_public_id ? friend.infos.photo : userAvatarUrl }} />
                 <Text style={styles.friendName} >{friend.infos.firstname} </Text>
                 <Text style={styles.friendName} >{friend.infos.lastname}</Text>
                 {/* <FontAwesomeIcon icon={faCircle} size={15} style={{ borderColor: statusColor }}></FontAwesomeIcon> */}
@@ -76,7 +80,7 @@ export default function FriendsScreen(props) {
     const friendsIncomingCards = friendsIncoming.map((friend, i) => {
         return (
             <View key={i} style={styles.friendIncomingContainer} >
-                <Image style={styles.friendIncomingAvatar} source={{ uri: userAvatarUrl }} />
+                <Image style={styles.friendIncomingAvatar} source={{ uri: friend.infos.photo_public_id ? friend.infos.photo : userAvatarUrl }} />
                 <Text style={styles.friendIncomingName} >{friend.infos.firstname} {friend.infos.lastname}</Text>
                 <View>
                     <ButtonSecondary title='Accepter' status={true} onPress={() => confirmAcceptIncomingFriend(friend._id, friend.infos.firstname)} />
@@ -90,9 +94,9 @@ export default function FriendsScreen(props) {
     const friendsOutComingCards = friendsOutcoming.map((friend, i) => {
         return (
             <View key={i} style={styles.friendOutcomingContainer} >
-                <Image style={styles.friendOutcomingAvatar} source={{ uri: userAvatarUrl }} />
+                <Image style={styles.friendOutcomingAvatar} source={{ uri: friend.infos.photo_public_id ? friend.infos.photo : userAvatarUrl }} />
                 <Text style={styles.friendOutcomingName} >{friend.infos.firstname} {friend.infos.lastname}</Text>
-                <ButtonSecondary title='Annuler' status={true}  onPress={() => confirmCancelOutcomingFriend(friend._id, friend.infos.firstname)}/>
+                <ButtonSecondary title='Annuler' status={true} onPress={() => confirmCancelOutcomingFriend(friend._id, friend.infos.firstname)} />
             </View>
         )
 
@@ -101,7 +105,7 @@ export default function FriendsScreen(props) {
     const usersBlockedCards = usersBlocked.map((friend, i) => {
         return (
             <View key={i} style={styles.usersBlockedContainer} >
-                <Image style={styles.usersBlockedAvatar} source={{ uri: userAvatarUrl }} />
+                <Image style={styles.usersBlockedAvatar} source={{ uri: friend.infos.photo_public_id ? friend.infos.photo : userAvatarUrl }} />
                 <Text style={styles.usersBlockedName} >{friend.infos.firstname} {friend.infos.lastname}</Text>
                 <ButtonSecondary title='Annuler' status={true} onPress={() => confirmCancelBlockFriend(friend._id, friend.infos.firstname)} />
             </View>
@@ -116,7 +120,7 @@ export default function FriendsScreen(props) {
             { text: 'Accepter', onPress: () => handleIncomingFriend(_id, true) },
         ])
     }
-    
+
     const confirmRefuseIncomingFriend = (_id, firstname) => {
         Alert.alert(`Refuser ${firstname} ?`, 'Cette personne pourra toujours vous envoyer une autre invitation', [
             { text: 'Annuler' },
@@ -132,16 +136,16 @@ export default function FriendsScreen(props) {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ friendFrom: _id, accept })
-            })    
+            })
             const data = await response.json()
             console.log(data)
             if (data.result) {
                 dispatch(setUserFriends(data.userFromFriends))
                 navigation.navigate('Friends')
-            }    
-        }    
+            }
+        }
         catch (error) { console.log(error) }
-    }    
+    }
 
     // outcoming
     const confirmCancelOutcomingFriend = (_id, firstname) => {

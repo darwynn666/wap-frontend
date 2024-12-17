@@ -39,8 +39,8 @@ export default function SignIn(props) {
 
 
         setDisableButton(true)
-        const url=`${BACKEND_URL}/users/signin`
-        console.log('POST',url)
+        const url = `${BACKEND_URL}/users/signin`
+        console.log('POST', url)
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -50,7 +50,7 @@ export default function SignIn(props) {
         setDisableButton(false)
         if (data.result) {
             console.log('login ok')
-            dispatch(setUser(data.data)) // à verifier
+            dispatch(setUser(data.data)) 
             navigation.navigate('Map')
         }
         else {
@@ -62,7 +62,7 @@ export default function SignIn(props) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView style={{height:'1%'}}>
+            <ScrollView style={{ height: '1%' }}>
 
                 <View style={styles.imageContainer}>
                     {/* <Image></Image> */}
@@ -84,10 +84,10 @@ export default function SignIn(props) {
                     </View>
                 </View>
 
+                <View style={styles.bottomControls}>
+                    <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton} />
+                </View>
             </ScrollView>
-            <View style={styles.bottomControls}>
-                <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton} />
-            </View>
 
         </SafeAreaView>
     )
@@ -111,8 +111,8 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '400',
     },
-    formContainer:{
-        padding:globalStyle.padding,
+    formContainer: {
+        padding: globalStyle.padding,
     },
     titleContainer: {
         // backgroundColor:'red',

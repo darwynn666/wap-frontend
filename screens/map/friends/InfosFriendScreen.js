@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, Image, Dimensions, Alert, Button } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, Image, Dimensions, Alert, Button ,BackHandler} from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
@@ -24,9 +24,11 @@ export default function InfosFriendScreen(props) {
     console.log(friend)
     
     
-    useEffect(()=>{
-        // fetch friends dogs
-    },[])
+    useEffect(() => {
+        const backAction = () => { navigation.navigate('Friends'); return true }// handle back button
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
+        return () => backHandler.remove();
+    }, []);
     
     console.log(friend.status)
     let statusText = null
@@ -134,7 +136,7 @@ export default function InfosFriendScreen(props) {
             </View>
 
             <View style={styles.avatarContainer} >
-                <Image source={{ uri: userAvatarUrl }} style={styles.avatar} ></Image>
+                <Image source={{ uri: friend.infos.photo_public_id ? friend.infos.photo : userAvatarUrl }} style={styles.avatar} ></Image>
             </View>
 
 

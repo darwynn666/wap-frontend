@@ -83,13 +83,13 @@ export default function SignUpUserScreen(props) {
                 </View>
 
 
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+                <View style={styles.bottomControls}>
+                    <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton} />
+                </View>
             </ScrollView>
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
-            </View>
-            <View style={styles.bottomControls}>
-                <ButtonPrimary onPress={() => handleSubmit()} title='Continuer' disabled={disableButton} />
-            </View>
 
         </SafeAreaView>
     )
