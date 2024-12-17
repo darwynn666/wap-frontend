@@ -48,6 +48,8 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { callNumber, smsNumber, sendEmail } from "../../modules/tools";
 
+import MapPopUpPlace from "./components/MapPopUpPlace";
+
 // COMPONENT
 export default function MapScreen2() {
   const navigation = useNavigation();
@@ -217,20 +219,6 @@ export default function MapScreen2() {
     return user.friends.blocked.some((friend) => friend == id);
   };
 
-  /**
-   *
-   * @param {*} user_id
-   * @param {*} place_id
-   * @returns
-   */
-  const isUserInPlace = (user_id, place) => {
-    // console.log("selectedplace", place);
-    if (!place) return false;
-    else return place.users.includes(user_id);
-    // console.log(place.users.includes(user_id))
-    //
-  };
-
   useEffect(() => {
     getPlaces();
   }, []);
@@ -382,31 +370,6 @@ export default function MapScreen2() {
     );
   };
 
-  const ImHerePressed = async (user_id, place_id) => {
-    //set value in bdd
-    const request = await fetch(
-      `${BACKEND_URL}/places/${place_id}/users/${user_id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-type": "application/json",
-        },
-      }
-    );
-    const response = await request.json();
-    // set value in place usestate
-    setPlacesData([
-      ...placesData.map((x) => {
-        if (x._id === place_id) x.users = response.users;
-        return x;
-      }),
-    ]);
-    //
-    const tmpPlaces = { ...selectedPlace };
-    tmpPlaces.users = response.users;
-    setSelectedPlace(tmpPlaces);
-  };
-
   //create markers
   const places = placesDataRegionFilter
     .filter(
@@ -495,6 +458,7 @@ export default function MapScreen2() {
       if (usersDisplayIgnored.includes("unknows")) isShown = isShown && !_unkow;
       return isShown;
     })
+    .filter((x) => x._id != user._id)
     .map((user, i) => {
       let icon = require("../../assets/icons/icon_dog_gray.png");
       //need to check if friends or blocked
@@ -547,57 +511,15 @@ export default function MapScreen2() {
 
       {/* popUp of marker */}
       {/* places */}
-      <MapPopUpModal
+      <MapPopUpPlace
+        place={selectedPlace}
         visibility={popUpPlacesVisibility}
-        onRequestClose={() => setPopUpPlacesVisibility(false)}
-      >
-        {selectedPlace && (
-          <View style={{ width: "100%" }}>
-            <View>
-              <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
-                {selectedPlace.name}
-              </Text>
-              <Image
-                style={{ width: "100%", height: 175, resizeMode: "cover" }}
-                source={{
-                  uri:
-                    selectedPlace.photo != ""
-                      ? selectedPlace.photo
-                      : defaultPlaceUrl,
-                }}
-              />
-            </View>
-            <Text
-              style={{
-                marginVertical: 5,
-                fontWeight: "bold",
-                fontSize: globalStyle.h6,
-              }}
-            >
-              {selectedPlace.houseNumber} {selectedPlace.street}{" "}
-              {selectedPlace.postcode} {selectedPlace.city}{" "}
-            </Text>
-            <Text style={{ fontSize: globalStyle.h5, marginVertical: 8 }}>
-              {selectedPlace.description}
-            </Text>
-            <View style={{ margin: 15 }}>
-              <MenuBottomItem
-                onPressed={() => {
-                  ImHerePressed(user._id, selectedPlace._id);
-                }}
-                srcIsActive={
-                  isUserInPlace(user._id, selectedPlace) ? (
-                    <IconDogBlue />
-                  ) : (
-                    <IconDogBlueLight />
-                  )
-                }
-                label="J'y suis"
-              ></MenuBottomItem>
-            </View>
-          </View>
-        )}
-      </MapPopUpModal>
+        userID={user._id}
+        placesData={placesData}
+        setPlacesData={setPlacesData}
+        setSelectedPlace={setSelectedPlace}
+        setPopUpPlacesVisibility={setPopUpPlacesVisibility}
+      />
 
       {/* users */}
       <MapPopUpModal
