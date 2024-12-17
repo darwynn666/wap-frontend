@@ -21,6 +21,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { callNumber, smsNumber, sendEmail } from "../../../modules/tools";
 import MapPopUpModal from "./MapPopUpModal";
 import MenuBottomItem from "./MenuBottomItem";
+import { dogAvatarUrl, userAvatarUrl } from "../../../config";
 
 const STATUS_COLOR = {
     walk: globalStyle.greenPrimary,

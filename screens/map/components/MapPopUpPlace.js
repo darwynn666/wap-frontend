@@ -3,6 +3,7 @@ import { globalStyle } from "../../../config";
 import MapPopUpModal from "./MapPopUpModal";
 import { IconDogBlue, IconDogBlueLight } from "../../../globalComponents/Icons";
 import { BACKEND_URL } from "../../../config";
+import {  defaultPlaceUrl } from "../../../config";
 
 //places popup
 export default MapPopUpPlace = ({
