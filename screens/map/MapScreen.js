@@ -73,7 +73,7 @@ export default function MapScreen2() {
 
   const [placesData, setPlacesData] = useState([]);
   const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
-  const [selectedPlace, setSelectedPlace] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null);
 
   const [usersData, setUsersData] = useState([]);
   const [usersDataRegionFilter, setUsersDataRegionFilter] = useState([]);
@@ -209,6 +209,20 @@ export default function MapScreen2() {
 
   const isBlocked = (id) => {
     return user.friends.blocked.some((friend) => friend == id);
+  };
+
+  /**
+   *
+   * @param {*} user_id
+   * @param {*} place_id
+   * @returns
+   */
+  const isUserInPlace = (user_id, place) => {
+    console.log("selectedplace", place);
+    if (!place) return false;
+    else return place.users.includes(user_id);
+    // console.log(place.users.includes(user_id))
+    // 
   };
 
   useEffect(() => {
@@ -362,6 +376,31 @@ export default function MapScreen2() {
     );
   };
 
+  const ImHerePressed = async (user_id, place_id) => {
+    //set value in bdd
+    const request = await fetch(
+      `${BACKEND_URL}/places/${place_id}/users/${user_id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
+      }
+    );
+    const response = await request.json();
+    // set value in place usestate
+    setPlacesData([
+      ...placesData.map((x) => {
+        if (x._id === place_id) x.users = response.users;
+        return x;
+      }),
+    ]);
+    //
+    const tmpPlaces = {...selectedPlace};
+    tmpPlaces.users=response.users ;
+    setSelectedPlace(tmpPlaces);
+  };
+
   //create markers
   const places = placesDataRegionFilter
     .filter(
@@ -469,36 +508,52 @@ export default function MapScreen2() {
         visibility={popUpPlacesVisibility}
         onRequestClose={() => setPopUpPlacesVisibility(false)}
       >
-        <View>
-          <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
-            {selectedPlace.name}
+        {selectedPlace && <View>
+          <View>
+            <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
+              {selectedPlace.name}
+            </Text>
+          </View>
+          <Image
+            style={{ width: "100%", height: 175, resizeMode: "cover" }}
+            source={{
+              uri:
+                selectedPlace.photo != ""
+                  ? selectedPlace.photo
+                  : defaultPlaceUrl
+            }}
+          />
+          <Text>{selectedPlace.photo}</Text>
+          <Text
+            style={{
+              marginVertical: 5,
+              fontWeight: "bold",
+              fontSize: globalStyle.h6,
+            }}
+          >
+            {selectedPlace.houseNumber} {selectedPlace.street}{" "}
+            {selectedPlace.postcode} {selectedPlace.city}{" "}
           </Text>
+          <Text style={{ fontSize: globalStyle.h5, marginVertical: 8 }}>
+            {selectedPlace.description}
+          </Text>
+          <View style={{ margin: 15 }}>
+            <MenuBottomItem
+              onPressed={() => {
+                ImHerePressed(user._id, selectedPlace._id);
+              }}
+              srcIsActive={
+                isUserInPlace(user._id, selectedPlace) ? (
+                  <IconDogBlue />
+                ) : (
+                  <IconDogBlueLight />
+                )
+              }
+              label="J'y suis"
+            ></MenuBottomItem>
+          </View>
         </View>
-        <Image
-          style={{ width: "100%", height: 175, resizeMode: "cover" }}
-          source={{
-            uri:
-              selectedPlace.photo != "" ? selectedPlace.photo : defaultPlaceUrl,
-          }}
-        />
-        <Text
-          style={{
-            marginVertical: 5,
-            fontWeight: "bold",
-            fontSize: globalStyle.h6,
-          }}
-        >
-          {selectedPlace.houseNumber} {selectedPlace.street}{" "}
-          {selectedPlace.postcode} {selectedPlace.city}{" "}
-        </Text>
-        <Text style={{ fontSize:globalStyle.h5, marginVertical: 8 }}>{selectedPlace.description}</Text>
-        <View style= {{margin:15}}>
-          <MenuBottomItem
-            onPressed={()=>{}}
-            srcIsActive={<IconDogBlueLight />}
-            label="J'y suis"
-          ></MenuBottomItem>
-        </View>
+}
       </MapPopUpModal>
 
       {/* users */}
