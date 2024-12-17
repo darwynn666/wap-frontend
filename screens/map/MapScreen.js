@@ -29,6 +29,7 @@ import {
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
+import {dogAvatarUrl} from '../../config'
 import { BACKEND_URL } from "../../config";
 
 import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
@@ -43,6 +44,7 @@ import {
   IconMessage,
 } from "../../globalComponents/Icons";
 import { ScrollView } from "react-native-gesture-handler";
+import  {callNumber,smsNumber,sendEmail} from '../../modules/tools'
 
 // COMPONENT
 export default function MapScreen2() {
@@ -310,9 +312,6 @@ export default function MapScreen2() {
   };
 
   const handleBlockFriend = async (friendTo) => {
-    console.log(user.token);
-    console.log(user._id);
-    console.log(friendTo._id);
 
     setPopUpUsersVisibility(false);
 
@@ -506,6 +505,7 @@ export default function MapScreen2() {
                   marginVertical: 10,
                 }}
               >
+                {/* create view for each dogs */}
                 {selectedUser.dogs.map((dog, i) => {
                   return (
                     <View
@@ -524,7 +524,7 @@ export default function MapScreen2() {
                     >
                       <Image
                         style={{ width: 60, height: 60, borderRadius: 30 }}
-                        source={{ uri: selectedUser.infos.photo }}
+                        source={{ uri:  dog.photo ? dog.photo : dogAvatarUrl }}
                       />
                       <Text
                         style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
@@ -547,9 +547,9 @@ export default function MapScreen2() {
                 paddingTop: 20,
               }}
             >
-              <MenuBottomItem srcIsActive={<IconMessage />}></MenuBottomItem>
-              <MenuBottomItem srcIsActive={<IconPhone />}></MenuBottomItem>
-              <MenuBottomItem srcIsActive={<IconEmail />}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconMessage />} onPressed={smsNumber(selectedUser.infos.telephone)}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconPhone />} onPressed={callNumber(selectedUser.infos.telephone)}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconEmail />} onPressed={sendEmail(selectedUser.infos.email)}></MenuBottomItem>
             </View>
           </View>
         )}
