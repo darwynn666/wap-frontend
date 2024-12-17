@@ -508,12 +508,11 @@ export default function MapScreen2() {
         visibility={popUpPlacesVisibility}
         onRequestClose={() => setPopUpPlacesVisibility(false)}
       >
-        {selectedPlace && <View>
+        {selectedPlace && <View style={{width:"100%"}}>
           <View>
             <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
               {selectedPlace.name}
             </Text>
-          </View>
           <Image
             style={{ width: "100%", height: 175, resizeMode: "cover" }}
             source={{
@@ -523,7 +522,7 @@ export default function MapScreen2() {
                   : defaultPlaceUrl
             }}
           />
-          <Text>{selectedPlace.photo}</Text>
+          </View>
           <Text
             style={{
               marginVertical: 5,
