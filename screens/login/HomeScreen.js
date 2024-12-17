@@ -5,7 +5,7 @@ import { useRoute, useNavigation } from '@react-navigation/native'
 import ButtonPrimary from '../../globalComponents/ButtonPrimary'
 import { BACKEND_URL, globalStyle } from '../../config'
 import { setUser } from '../../reducers/user'
-
+import { logoHomeUrl } from '../../config'
 
 
 export default function HomeScreen(props) {
@@ -61,13 +61,13 @@ export default function HomeScreen(props) {
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer}>
-                {/* <Image></Image> */}
-                <Text>Image Logo</Text>
+                <Image source={{ uri: logoHomeUrl }} style={styles.logo}></Image>
+                {/* <Text>Image Logo</Text> */}
             </View>
             <View style={styles.buttonsContainer}>
                 {logged && <>
                     <Text>Bonjour {user.infos.firstname}</Text>
-                    <ButtonPrimary onPress={() => navigation.navigate('Map',{screen:'_Map'})} title='Démarrer' />
+                    <ButtonPrimary onPress={() => navigation.navigate('Map', { screen: '_Map' })} title='Démarrer' />
                 </>}
                 {!logged && <>
                     <ButtonPrimary onPress={() => handleSignUp()} title='Sign Up' />
@@ -88,17 +88,22 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     imageContainer: {
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: '85%',
+        height: '80%',
+    },
+    logo: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'contain',
     },
     buttonsContainer: {
         // backgroundColor:'red',
         alignItems: 'center',
         justifyContent: 'space-around',
         width: '100%',
-        height: '15%',
+        height: '20%',
     },
 })

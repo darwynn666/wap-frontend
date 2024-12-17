@@ -8,6 +8,7 @@ import { setUser } from '../../reducers/user'
 import ButtonPrimary from '../../globalComponents/ButtonPrimary'
 import InputFullSize from '../../globalComponents/InputFullSize'
 import { userAvatarUrl } from '../../config'
+import { logoHomeUrl } from '../../config'
 
 
 export default function SignIn(props) {
@@ -64,10 +65,10 @@ export default function SignIn(props) {
         <SafeAreaView style={styles.container}>
             <ScrollView style={{ height: '1%' }}>
 
-                <View style={styles.imageContainer}>
-                    {/* <Image></Image> */}
-                    <Text>Image Logo</Text>
-                </View>
+            <View style={styles.imageContainer}>
+                <Image source={{ uri: logoHomeUrl }} style={styles.logo}></Image>
+                {/* <Text>Image Logo</Text> */}
+            </View>
 
                 <View style={styles.formContainer}>
                     <View style={styles.titleContainer}>
@@ -105,11 +106,16 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     imageContainer: {
-        backgroundColor: '#eeeeee',
+        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
         width: '100%',
-        height: '400',
+        height: '80%',
+    },
+    logo: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'contain',
     },
     formContainer: {
         padding: globalStyle.padding,
