@@ -51,8 +51,8 @@ export default function SignIn(props) {
         setDisableButton(false)
         if (data.result) {
             console.log('login ok')
-            dispatch(setUser(data.data)) 
-            navigation.navigate('Map')
+            dispatch(setUser(data.data))
+            navigation.navigate('Map', { screen: '_Map' })
         }
         else {
             // console.log(data)
@@ -65,10 +65,10 @@ export default function SignIn(props) {
         <SafeAreaView style={styles.container}>
             <ScrollView style={{ height: '1%' }}>
 
-            <View style={styles.imageContainer}>
-                <Image source={{ uri: logoHomeUrl }} style={styles.logo}></Image>
-                {/* <Text>Image Logo</Text> */}
-            </View>
+                <View style={styles.imageContainer}>
+                    <Image source={{ uri: logoHomeUrl }} style={styles.logo}></Image>
+                    {/* <Text>Image Logo</Text> */}
+                </View>
 
                 <View style={styles.formContainer}>
                     <View style={styles.titleContainer}>
