@@ -29,7 +29,7 @@ import {
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
-import {dogAvatarUrl} from '../../config'
+import {dogAvatarUrl,userAvatarUrl} from '../../config'
 import { BACKEND_URL } from "../../config";
 
 import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
@@ -481,7 +481,7 @@ export default function MapScreen2() {
             >
               <Image
                 style={{ width: 100, height: 100, borderRadius: 50 }}
-                source={{ uri: selectedUser.infos.photo }}
+                source={{ uri: selectedUser.infos.photo!="" ? selectedUser.infos.photo : userAvatarUrl}}
               />
               <Text style={{ fontSize: globalStyle.h3 }}>
                 {selectedUser.infos.firstname} {selectedUser.infos.lastname}
@@ -524,7 +524,7 @@ export default function MapScreen2() {
                     >
                       <Image
                         style={{ width: 60, height: 60, borderRadius: 30 }}
-                        source={{ uri:  dog.photo ? dog.photo : dogAvatarUrl }}
+                        source={{ uri:  dog.photo!="" ? dog.photo : dogAvatarUrl }}
                       />
                       <Text
                         style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
@@ -547,9 +547,9 @@ export default function MapScreen2() {
                 paddingTop: 20,
               }}
             >
-              <MenuBottomItem srcIsActive={<IconMessage />} onPressed={smsNumber(selectedUser.infos.telephone)}></MenuBottomItem>
-              <MenuBottomItem srcIsActive={<IconPhone />} onPressed={callNumber(selectedUser.infos.telephone)}></MenuBottomItem>
-              <MenuBottomItem srcIsActive={<IconEmail />} onPressed={sendEmail(selectedUser.infos.email)}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconMessage />} onPressed={()=>smsNumber(selectedUser.infos.telephone)}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconPhone />} onPressed={()=>callNumber(selectedUser.infos.telephone)}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconEmail />} onPressed={()=>sendEmail(selectedUser.infos.email)}></MenuBottomItem>
             </View>
           </View>
         )}
