@@ -6,13 +6,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // redux 
 import { Provider } from 'react-redux';
-import { configureStore,combineReducers } from '@reduxjs/toolkit';
-import user from './reducers/user'
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore, persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-//import rootReducer from './reducers'; 
+import user from './reducers/user'
 import settings from './reducers/settings'
+//import rootReducer from './reducers'; 
 
 // const store = configureStore({
 //   reducer: { user,settings },
@@ -29,13 +29,13 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 
- export const store = configureStore({
+export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 
- export const persistor = persistStore(store);
+export const persistor = persistStore(store);
 
 // IMPORT SCREENS
 import TestScreen from './screens/TestScreen'; //empty component for tests
@@ -61,6 +61,7 @@ import FriendsScreen from './screens/map/friends/FriendsScreen';
 import BlockFriendScreen from './screens/map/friends/BlockFriendScreen';
 import DeleteFriendScreen from './screens/map/friends/DeleteFriendScreen';
 import InfosFriendScreen from './screens/map/friends/InfosFriendScreen';
+import LogoutScreen from './screens/map/logout/LogoutScreen';
 import AreYouThereScreen from './screens/map/addplace/AreYouThereScreen';
 import ChoosePlaceCoordsScreen from './screens/map/addplace/ChoosePlaceCoordsScreen';
 import ChoosePlaceAddressScreen from './screens/map/addplace/ChoosePlaceAddressScreen';
@@ -69,7 +70,8 @@ import FillPlaceInfosScreen from './screens/map/addplace/FillPlaceInfosScreen';
 import EditPlaceInfosScreen from './screens/map/editplace/EditPlaceInfosScreen';
 import EditPlaceAddressScreen from './screens/map/editplace/EditPlaceAddressScreen';
 
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -132,7 +134,14 @@ const StackFriends = () => {
       <Stack.Screen name="BlockFriend" component={BlockFriendScreen} />
       <Stack.Screen name="DeleteFriend" component={DeleteFriendScreen} />
       <Stack.Screen name="InfosFriend" component={InfosFriendScreen} />
-      
+
+    </Stack.Navigator>
+  )
+}
+const StackLogout = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="User" component={LogoutScreen} />
     </Stack.Navigator>
   )
 }
@@ -155,13 +164,51 @@ const StackEditPlace = () => {
     </Stack.Navigator>
   )
 }
+const CustomDrawerContent = (props) => {
+  const user = useSelector(state => state.user.value)
+  return (
+    <View style={styles.drawerContainer}>
+
+      <TouchableOpacity style={styles.avatarContainer} onPress={() => props.navigation.navigate('Mon compte')}>
+        <Image source={{ uri: user?.infos ? user.infos.photo : userAvatarUrl }} style={styles.avatar} />
+        <Text style={styles.avatarName}>{user?.infos ? user.infos.firstname : 'no_name'}</Text>
+      </TouchableOpacity>
+
+      <View style={styles.drawerItems}>
+        <TouchableOpacity onPress={() => props.navigation.navigate('Mon compte')}>
+          <Text style={styles.drawerItem}>Mon compte</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => props.navigation.navigate('Mes chiens')}>
+          <Text style={styles.drawerItem}>Mes chiens</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => props.navigation.navigate('Mes amis')}>
+          <Text style={styles.drawerItem}>Mes amis</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => props.navigation.navigate('Deconnexion')}>
+          <Text style={styles.drawerItemLogout}>Déconnexion</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => props.navigation.navigate('_Map')}>
+          <Text style={styles.drawerItemLogout}>_Map</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => props.navigation.navigate('_AddPlace')}>
+          <Text style={styles.drawerItemLogout}>_AddPlace</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => props.navigation.navigate('_EditPlace')}>
+          <Text style={styles.drawerItemLogout}>_EditPlace</Text>
+        </TouchableOpacity>
+      </View>
+
+    </View>
+  );
+};
 const DrawerMap = () => {
   return (
-    <Drawer.Navigator initialRouteName='_Map' screenOptions={{ headerShown: true }}>
+    <Drawer.Navigator initialRouteName='_Map' drawerContent={(props) => <CustomDrawerContent {...props} />} screenOptions={{ headerShown: true }}>
       <Drawer.Screen name="Mon compte" component={StackUser} />
       <Drawer.Screen name="Mes chiens" component={StackDogs} />
       <Drawer.Screen name="Mes amis" component={StackFriends} />
-      <Drawer.Screen name="_Map" component={StackMap} options={{ headerShown: false,  drawerItemStyle: { display: '_none' } }} />
+      <Drawer.Screen name="Deconnexion" component={StackLogout} />
+      <Drawer.Screen name="_Map" component={StackMap} options={{ headerShown: false, drawerItemStyle: { display: '_none' } }} />
       <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ drawerItemStyle: { display: '_none' } }} />
       <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: '_none' } }} />
     </Drawer.Navigator>
@@ -174,26 +221,64 @@ export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-      <NavigationContainer>
-        <Tab.Navigator screenOptions={{ headerShown: false }}>
-          <Tab.Screen name="Login" component={StackLogin} />
-          <Tab.Screen name="Tuto" component={StackTuto} />
-          <Tab.Screen name="Map" component={DrawerMap} />
-          <Tab.Screen name="Test" component={TestScreen} />
-        </Tab.Navigator>
-      </NavigationContainer>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Login" component={StackLogin} />
+            <Stack.Screen name="Tuto" component={StackTuto} />
+            <Stack.Screen name="Map" component={DrawerMap} />
+            <Stack.Screen name="Test" component={TestScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
       </PersistGate>
     </Provider>
   );
 }
 
 // STYLE
-import { globalStyle } from './config'; // global style properties
+import { globalStyle, userAvatarUrl } from './config'; // global style properties
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: globalStyle.backgroundColor,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  drawerContainer: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+  },
+  avatarContainer: {
+    backgroundColor: '#fff',
+    width: '100%',
+    height: 150,
+    flexDirection: 'row',
+    justifyContent: 'left',
+    alignItems: 'flex-end',
+    padding: 20,
+  },
+  avatar: {
+    // backgroundColor:'red',
+    width: 80,
+    height: 80,
+    borderRadius: 80,
+    // resizeMode: 'contain',
+  },
+  avatarName: {
+    fontSize: globalStyle.h2,
+    marginLeft: 10,
+  },
+  drawerItems: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  drawerItem: {
+    fontSize: globalStyle.h3,
+    paddingVertical: 15,
+    color: '#333333',
+  },
+  drawerItemLogout: {
+    fontSize: globalStyle.h4,
+    paddingVertical: 15,
+    color: '#666666',
   },
 });

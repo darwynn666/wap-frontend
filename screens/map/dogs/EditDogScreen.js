@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Dimensions, Alert, Modal } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, TouchableOpacity, ScrollView, Dimensions, Alert, Modal ,BackHandler} from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -14,6 +14,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 
 import { BACKEND_URL } from '../../../config'
+
+
 
 
 export default function EditDogScreen() {
@@ -35,7 +37,15 @@ export default function EditDogScreen() {
     const [modalVisible, setModalVisible] = useState(false)
 
 
-    // Gestion de la soumission
+    useEffect(() => { 
+        const backAction = () => { navigation.navigate('Dogs'); return true }// handle back button 
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
+        return () => backHandler.remove();
+    }, []);
+
+
+
+
     const handleSubmit = async () => {
         setErrorMessage(null)
 

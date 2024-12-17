@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, ScrollView, Dimensions } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, KeyboardAvoidingView, ScrollView, Dimensions, BackHandler } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { globalStyle } from '../../../config'
@@ -26,9 +26,12 @@ export default function DogsScreen() {
             .then(response => response.json())
             .then(data => { setDoglist(data.data) })
     }
-    useEffect(() => { // load dogs list
-        getDogs()
-    }, [])
+    useEffect(() => {
+        getDogs() // load dogs list
+        const backAction = () => { navigation.navigate('_Map'); return true }// handle back button
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
+        return () => backHandler.remove();
+    }, []);
 
     useEffect(() => { // reload dogs list if needed (after edit, add and delete)
         getDogs()

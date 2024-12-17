@@ -1,7 +1,7 @@
 // backend
-export const BACKEND_URL = 'https://wap-backend.vercel.app'
+// export const BACKEND_URL = 'https://wap-backend.vercel.app'
 // export const BACKEND_URL = 'http://192.168.1.147:3000'
-// export const BACKEND_URL = 'http://10.1.1.56:3000'
+export const BACKEND_URL = 'http://10.1.1.56:3000'
 
 
 import { faDog } from "@fortawesome/free-solid-svg-icons";
@@ -51,7 +51,7 @@ export const globalStyle = {
 
 
 export const userAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078126/avatar_g55kvf.jpg'
-export const dogAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078252/avatar_xmojsb.jpg'
+export const dogAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734442673/dogavatar_vgjzgu.jpg'
 export const defaultPlaceUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734431989/default_location_images_u2fbv8.jpg'
 export const logoHomeUrl = '' // à définir et uploader sur cloudinary
 

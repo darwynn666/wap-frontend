@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, Dimensions, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, Dimensions, TouchableOpacity,BackHandler} from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { useSelector, useDispatch } from 'react-redux';
@@ -27,9 +27,11 @@ export default function AddDogScreen(props) {
     const [errorMessage, setErrorMessage] = useState(null)
     const [disableButton, setDisableButton] = useState(false)
 
-    const uploadphoto = () => {
-        console.log(uploadphoto)
-    }
+    useEffect(() => { 
+        const backAction = () => { navigation.navigate('Dogs'); return true }// handle back button 
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction) 
+        return () => backHandler.remove();
+    }, []);
 
 
     const handleSubmit = async () => {
@@ -88,10 +90,10 @@ export default function AddDogScreen(props) {
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
             <Text style={styles.title}>Ajouter un chien</Text>
-            <TouchableOpacity style={styles.avatarContainer} >
+            <View style={styles.avatarContainer} >
                 <Image source={{ uri: dogAvatarUrl }} style={styles.avatar} ></Image>
-                <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
-            </TouchableOpacity>
+                {/* <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon> */}
+            </View>
 
             <View style={styles.inputContainer}>
                 <InputFullSize onChangeText={(value) => setName(value)} value={name} placeholder='Son nom' />
@@ -132,6 +134,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: globalStyle.h2,
+        marginBottom:20,
     },
 
     inputContainer: {

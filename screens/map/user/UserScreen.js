@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, Button, Platform, Image, KeyboardAvoidingView, ScrollView, Dimensions, Modal } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, Button, Platform, Image, KeyboardAvoidingView, ScrollView, Dimensions, Modal, BackHandler, Alert } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { useSelector, useDispatch } from 'react-redux'
@@ -9,7 +9,7 @@ import InputFullSize from '../../../globalComponents/InputFullSize';
 import { userAvatarUrl } from '../../../config'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPen, faCamera, faFileImage } from '@fortawesome/free-solid-svg-icons'
-import { setUserInfos } from '../../../reducers/user'
+import { setUserInfos, setUserInfosPhoto } from '../../../reducers/user'
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 
@@ -34,6 +34,15 @@ export default function UserScreen(props) {
     const [modalVisible, setModalVisible] = useState(false)
     const [photo, setPhoto] = useState(user.infos.photo ? user.infos.photo : userAvatarUrl)
     const dispatch = useDispatch()
+
+
+
+    useEffect(() => {
+        const backAction = () => { navigation.navigate('_Map'); return true } // handle back button : go back to map
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
+        return () => backHandler.remove();
+    }, []);
+    
 
 
 
@@ -66,6 +75,7 @@ export default function UserScreen(props) {
             if (data) {
                 setErrorMessage('Modifications enregistrées')
                 dispatch(setUserInfos({ firstname, lastname, telephone, email, isDogSitter, isSearchingDogSitter }))
+                navigation.navigate('_Map')
             }
         }
         catch (error) {
@@ -83,6 +93,7 @@ export default function UserScreen(props) {
             result = await ImagePicker.launchCameraAsync({
                 mediaTypes: ['images'],
                 quality: 0.8,
+                // cameraType: 'front', // fix this !
             })
         }
         if (source === 'image') {
@@ -124,67 +135,74 @@ export default function UserScreen(props) {
                 body: formData
             })
             const data = await response.json()
-            // console.log(data)
+            console.log(data)
+            if (data.result) {
+                setErrorMessage('Photo enregistrée')
+                dispatch(setUserInfosPhoto({ photo: data.data.infos.photo, photo_public_id: data.data.infos.photo_public_id }))
+            }
+            else { setErrorMessage('Photo non enregistrée') }
         }
-        catch (error) { console.log(error) }
+        catch (error) { console.log('upload error', error) }
     }
 
     // console.log('local photo', photo)
     return (
+        <ScrollView>
 
-        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
 
 
-            <TouchableOpacity style={styles.avatarContainer} onPress={() => setModalVisible(true)}>
-                <Image source={{ uri: photo }} style={styles.avatar} ></Image>
-                <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
-            </TouchableOpacity>
+                <TouchableOpacity style={styles.avatarContainer} onPress={() => setModalVisible(true)}>
+                    <Image source={{ uri: photo }} style={styles.avatar} ></Image>
+                    <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
+                </TouchableOpacity>
 
-            <Modal visible={modalVisible} transparent={true} style={{ flex: 1 }}>
-                <View style={styles.modalContainer}>
-                    <Text style={styles.title}>Choisissez une image à importer</Text>
-                    <View style={styles.buttonsAvatarContainer}>
-                        <TouchableOpacity onPress={() => pickPhoto('camera')}>
-                            <FontAwesomeIcon icon={faCamera} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => pickPhoto('image')}>
-                            <FontAwesomeIcon icon={faFileImage} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
-                        </TouchableOpacity>
+                <Modal visible={modalVisible} transparent={true} style={{ flex: 1 }}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.title}>Choisissez une image à importer</Text>
+                        <View style={styles.buttonsAvatarContainer}>
+                            <TouchableOpacity onPress={() => pickPhoto('camera')}>
+                                <FontAwesomeIcon icon={faCamera} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => pickPhoto('image')}>
+                                <FontAwesomeIcon icon={faFileImage} color={globalStyle.greenPrimary} size={40}></FontAwesomeIcon>
+                            </TouchableOpacity>
+                        </View>
+                        <ButtonSecondary title='Annuler' onPress={() => setModalVisible(false)} />
                     </View>
-                    <ButtonSecondary title='Annuler' onPress={() => setModalVisible(false)} />
+                </Modal>
+
+
+                <View style={styles.inputContainer}>
+                    <InputFullSize onChangeText={(value) => setFirstname(value)} value={firstname} placeholder='Prénom' />
+                    <InputFullSize onChangeText={(value) => setLastname(value)} value={lastname} placeholder='Nom' />
+                    <InputFullSize onChangeText={(value) => setEmail(value)} value={email} placeholder='Email' />
+                    <InputFullSize onChangeText={(value) => setTelephone(value)} value={telephone} placeholder='Email' />
+                    <InputFullSize onChangeText={(value) => setPassword1(value)} value={password1} placeholder='Nouveau mot de passe' secureTextEntry={true} />
+                    <InputFullSize onChangeText={(value) => setPassword2(value)} value={password2} placeholder='Confirmer le mot de passe' secureTextEntry={true} />
+                </View >
+
+                <View style={styles.switchsContainer}>
+                    <View style={styles.switchContainer}>
+                        <Switch style={styles.switch} trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setIsDogSitter(value)} value={isDogSitter} />
+                        <Text style={styles.textswitch}>Je suis un Dogsitter</Text>
+                    </View>
+                    <View style={styles.switchContainer}>
+                        <Switch style={styles.switch} trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setIsSearchingDogSitter(value)} value={isSearchingDogSitter} />
+                        <Text style={styles.textswitch}>Je cherche un Dogsitter</Text>
+                    </View>
                 </View>
-            </Modal>
 
-
-            <View style={styles.inputContainer}>
-                <InputFullSize onChangeText={(value) => setFirstname(value)} value={firstname} placeholder='Prénom' />
-                <InputFullSize onChangeText={(value) => setLastname(value)} value={lastname} placeholder='Nom' />
-                <InputFullSize onChangeText={(value) => setEmail(value)} value={email} placeholder='Email' />
-                <InputFullSize onChangeText={(value) => setTelephone(value)} value={telephone} placeholder='Email' />
-                <InputFullSize onChangeText={(value) => setPassword1(value)} value={password1} placeholder='Nouveau mot de passe' secureTextEntry={true} />
-                <InputFullSize onChangeText={(value) => setPassword2(value)} value={password2} placeholder='Confirmer le mot de passe' secureTextEntry={true} />
-            </View >
-
-            <View style={styles.switchsContainer}>
-                <View style={styles.switchContainer}>
-                    <Switch style={styles.switch} trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setIsDogSitter(value)} value={isDogSitter} />
-                    <Text style={styles.textswitch}>Je suis un Dogsitter</Text>
+                <View style={styles.errorContainer}>
+                    <Text style={styles.errorText}>{errorMessage}</Text>
                 </View>
-                <View style={styles.switchContainer}>
-                    <Switch style={styles.switch} trackColor={{ false: '#d3d3d3', true: '#7fff00' }} thumbColor={globalStyle.greenPrimary} onValueChange={value => setIsSearchingDogSitter(value)} value={isSearchingDogSitter} />
-                    <Text style={styles.textswitch}>Je cherche un Dogsitter</Text>
+
+                <View style={styles.bottomControls}>
+                    <ButtonPrimary onPress={() => handleSubmit()} title='Enregistrer' disabled={disableButton} />
                 </View>
-            </View>
 
-            <View style={styles.errorContainer}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
-            </View>
-
-            <View style={styles.bottomControls}>
-                <ButtonPrimary onPress={() => handleSubmit()} title='Enregistrer' disabled={disableButton} />
-            </View>
-
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+        </ScrollView>
 
     )
 }
