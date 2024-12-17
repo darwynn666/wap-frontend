@@ -72,6 +72,8 @@ import EditPlaceAddressScreen from './screens/map/editplace/EditPlaceAddressScre
 
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faSignOut, faUserCircle, faDog, faUserFriends } from '@fortawesome/free-solid-svg-icons';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -171,22 +173,46 @@ const CustomDrawerContent = (props) => {
 
       <TouchableOpacity style={styles.avatarContainer} onPress={() => props.navigation.navigate('Mon compte')}>
         <Image source={{ uri: user?.infos ? user.infos.photo : userAvatarUrl }} style={styles.avatar} />
-        <Text style={styles.avatarName}>{user?.infos ? user.infos.firstname : 'no_name'}</Text>
+        <View style={styles.userNames}>
+          <Text style={styles.userName}>{user?.infos ? user.infos.firstname : 'no_name'}</Text>
+          <Text style={styles.userName}>{user?.infos ? user.infos.lastname : 'no_name'}</Text>
+        </View>
       </TouchableOpacity>
 
       <View style={styles.drawerItems}>
+
         <TouchableOpacity onPress={() => props.navigation.navigate('Mon compte')}>
-          <Text style={styles.drawerItem}>Mon compte</Text>
+          <View style={styles.drawerItemContainer}>
+            <FontAwesomeIcon icon={faUserCircle} size={30} style={{ color: globalStyle.greenPrimary }}></FontAwesomeIcon>
+            <Text style={styles.drawerItem}>Mon compte</Text>
+          </View>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => props.navigation.navigate('Mes chiens')}>
-          <Text style={styles.drawerItem}>Mes chiens</Text>
+          <View style={styles.drawerItemContainer}>
+            <FontAwesomeIcon icon={faDog} size={30} style={{ color: globalStyle.greenPrimary }}></FontAwesomeIcon>
+            <Text style={styles.drawerItem}>Mes chiens</Text>
+          </View>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => props.navigation.navigate('Mes amis')}>
-          <Text style={styles.drawerItem}>Mes amis</Text>
+          <View style={styles.drawerItemContainer}>
+            <FontAwesomeIcon icon={faUserFriends} size={30} style={{ color: globalStyle.greenPrimary }}></FontAwesomeIcon>
+            <Text style={styles.drawerItem}>Mes amis</Text>
+          </View>
         </TouchableOpacity>
+
+        <View style={{ width: '100%', height: 1, backgroundColor: '#cccccc', marginVertical: 20 }}></View>
+
         <TouchableOpacity onPress={() => props.navigation.navigate('Deconnexion')}>
-          <Text style={styles.drawerItemLogout}>Déconnexion</Text>
+          <View style={styles.drawerItemContainer}>
+            <FontAwesomeIcon icon={faSignOut} size={15} style={{ color: globalStyle.greenPrimary }}></FontAwesomeIcon>
+            <Text style={styles.drawerItemLogout}>Déconnexion</Text>
+          </View>
         </TouchableOpacity>
+
+        {/* hidden items */}
+        <View style={{ width: '100%', height: 1, backgroundColor: '#cccccc', marginVertical: 20 }}></View>
         <TouchableOpacity onPress={() => props.navigation.navigate('_Map')}>
           <Text style={styles.drawerItemLogout}>_Map</Text>
         </TouchableOpacity>
@@ -223,7 +249,7 @@ export default function App() {
       <PersistGate loading={null} persistor={persistor}>
         <NavigationContainer>
           <Tab.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Login" component={StackLogin} />
+            <Tab.Screen name="Login" component={StackLogin} />
             <Tab.Screen name="Tuto" component={StackTuto} />
             <Tab.Screen name="Map" component={DrawerMap} />
             <Tab.Screen name="Test" component={TestScreen} />
@@ -263,7 +289,12 @@ const styles = StyleSheet.create({
     borderRadius: 80,
     // resizeMode: 'contain',
   },
-  avatarName: {
+  userNames: {
+    // backgroundColor:'yellow',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
+  userName: {
     fontSize: globalStyle.h2,
     marginLeft: 10,
   },
@@ -271,14 +302,25 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingHorizontal: 20,
   },
+
+  drawerItemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   drawerItem: {
     fontSize: globalStyle.h3,
     paddingVertical: 15,
     color: '#333333',
+    marginLeft: 20,
+  },
+  logoutContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   drawerItemLogout: {
     fontSize: globalStyle.h4,
     paddingVertical: 15,
     color: '#666666',
+    marginLeft: 10,
   },
 });

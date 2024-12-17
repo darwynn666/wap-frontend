@@ -12,7 +12,7 @@ import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
 export default function LogoutScreen(props) {
     const navigation = useNavigation()
 
-    useEffect(() => { 
+    useEffect(() => {
         const backAction = () => { navigation.navigate('_Map'); return true } // handle back button
         const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
         return () => backHandler.remove();
@@ -23,7 +23,7 @@ export default function LogoutScreen(props) {
         <View style={styles.container}>
             <Text style={styles.text}>Vous devrez vous reconnecter pour acceder aux informations de la carte</Text>
             <View style={styles.buttonContainer}>
-                <ButtonPrimary style={styles.button} title='Se deconnecter' onPress={() => navigation.navigate('Login', { screen: 'Signin' })} />
+                <ButtonPrimary style={styles.button} title='Se deconnecter' onPress={() => navigation.navigate('Home', { forceLogout: true })} />
             </View>
             <View style={styles.buttonContainer}>
                 <ButtonPrimary style={styles.button} title='Retourner à la carte' onPress={() => navigation.navigate('_Map')} />
@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
         margin: 40,
     },
     buttonContainer: {
-        width:'100%',
-        justifyContent:'center',
-        alignItems:'center',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
         margin: 20,
     },
 })

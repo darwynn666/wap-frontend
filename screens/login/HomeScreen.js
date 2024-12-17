@@ -15,10 +15,13 @@ export default function HomeScreen(props) {
     const dispatch = useDispatch()
     const [logged, setLogged] = useState(false)
 
+
+
     useEffect(() => {
         if (route.params?.forceLogout) {
-            dispatch(setUser(null))
+            dispatch(setUser({}))
             setLogged(false)
+            route.params.forceLogout=false
             return
         }
     }, [route.params?.forceLogout])
@@ -67,7 +70,7 @@ export default function HomeScreen(props) {
             <View style={styles.buttonsContainer}>
                 {logged && <>
                     <Text>Bonjour {user.infos.firstname}</Text>
-                    <ButtonPrimary onPress={() => navigation.navigate('Map', { screen: '_Map' })} title='Démarrer' />
+                    <ButtonPrimary onPress={() => navigation.navigate('Map', { screen: '_Map' })} title='Voir la carte' />
                 </>}
                 {!logged && <>
                     <ButtonPrimary onPress={() => handleSignUp()} title='Sign Up' />
