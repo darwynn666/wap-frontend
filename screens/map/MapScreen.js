@@ -29,7 +29,7 @@ import {
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
-import {dogAvatarUrl,userAvatarUrl} from '../../config'
+import { dogAvatarUrl, userAvatarUrl } from "../../config";
 import { BACKEND_URL } from "../../config";
 
 import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
@@ -44,7 +44,7 @@ import {
   IconMessage,
 } from "../../globalComponents/Icons";
 import { ScrollView } from "react-native-gesture-handler";
-import  {callNumber,smsNumber,sendEmail} from '../../modules/tools'
+import { callNumber, smsNumber, sendEmail } from "../../modules/tools";
 
 // COMPONENT
 export default function MapScreen2() {
@@ -79,6 +79,12 @@ export default function MapScreen2() {
   // force position
   const [forcePosition, setForcePosition] = useState();
   const [forcePositionColor, setForcePositionColor] = useState("#666666");
+
+  const STATUS_COLOR = {
+    walk: globalStyle.greenPrimary,
+    pause: globalStyle.bluePrimary,
+    off: globalStyle.grayPrimary,
+  };
 
   // user position
   useEffect(() => {
@@ -212,10 +218,15 @@ export default function MapScreen2() {
 
   //handle marker interaction
   //places
-  const onPlaceMarkerPress = (coordinate) => {
+  const onPlaceMarkerPress = async (place) => {
+    // get user info by id
+    const [location] = place;
+    const latitude = location.coordinates[1];
+    const longitude = location.coordinates[0];
+
     const adjustedRegion = {
-      latitude: coordinate.latitude + 0.01, // offset to show marker under marker
-      longitude: coordinate.longitude,
+      latitude: latitude + 0.01, // offset to show marker under marker
+      longitude: longitude,
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
     };
@@ -255,7 +266,7 @@ export default function MapScreen2() {
     setSelectedUser(userAllInfos);
 
     const adjustedRegion = {
-      latitude: coordinate.latitude + (isAccepted(user._id) ? 0.0325 : 0.01), // offset to show marker under marker
+      latitude: coordinate.latitude + (isAccepted(user._id) ? 0.035 : 0.01), // offset to show marker under marker
       longitude: coordinate.longitude,
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
@@ -312,7 +323,6 @@ export default function MapScreen2() {
   };
 
   const handleBlockFriend = async (friendTo) => {
-
     setPopUpUsersVisibility(false);
 
     const request = await fetch(`${BACKEND_URL}/friends/${user.token}/block/`, {
@@ -382,12 +392,7 @@ export default function MapScreen2() {
             longitude: placesMarker.location.coordinates[0],
           }}
           image={icon}
-          onPress={() =>
-            onPlaceMarkerPress({
-              latitude: placesMarker.location.coordinates[1],
-              longitude: placesMarker.location.coordinates[0],
-            })
-          }
+          onPress={() => onPlaceMarkerPress(place)}
         />
       );
     });
@@ -479,10 +484,27 @@ export default function MapScreen2() {
                 marginVertical: 10,
               }}
             >
-              <Image
-                style={{ width: 100, height: 100, borderRadius: 50 }}
-                source={{ uri: selectedUser.infos.photo!="" ? selectedUser.infos.photo : userAvatarUrl}}
-              />
+              <View
+                style={{
+                  width: 120,
+                  height: 120,
+                  borderRadius: 60,
+                  borderColor: STATUS_COLOR[selectedUser.status],
+                  borderWidth: 4,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Image
+                  style={{ width: 100, height: 100, borderRadius: 50 }}
+                  source={{
+                    uri:
+                      selectedUser.infos.photo != ""
+                        ? selectedUser.infos.photo
+                        : userAvatarUrl,
+                  }}
+                />
+              </View>
               <Text style={{ fontSize: globalStyle.h3 }}>
                 {selectedUser.infos.firstname} {selectedUser.infos.lastname}
               </Text>
@@ -515,17 +537,35 @@ export default function MapScreen2() {
                         alignItems: "center",
                         marginVertical: 10,
                         borderRadius: 10,
-                        borderColor: globalStyle.greenPrimary,
+                        borderColor:globalStyle.grayLight,
                         borderWidth: 2,
                         padding: 10,
-                        height: 135,
-                        width: 80,
+                        height: 150,
+                        width: 90,
                       }}
                     >
-                      <Image
-                        style={{ width: 60, height: 60, borderRadius: 30 }}
-                        source={{ uri:  dog.photo!="" ? dog.photo : dogAvatarUrl }}
-                      />
+                      {/* dog photo */}
+                      <View
+                        style={{
+                          width: 74,
+                          height: 74,
+                          marginBottom:3,
+                          borderRadius: 37,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          borderWidth:3,
+                          borderColor :dog.isTaken
+                          ? globalStyle.greenPrimary
+                          : globalStyle.grayPrimary,
+                        }}
+                      >
+                        <Image
+                          style={{ width: 60, height: 60, borderRadius: 30 }}
+                          source={{
+                            uri: dog.photo != "" ? dog.photo : dogAvatarUrl,
+                          }}
+                        />
+                      </View>
                       <Text
                         style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
                       >
@@ -547,9 +587,18 @@ export default function MapScreen2() {
                 paddingTop: 20,
               }}
             >
-              <MenuBottomItem srcIsActive={<IconMessage />} onPressed={()=>smsNumber(selectedUser.infos.telephone)}></MenuBottomItem>
-              <MenuBottomItem srcIsActive={<IconPhone />} onPressed={()=>callNumber(selectedUser.infos.telephone)}></MenuBottomItem>
-              <MenuBottomItem srcIsActive={<IconEmail />} onPressed={()=>sendEmail(selectedUser.infos.email)}></MenuBottomItem>
+              <MenuBottomItem
+                srcIsActive={<IconMessage />}
+                onPressed={() => smsNumber(selectedUser.infos.telephone)}
+              ></MenuBottomItem>
+              <MenuBottomItem
+                srcIsActive={<IconPhone />}
+                onPressed={() => callNumber(selectedUser.infos.telephone)}
+              ></MenuBottomItem>
+              <MenuBottomItem
+                srcIsActive={<IconEmail />}
+                onPressed={() => sendEmail(selectedUser.infos.email)}
+              ></MenuBottomItem>
             </View>
           </View>
         )}
