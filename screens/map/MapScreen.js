@@ -8,11 +8,15 @@ import {
   Pressable,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Marker, Callout } from "react-native-maps";
 import MapView from "react-native-maps";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { setUserFriends } from "../../reducers/user";
+
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -20,24 +24,47 @@ import {
   faCircleChevronRight,
   faLocationCrosshairs,
   faMapMarker,
-  faBars
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
+import {dogAvatarUrl,userAvatarUrl} from '../../config'
 import { BACKEND_URL } from "../../config";
 
 import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
 
+import MapPopUpModal from "./components/MapPopUpModal";
+import MenuBottomItem from "./components/MenuBottomItem";
+import {
+  IconDogGreen,
+  IconDogRed,
+  IconPhone,
+  IconEmail,
+  IconMessage,
+} from "../../globalComponents/Icons";
+import { ScrollView } from "react-native-gesture-handler";
+import  {callNumber,smsNumber,sendEmail} from '../../modules/tools'
+
 // COMPONENT
 export default function MapScreen2() {
   const navigation = useNavigation();
+
+  const mapRef = useRef(null);
+
+  const [popUpPlacesVisibility, setPopUpPlacesVisibility] = useState(false);
+  const [popUpUsersVisibility, setPopUpUsersVisibility] = useState(false);
+  const POP_UP_SPEED = 500;
+
   const [currentPosition, setCurrentPosition] = useState(false);
   const [positionMarker, setPositionMarker] = useState();
   const [mapType, setMapType] = useState("standard");
   const [visibleRegion, setVisibleRegion] = useState();
 
   const user = useSelector((state) => state.user.value);
+
+  const dispatch = useDispatch();
+
   const settings = useSelector((state) => state.settings.value);
   const usersDisplayIgnored = settings.usersDisplayIgnored;
   const placesDisplayIgnored = settings.placesDisplayIgnored;
@@ -47,6 +74,7 @@ export default function MapScreen2() {
 
   const [usersData, setUsersData] = useState([]);
   const [usersDataRegionFilter, setUsersDataRegionFilter] = useState([]);
+  const [selectedUser, setSelectedUser] = useState([]);
 
   // force position
   const [forcePosition, setForcePosition] = useState();
@@ -64,40 +92,48 @@ export default function MapScreen2() {
             longitude: location.coords.longitude,
             latitudeDelta: 0.05, //0.05 equivaut à environ 5km
             longitudeDelta: 0.05,
-          })
+          });
         });
       }
     })();
   }, []);
 
   const handleRegionChange = (region) => {
-    console.log(region)
+    // console.log(region);
     //filter places
-    setPlacesDataRegionFilter(placesData
-      .filter((marker) => 
-      {
-       if (visibleRegion.latitude)
-       {
-         return marker.location.coordinates[1] >= region.latitude - region.latitudeDelta / 2 &&
-         marker.location.coordinates[1] <= region.latitude + region.latitudeDelta / 2 &&
-         marker.location.coordinates[0] >= region.longitude - region.longitudeDelta / 2 &&
-         marker.location.coordinates[0] <= region.longitude + region.longitudeDelta / 2
-       }
-      }
-     ))
-     //filter users
-     setUsersDataRegionFilter(usersData
-      .filter((marker) => 
-        {
-         if (visibleRegion.latitude)
-         {
-           return marker.currentLocation.coordinates[1] >= region.latitude - region.latitudeDelta / 2 &&
-           marker.currentLocation.coordinates[1] <= region.latitude + region.latitudeDelta / 2 &&
-           marker.currentLocation.coordinates[0] >= region.longitude - region.longitudeDelta / 2 &&
-           marker.currentLocation.coordinates[0] <= region.longitude + region.longitudeDelta / 2
-         }
+    setPlacesDataRegionFilter(
+      placesData.filter((marker) => {
+        if (visibleRegion.latitude) {
+          return (
+            marker.location.coordinates[1] >=
+              region.latitude - region.latitudeDelta / 2 &&
+            marker.location.coordinates[1] <=
+              region.latitude + region.latitudeDelta / 2 &&
+            marker.location.coordinates[0] >=
+              region.longitude - region.longitudeDelta / 2 &&
+            marker.location.coordinates[0] <=
+              region.longitude + region.longitudeDelta / 2
+          );
         }
-       ))
+      })
+    );
+    //filter users
+    setUsersDataRegionFilter(
+      usersData.filter((marker) => {
+        if (visibleRegion.latitude) {
+          return (
+            marker.currentLocation.coordinates[1] >=
+              region.latitude - region.latitudeDelta / 2 &&
+            marker.currentLocation.coordinates[1] <=
+              region.latitude + region.latitudeDelta / 2 &&
+            marker.currentLocation.coordinates[0] >=
+              region.longitude - region.longitudeDelta / 2 &&
+            marker.currentLocation.coordinates[0] <=
+              region.longitude + region.longitudeDelta / 2
+          );
+        }
+      })
+    );
     // console.log('marker 0', markers[0])
     region.latitude && setVisibleRegion(region);
   };
@@ -174,96 +210,386 @@ export default function MapScreen2() {
     getUsers();
   }, []);
 
-  const places = placesDataRegionFilter
-  .filter(
-    (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
-  )
-  .map((e, i) => {
-    let icon = "";
-    switch (e.type) {
-      case "restaurants":
-        icon = require("../../assets/icons/icon_restaurant.png");
-        break;
-      case "bars":
-        icon = require("../../assets/icons/icon_bar.png");
-        break;
-      case "garbages":
-        icon = require("../../assets/icons/icon_toilet.png");
-        break;
-      case "shops":
-        icon = require("../../assets/icons/icon_shop.png");
-        break;
-      case "parks":
-        icon = require("../../assets/icons/icon_park.png");
-        break;
-      default:
-        icon = require("../../assets/icons/icon_location.png");
+  //handle marker interaction
+  //places
+  const onPlaceMarkerPress = (coordinate) => {
+    const adjustedRegion = {
+      latitude: coordinate.latitude + 0.01, // offset to show marker under marker
+      longitude: coordinate.longitude,
+      latitudeDelta: 0.05,
+      longitudeDelta: 0.05,
+    };
+
+    // move to marker
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(adjustedRegion, POP_UP_SPEED);
+      setTimeout(() => {
+        setPopUpPlacesVisibility(true);
+      }, POP_UP_SPEED);
     }
-    return (
-      <Marker
-        key={i}
-        coordinate={{
-          latitude: e.location.coordinates[1],
-          longitude: e.location.coordinates[0],
-        }}
-        image={icon}
-      />
+  };
+
+  //users
+  const onUsersMarkerPress = async (coordinate, user) => {
+    // get user info by id
+    const usersRequest = await fetch(`${BACKEND_URL}/users/${user._id}`);
+    const usersResponse = await usersRequest.json();
+    const usersData = usersResponse.data;
+
+    let _user = { friendType: "" };
+    //check status of user by id
+    const friendType = [
+      { name: "accepted", value: isAccepted(user._id) },
+      { name: "blocked", value: isBlocked(user._id) },
+      {
+        name: "unknowed",
+        value: !(isAccepted(user._id) || isBlocked(user._id)),
+      },
+    ];
+
+    _user.friendType = friendType
+      .filter((x) => x.value === true)
+      .map((x) => x.name)[0];
+
+    const userAllInfos = { ..._user, ...usersData };
+    setSelectedUser(userAllInfos);
+
+    const adjustedRegion = {
+      latitude: coordinate.latitude + (isAccepted(user._id) ? 0.0325 : 0.01), // offset to show marker under marker
+      longitude: coordinate.longitude,
+      latitudeDelta: 0.05,
+      longitudeDelta: 0.05,
+    };
+
+    // move to marker
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(adjustedRegion, POP_UP_SPEED);
+      setTimeout(() => {
+        setPopUpUsersVisibility(true);
+      }, POP_UP_SPEED);
+    }
+  };
+
+  //popup button handler
+  const handleOutcomingFriend = async (friendTo) => {
+    setPopUpUsersVisibility(false);
+
+    const request = await fetch(
+      `${BACKEND_URL}/friends/${user.token}/outcoming/`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          friendFrom: user._id,
+          friendTo: friendTo._id,
+        }),
+      }
     );
-  });
+
+    const response = await request.json();
+    if (response.result) {
+      Alert.alert("La demande a été envoyé");
+      dispatch(setUserFriends(response.userFromFriends));
+    } else {
+      Alert.alert("La demande a déjà été envoyée");
+    }
+  };
+
+  const askFriendPress = async () => {
+    const firstname = selectedUser.infos.firstname;
+    const id = selectedUser;
+    Alert.alert(
+      `Demander ${firstname} en ami ?`,
+      "Vous pourrez échanger vos informations et vous voir sur la carte",
+      [
+        { text: "Non", onPress: () => setPopUpUsersVisibility(false) },
+        {
+          text: "Oui",
+          onPress: () => handleOutcomingFriend(selectedUser),
+        },
+      ]
+    );
+  };
+
+  const handleBlockFriend = async (friendTo) => {
+
+    setPopUpUsersVisibility(false);
+
+    const request = await fetch(`${BACKEND_URL}/friends/${user.token}/block/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        friendToBlock: friendTo._id,
+      }),
+    });
+
+    const response = await request.json();
+    if (response.result) {
+      Alert.alert("Cet utilisateur est maintenant bloqué");
+      dispatch(setUserFriends(response.userFriends));
+    } else {
+      Alert.alert("Erreur lors de la demande de bloquage");
+    }
+  };
+
+  const blockFriendPress = async () => {
+    const firstname = selectedUser.infos.firstname;
+    const id = selectedUser;
+    Alert.alert(
+      `Bloquer ${firstname} ?`,
+      "Cet utilisateur ne pourra plus vous voir sur la carte.",
+      [
+        { text: "Non", onPress: () => setPopUpUsersVisibility(false) },
+        {
+          text: "Oui",
+          onPress: () => handleBlockFriend(selectedUser),
+        },
+      ]
+    );
+  };
+
+  //create markers
+  const places = placesDataRegionFilter
+    .filter(
+      (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
+    )
+    .map((placesMarker, i) => {
+      let icon = "";
+      switch (placesMarker.type) {
+        case "restaurants":
+          icon = require("../../assets/icons/icon_restaurant.png");
+          break;
+        case "bars":
+          icon = require("../../assets/icons/icon_bar.png");
+          break;
+        case "garbages":
+          icon = require("../../assets/icons/icon_toilet.png");
+          break;
+        case "shops":
+          icon = require("../../assets/icons/icon_shop.png");
+          break;
+        case "parks":
+          icon = require("../../assets/icons/icon_park.png");
+          break;
+        default:
+          icon = require("../../assets/icons/icon_location.png");
+      }
+      return (
+        <Marker
+          key={i}
+          coordinate={{
+            latitude: placesMarker.location.coordinates[1],
+            longitude: placesMarker.location.coordinates[0],
+          }}
+          image={icon}
+          onPress={() =>
+            onPlaceMarkerPress({
+              latitude: placesMarker.location.coordinates[1],
+              longitude: placesMarker.location.coordinates[0],
+            })
+          }
+        />
+      );
+    });
 
   const users = usersDataRegionFilter
-  .filter((userData) => {
-    const _isAccepted = isAccepted(userData._id);
-    const _isBlocked = isBlocked(userData._id);
-    const _unkow = !(_isAccepted || _isBlocked);
-    let isShown =true;
-    if (usersDisplayIgnored.includes("friends"))
-      isShown =  isShown && !_isAccepted
-    if (usersDisplayIgnored.includes("blocked"))
-      isShown =  isShown && !_isBlocked
-    if (usersDisplayIgnored.includes("unknows"))
-      isShown =  isShown && !_unkow
-    return isShown;
-  })
-  .map((e, i) => {
-    let icon = require("../../assets/icons/icon_dog_gray.png");
-    //need to check if friends or blocked
-    if (isAccepted(e._id))
-      icon = require("../../assets/icons/icon_dog_green.png");
-    else if (isBlocked(e._id))
-      icon = require("../../assets/icons/icon_dog_red.png");
+    .filter((userData) => {
+      const _isAccepted = isAccepted(userData._id);
+      const _isBlocked = isBlocked(userData._id);
+      const _unkow = !(_isAccepted || _isBlocked);
+      let isShown = true;
+      if (usersDisplayIgnored.includes("friends"))
+        isShown = isShown && !_isAccepted;
+      if (usersDisplayIgnored.includes("blocked"))
+        isShown = isShown && !_isBlocked;
+      if (usersDisplayIgnored.includes("unknows")) isShown = isShown && !_unkow;
+      return isShown;
+    })
+    .map((user, i) => {
+      let icon = require("../../assets/icons/icon_dog_gray.png");
+      //need to check if friends or blocked
+      if (isAccepted(user._id))
+        icon = require("../../assets/icons/icon_dog_green.png");
+      else if (isBlocked(user._id))
+        icon = require("../../assets/icons/icon_dog_red.png");
 
-    return (
-      <Marker
-        key={i}
-        coordinate={{
-          latitude: e.currentLocation.coordinates[1],
-          longitude: e.currentLocation.coordinates[0],
-        }}
-        // pinColor="royalblue"
-        image={icon}
-      ></Marker>
-    );
-  });
+      return (
+        <Marker
+          key={i}
+          coordinate={{
+            latitude: user.currentLocation.coordinates[1],
+            longitude: user.currentLocation.coordinates[0],
+          }}
+          // pinColor="royalblue"
+          image={icon}
+          onPress={() =>
+            onUsersMarkerPress(
+              {
+                latitude: user.currentLocation.coordinates[1],
+                longitude: user.currentLocation.coordinates[0],
+              },
+              user
+            )
+          }
+        ></Marker>
+      );
+    });
 
   // console.log('current position', currentPosition)
   return (
     <View style={styles.container}>
-      { (
-        <MapView
-          initialRegion={visibleRegion}
-          mapType={settings.mapDisplayIgnored}
-          style={{ width: "100%", height: "100%" }}
-          showsUserLocation={!forcePosition}
-          showsMyLocationButton={!forcePosition}
-          onPress={(region) => handlePress(region)}
-          onRegionChangeComplete={(region) => handleRegionChange(region)}
-        >
-          {forcePosition && positionMarker}
-          {places}
-          {users}
-        </MapView>
-      )}
+      <MapView
+        ref={mapRef}
+        initialRegion={visibleRegion}
+        mapType={settings.mapDisplayIgnored}
+        style={{ width: "100%", height: "100%" }}
+        showsUserLocation={!forcePosition}
+        showsMyLocationButton={!forcePosition}
+        onPress={(region) => handlePress(region)}
+        onRegionChangeComplete={(region) => handleRegionChange(region)}
+        moveOnMarkerPress={false}
+      >
+        {forcePosition && positionMarker}
+        {places}
+        {users}
+      </MapView>
+
+      {/* popUp of marker */}
+      {/* places */}
+      <MapPopUpModal
+        visibility={popUpPlacesVisibility}
+        onRequestClose={() => setPopUpPlacesVisibility(false)}
+      ></MapPopUpModal>
+
+      {/* users */}
+      <MapPopUpModal
+        visibility={popUpUsersVisibility}
+        onRequestClose={() => setPopUpUsersVisibility(false)}
+      >
+        {selectedUser.friendType == "accepted" && (
+          <View style={{ width: "90%" }}>
+            {/* header user info */}
+            <View
+              style={{
+                width: "100%",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 5,
+                marginVertical: 10,
+              }}
+            >
+              <Image
+                style={{ width: 100, height: 100, borderRadius: 50 }}
+                source={{ uri: selectedUser.infos.photo!="" ? selectedUser.infos.photo : userAvatarUrl}}
+              />
+              <Text style={{ fontSize: globalStyle.h3 }}>
+                {selectedUser.infos.firstname} {selectedUser.infos.lastname}
+              </Text>
+            </View>
+            <View style={styles.separator}></View>
+            {/* dogs view */}
+            <ScrollView
+              horizontal={true}
+              contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  minHeight: "10",
+                  flexDirection: "row",
+                  flexGrow: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 15,
+                  marginVertical: 10,
+                }}
+              >
+                {/* create view for each dogs */}
+                {selectedUser.dogs.map((dog, i) => {
+                  return (
+                    <View
+                      key={i}
+                      style={{
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        marginVertical: 10,
+                        borderRadius: 10,
+                        borderColor: globalStyle.greenPrimary,
+                        borderWidth: 2,
+                        padding: 10,
+                        height: 135,
+                        width: 80,
+                      }}
+                    >
+                      <Image
+                        style={{ width: 60, height: 60, borderRadius: 30 }}
+                        source={{ uri:  dog.photo!="" ? dog.photo : dogAvatarUrl }}
+                      />
+                      <Text
+                        style={{ fontSize: globalStyle.h5, fontWeight: "bold" }}
+                      >
+                        {dog.name}
+                      </Text>
+                      <Text style={{ fontSize: globalStyle.h6 }}>
+                        {dog.status}
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            </ScrollView>
+            <View style={styles.separator}></View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-around",
+                paddingTop: 20,
+              }}
+            >
+              <MenuBottomItem srcIsActive={<IconMessage />} onPressed={()=>smsNumber(selectedUser.infos.telephone)}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconPhone />} onPressed={()=>callNumber(selectedUser.infos.telephone)}></MenuBottomItem>
+              <MenuBottomItem srcIsActive={<IconEmail />} onPressed={()=>sendEmail(selectedUser.infos.email)}></MenuBottomItem>
+            </View>
+          </View>
+        )}
+
+        {selectedUser.friendType == "blocked" && (
+          <View>
+            <Text>
+              Cet utilisateur est bloqué. Toutefois, vous pouvez le débloquer
+              dans votre liste d'amis.
+            </Text>
+          </View>
+        )}
+
+        {selectedUser.friendType == "unknowed" && (
+          <View
+            style={{
+              width: "100%",
+              flexDirection: "row",
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <TouchableOpacity>
+              {/* MenuBottomItem is a component with an icon, a label as in filtermenu */}
+              <MenuBottomItem
+                srcIsActive={<IconDogGreen />}
+                label="ajouter un ami"
+                onPressed={() => askFriendPress()}
+              ></MenuBottomItem>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <MenuBottomItem
+                srcIsActive={<IconDogRed />}
+                label="bloquer une personne"
+                onPressed={() => blockFriendPress()}
+              ></MenuBottomItem>
+            </TouchableOpacity>
+          </View>
+        )}
+      </MapPopUpModal>
 
       <TouchableOpacity
         style={styles.menuButton}
@@ -360,4 +686,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   marker: {},
+  separator: {
+    borderBottomColor: globalStyle.grayPrimary,
+    borderBottomWidth: 1,
+    height: 1,
+    width: "100%",
+  },
 });
