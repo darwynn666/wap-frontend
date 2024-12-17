@@ -41,7 +41,7 @@ export default function DogsScreen() {
         console.log(data);
         return (
             <TouchableOpacity key={i} style={styles.dogContainer} onPress={() => navigation.navigate('EditDog', { ...data })} >
-                <Image style={styles.image} source={{ uri: dogAvatarUrl }} />
+                <Image style={styles.image} source={{ uri: data.photo_public_id ? data.photo : dogAvatarUrl }} />
                 <View style={styles.dogName}>
                     <FontAwesomeIcon icon={faCircle} size={15} style={{ color: data.sex === 'male' ? '#87CEEB' : '#FFC0CB' }}></FontAwesomeIcon>
                     <Text style={styles.text} >{data.name}</Text>
