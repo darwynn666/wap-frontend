@@ -1,10 +1,31 @@
-import { StyleSheet, Text, TextInput, View, Button, ImageBackground, Image } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Button, ImageBackground, Animated, useAnimatedValue, Image, delay, fadeOut, duration } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
 import BottomMenu from './components/BottomMenu'
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+const FadeInView = ({ delay = 0, duration = 5000, fadeOut = false, children, style }) => {
+    const fadeAnim = useAnimatedValue(fadeOut ? 1 : 0); // Départ selon le sens de l'animation
+
+    useEffect(() => {
+        Animated.timing(fadeAnim, {
+            toValue: fadeOut ? 0 : 1, // Aller vers 1 (apparition) ou 0 (disparition)
+            duration: duration, // Durée de l'animation
+            delay: delay, // Délai avant de commencer
+            useNativeDriver: true,
+        }).start();
+    }, [fadeAnim, fadeOut, delay, duration]);
+
+    return (
+        <Animated.View style={{ ...style, opacity: fadeAnim }}>
+            {children}
+        </Animated.View>
+    );
+};
+
+
 
 
 export default function MarkersTutoScreen(props) {
@@ -26,70 +47,66 @@ export default function MarkersTutoScreen(props) {
 
     return (
         <ImageBackground source={require('../../assets/icons/map_tuto.jpg')} style={styles.background}>
+            <Text style={styles.texttuto}>Tuto 1/5</Text>
             {/* <GestureHandlerRootView style={{ flex: 1 }}>
                 <PanGestureHandler onGestureEvent={onSwipePerformed}> */}
-                    <View style={styles.container}>
-                        <View style={styles.containermap}>
-                            <View>
-                                <Text style={styles.text}>Tuto1/5</Text>
-                            </View>
-                            <View style={styles.reddog}>
-                                <View style={styles.tooltip}>
-                                    <Text style={styles.tooltipText}>
-                                        Ici c'est toi
-                                    </Text>
-                                </View>
-                                <Icon name="arrow-down" style={styles.arrow} size={30} color="#fff" />
-                                <Image style={styles.icon} source={require('../../assets/icons/icon_dog_red.png')}></Image>
-                            </View>
-
-                            <View style={styles.greendog}>
-                                <View style={styles.tooltip}>
-                                    <Text style={styles.tooltipText}>
-                                        Un ami que tu connais ? Appelle-le et rejoins-le
-                                    </Text>
-                                </View>
-                                <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
-                                <Image style={styles.icon} source={require('../../assets/icons/icon_dog_green.png')}></Image>
-                            </View>
-                            <View style={styles.graydog1}>
-                                <View style={styles.tooltip}>
-                                    <Text style={styles.tooltipText}>
-                                        Une future connaissance? Rencontre-la et ajoute-la à tes amis
-                                    </Text>
-                                </View>
-                                <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
-                                <Image style={styles.icon} source={require('../../assets/icons/icon_dog_gray.png')}></Image>
-                            </View>
-                            <View style={styles.graydog2}>
-
-                                <Image style={styles.icon} source={require('../../assets/icons/icon_dog_gray.png')}></Image>
-                            </View>
-                            <View style={styles.restaurant}>
-                                <View style={styles.tooltip}>
-                                    <Text style={styles.tooltipText}>
-                                        Trois personnes au même lieu, ça doit être super comme endroit !
-                                    </Text>
-                                </View>
-                                <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
-                                <Text>3</Text>
-                                <Image style={styles.icon} source={require('../../assets/icons/icon_restaurant.png')}></Image>
-                            </View>
-                            <View style={styles.toilet}>
-                                <View style={styles.tooltip}>
-                                    <Text style={styles.tooltipText}>
-                                        Les sachets propreté c’est ici
-                                    </Text>
-                                </View>
-                                <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
-                                <Image style={styles.icon} source={require('../../assets/icons/icon_toilet.png')}></Image>
-                            </View>
+            <View style={styles.container}>
+                <View style={styles.containermap}>
+                    <FadeInView delay={0} duration={3000} style={styles.reddog}>
+                        <View style={styles.tooltip}>
+                            <Text style={styles.tooltipText}>
+                                Ici c'est toi
+                            </Text>
                         </View>
-                        <View style={styles.containerbutton}>
-                            <BottomMenu />
+                        <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
+                        <Image style={styles.icon} source={require('../../assets/icons/icon_dog_red.png')}></Image>
+                    </FadeInView>
+                    <FadeInView delay={3000} duration={3000} style={styles.greendog}>
+                        <View style={styles.tooltip}>
+                            <Text style={styles.tooltipText}>
+                                Un ami que tu connais ? Appelle-le et rejoins-le
+                            </Text>
                         </View>
+                        <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
+                        <Image style={styles.icon} source={require('../../assets/icons/icon_dog_green.png')}></Image>
+                    </FadeInView>
+                    <FadeInView delay={6000} duration={3000} style={styles.graydog1}>
+                        <View style={styles.tooltip}>
+                            <Text style={styles.tooltipText}>
+                                Une future connaissance? Rencontre-la et ajoute-la à tes amis
+                            </Text>
+                        </View>
+                        <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
+                        <Image style={styles.icon} source={require('../../assets/icons/icon_dog_gray.png')}></Image>
+                    </FadeInView>
+                    <View style={styles.graydog2}>
+                        <Image style={styles.icon} source={require('../../assets/icons/icon_dog_gray.png')}></Image>
                     </View>
-                {/* </PanGestureHandler>
+                    <FadeInView delay={9000} duration={3000} style={styles.restaurant}>
+                        <View style={styles.tooltip}>
+                            <Text style={styles.tooltipText}>
+                                Trois personnes au même lieu, ça doit être super comme endroit !
+                            </Text>
+                        </View>
+                        <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
+                        <Text style={styles.number}>3</Text>
+                        <Image style={styles.icon} source={require('../../assets/icons/icon_restaurant.png')}></Image>
+                    </FadeInView>
+                    <FadeInView delay={12000} duration={3000} style={styles.toilet}>
+                        <View style={styles.tooltip}>
+                            <Text style={styles.tooltipText}>
+                                Les sachets propreté c’est ici
+                            </Text>
+                        </View>
+                        <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" />
+                        <Image style={styles.icon} source={require('../../assets/icons/icon_toilet.png')}></Image>
+                    </FadeInView>
+                </View>
+                <View style={styles.containerbutton}>
+                    <BottomMenu />
+                </View>
+            </View>
+            {/* </PanGestureHandler>
             </GestureHandlerRootView> */}
         </ImageBackground>
     )
@@ -122,12 +139,8 @@ const styles = StyleSheet.create({
         flex: 0.1,
         width: '100%',
         height: '15%',
-        //marginTop: '50',
-        // marginTop: 50
-        // paddingTop:'20%',
-       //justifyContent:'space between',
-       marginBottom:-30
-        
+        marginBottom: -30
+
     },
     background: {
         width: '100%',
@@ -166,7 +179,7 @@ const styles = StyleSheet.create({
     restaurant: {
         alignItems: 'center',
         position: 'relative',
-        top: -300,
+        top: -320,
         left: 100,
     },
     toilet: {
@@ -180,7 +193,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 70,
         //right:-5,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Opacité corrigée pour que le fond soit bien visible
+        backgroundColor: 'rgba(0, 0, 0, 1)', // Opacité corrigée pour que le fond soit bien visible
         padding: 10,
         borderRadius: 8,
         maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
@@ -194,27 +207,29 @@ const styles = StyleSheet.create({
 
     },
     arrow: {
-        width: 0,
-        height: 0,
-        borderLeftWidth: 10,
-        borderRightWidth: 10,
-        borderBottomWidth: 10,
-        borderStyle: 'solid',
-        backgroundColor: 'transparent',
-        borderLeftColor: 'transparent',
-        borderRightColor: 'transparent',
-        borderBottomColor: '#fff',
-        marginTop: -2, // Ajustez selon l'espace souhaité
+        // width: ,
+        //height: '5',
+        //borderLeftWidth: 10,
+        //borderRightWidth: 10,
+        //borderBottomWidth: 10,
+        //borderStyle: 'solid',
+        // backgroundColor: 'transparent',
+        // borderLeftColor: 'transparent',
+        //borderRightColor: 'transparent',
+        //borderBottomColor: '#000',
+        // marginTop: -3, // Ajustez selon l'espace souhaité
     },
 
-    text: {
+    texttuto: {
         color: '#000',
         alignItems: 'center',
         position: 'relative',
-        top: -290,
-        left: 150,
-        fontSize:20
-
-
+        top: 20,
+        left: 300,
+        fontSize: globalStyle.h2,
+    },
+    number: {
+        fontSize: globalStyle.h3,
     },
 })
+
