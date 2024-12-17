@@ -10,6 +10,7 @@ const greenPrimary = "#44CD6F";
 const grayPrimary = "#A19D9D";
 const grayLight = "#D9D9D9";
 const bluePrimary = "#5F9CE1";
+const blueLight = "#A9CAEF";
 const redPrimary = "#DF4141";
 
 // global style properties
@@ -33,6 +34,7 @@ export const globalStyle = {
     grayPrimary: grayPrimary,
     grayLight: grayLight,
     bluePrimary: bluePrimary,
+    blueLight:blueLight,
     redPrimary: redPrimary,
 
     // buttons

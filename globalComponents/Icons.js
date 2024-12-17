@@ -31,6 +31,10 @@ const IconDogBlue = () => {
   return <IconDog color={globalStyle.bluePrimary} />;
 };
 
+const IconDogBlueLight = () => {
+  return <IconDog color={globalStyle.blueLight} />;
+};
+
 const IconDogRed = () => {
   return <IconDog color={globalStyle.redPrimary} />;
 };
@@ -248,6 +252,7 @@ module.exports = {
   IconDogGray,
   IconDogGreen,
   IconDogBlue,
+  IconDogBlueLight,
   IconDogRed,
   IconDogGrayLight,
   IconBarBlue,
@@ -268,5 +273,5 @@ module.exports = {
   IconMapSatelliteGray,
   IconPhone,
   IconEmail,
-  IconMessage
+  IconMessage,
 };

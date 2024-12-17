@@ -39,6 +39,8 @@ import MenuBottomItem from "./components/MenuBottomItem";
 import {
   IconDogGreen,
   IconDogRed,
+  IconDogBlue,
+  IconDogBlueLight,
   IconPhone,
   IconEmail,
   IconMessage,
@@ -468,17 +470,35 @@ export default function MapScreen2() {
         onRequestClose={() => setPopUpPlacesVisibility(false)}
       >
         <View>
-          <Text style={{ fontSize: globalStyle.h2 ,marginBottom:10}}>{selectedPlace.name}</Text>
+          <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
+            {selectedPlace.name}
+          </Text>
         </View>
         <Image
-          style={{ width: "100%", height: 175, resizeMode:"cover" }}
+          style={{ width: "100%", height: 175, resizeMode: "cover" }}
           source={{
             uri:
               selectedPlace.photo != "" ? selectedPlace.photo : defaultPlaceUrl,
           }}
         />
-        <Text style={{marginVertical:5, fontWeight:'bold', fontSize:globalStyle.h6}}>{selectedPlace.houseNumber} {selectedPlace.street} {selectedPlace.postcode} {selectedPlace.city} </Text>
-        <Text style={{marginVertical:10}} >{selectedPlace.description}</Text>
+        <Text
+          style={{
+            marginVertical: 5,
+            fontWeight: "bold",
+            fontSize: globalStyle.h6,
+          }}
+        >
+          {selectedPlace.houseNumber} {selectedPlace.street}{" "}
+          {selectedPlace.postcode} {selectedPlace.city}{" "}
+        </Text>
+        <Text style={{ fontSize:globalStyle.h5, marginVertical: 8 }}>{selectedPlace.description}</Text>
+        <View style= {{margin:15}}>
+          <MenuBottomItem
+            onPressed={()=>{}}
+            srcIsActive={<IconDogBlueLight />}
+            label="J'y suis"
+          ></MenuBottomItem>
+        </View>
       </MapPopUpModal>
 
       {/* users */}
