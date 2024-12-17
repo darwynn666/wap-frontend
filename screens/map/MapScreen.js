@@ -73,7 +73,7 @@ export default function MapScreen2() {
 
   const [placesData, setPlacesData] = useState([]);
   const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
-  const [selectedPlace, setSelectedPlace] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null);
 
   const [usersData, setUsersData] = useState([]);
   const [usersDataRegionFilter, setUsersDataRegionFilter] = useState([]);
@@ -109,40 +109,46 @@ export default function MapScreen2() {
 
   const handleRegionChange = (region) => {
     // console.log(region);
-    //filter places
-    setPlacesDataRegionFilter(
-      placesData.filter((marker) => {
-        if (visibleRegion.latitude) {
-          return (
-            marker.location.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
-            marker.location.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
-            marker.location.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
-            marker.location.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
-          );
-        }
-      })
-    );
-    //filter users
-    setUsersDataRegionFilter(
-      usersData.filter((marker) => {
-        if (visibleRegion.latitude) {
-          return (
-            marker.currentLocation.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
-            marker.currentLocation.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
-            marker.currentLocation.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
-            marker.currentLocation.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
-          );
-        }
-      })
-    );
+    // if dezoom
+    if (region.latitudeDelta > 1) {
+      setPlacesDataRegionFilter([]);
+      setUsersDataRegionFilter([]);
+    } else {
+      //filter places
+      setPlacesDataRegionFilter(
+        placesData.filter((marker) => {
+          if (visibleRegion.latitude) {
+            return (
+              marker.location.coordinates[1] >=
+                region.latitude - region.latitudeDelta / 2 &&
+              marker.location.coordinates[1] <=
+                region.latitude + region.latitudeDelta / 2 &&
+              marker.location.coordinates[0] >=
+                region.longitude - region.longitudeDelta / 2 &&
+              marker.location.coordinates[0] <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          }
+        })
+      );
+      //filter users
+      setUsersDataRegionFilter(
+        usersData.filter((marker) => {
+          if (visibleRegion.latitude) {
+            return (
+              marker.currentLocation.coordinates[1] >=
+                region.latitude - region.latitudeDelta / 2 &&
+              marker.currentLocation.coordinates[1] <=
+                region.latitude + region.latitudeDelta / 2 &&
+              marker.currentLocation.coordinates[0] >=
+                region.longitude - region.longitudeDelta / 2 &&
+              marker.currentLocation.coordinates[0] <=
+                region.longitude + region.longitudeDelta / 2
+            );
+          }
+        })
+      );
+    }
     // console.log('marker 0', markers[0])
     region.latitude && setVisibleRegion(region);
   };
@@ -209,6 +215,20 @@ export default function MapScreen2() {
 
   const isBlocked = (id) => {
     return user.friends.blocked.some((friend) => friend == id);
+  };
+
+  /**
+   *
+   * @param {*} user_id
+   * @param {*} place_id
+   * @returns
+   */
+  const isUserInPlace = (user_id, place) => {
+    // console.log("selectedplace", place);
+    if (!place) return false;
+    else return place.users.includes(user_id);
+    // console.log(place.users.includes(user_id))
+    //
   };
 
   useEffect(() => {
@@ -362,6 +382,31 @@ export default function MapScreen2() {
     );
   };
 
+  const ImHerePressed = async (user_id, place_id) => {
+    //set value in bdd
+    const request = await fetch(
+      `${BACKEND_URL}/places/${place_id}/users/${user_id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-type": "application/json",
+        },
+      }
+    );
+    const response = await request.json();
+    // set value in place usestate
+    setPlacesData([
+      ...placesData.map((x) => {
+        if (x._id === place_id) x.users = response.users;
+        return x;
+      }),
+    ]);
+    //
+    const tmpPlaces = { ...selectedPlace };
+    tmpPlaces.users = response.users;
+    setSelectedPlace(tmpPlaces);
+  };
+
   //create markers
   const places = placesDataRegionFilter
     .filter(
@@ -391,12 +436,48 @@ export default function MapScreen2() {
       return (
         <Marker
           key={i}
+          anchor={{ x: 0.5, y: 0.5 }}
           coordinate={{
             latitude: placesMarker.location.coordinates[1],
             longitude: placesMarker.location.coordinates[0],
           }}
           image={icon}
           onPress={() => onPlaceMarkerPress(placesMarker)}
+        />
+      );
+    });
+
+  const placesUsersCounter = placesDataRegionFilter
+    .filter(
+      (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
+    )
+    .filter((place) => place.users.length > 0)
+    .map((placesMarker, i) => {
+      const nbUser = placesMarker.users.length;
+
+      const images = [
+        require(`../../assets/icons/icon_counter_0.png`),
+        require(`../../assets/icons/icon_counter_1.png`),
+        require(`../../assets/icons/icon_counter_2.png`),
+        require(`../../assets/icons/icon_counter_3.png`),
+        require(`../../assets/icons/icon_counter_4.png`),
+        require(`../../assets/icons/icon_counter_5.png`),
+        require(`../../assets/icons/icon_counter_6.png`),
+        require(`../../assets/icons/icon_counter_7.png`),
+        require(`../../assets/icons/icon_counter_8.png`),
+        require(`../../assets/icons/icon_counter_9.png`),
+        require(`../../assets/icons/icon_counter_10.png`),
+      ];
+
+      return (
+        <Marker
+          key={i}
+          anchor={{ x: 0, y: 0 }}
+          coordinate={{
+            latitude: placesMarker.location.coordinates[1],
+            longitude: placesMarker.location.coordinates[0],
+          }}
+          image={images[nbUser <= 10 ? nbUser : 10]}
         />
       );
     });
@@ -460,6 +541,7 @@ export default function MapScreen2() {
       >
         {forcePosition && positionMarker}
         {places}
+        {placesUsersCounter}
         {users}
       </MapView>
 
@@ -469,36 +551,52 @@ export default function MapScreen2() {
         visibility={popUpPlacesVisibility}
         onRequestClose={() => setPopUpPlacesVisibility(false)}
       >
-        <View>
-          <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
-            {selectedPlace.name}
-          </Text>
-        </View>
-        <Image
-          style={{ width: "100%", height: 175, resizeMode: "cover" }}
-          source={{
-            uri:
-              selectedPlace.photo != "" ? selectedPlace.photo : defaultPlaceUrl,
-          }}
-        />
-        <Text
-          style={{
-            marginVertical: 5,
-            fontWeight: "bold",
-            fontSize: globalStyle.h6,
-          }}
-        >
-          {selectedPlace.houseNumber} {selectedPlace.street}{" "}
-          {selectedPlace.postcode} {selectedPlace.city}{" "}
-        </Text>
-        <Text style={{ fontSize:globalStyle.h5, marginVertical: 8 }}>{selectedPlace.description}</Text>
-        <View style= {{margin:15}}>
-          <MenuBottomItem
-            onPressed={()=>{}}
-            srcIsActive={<IconDogBlueLight />}
-            label="J'y suis"
-          ></MenuBottomItem>
-        </View>
+        {selectedPlace && (
+          <View style={{ width: "100%" }}>
+            <View>
+              <Text style={{ fontSize: globalStyle.h2, marginBottom: 10 }}>
+                {selectedPlace.name}
+              </Text>
+              <Image
+                style={{ width: "100%", height: 175, resizeMode: "cover" }}
+                source={{
+                  uri:
+                    selectedPlace.photo != ""
+                      ? selectedPlace.photo
+                      : defaultPlaceUrl,
+                }}
+              />
+            </View>
+            <Text
+              style={{
+                marginVertical: 5,
+                fontWeight: "bold",
+                fontSize: globalStyle.h6,
+              }}
+            >
+              {selectedPlace.houseNumber} {selectedPlace.street}{" "}
+              {selectedPlace.postcode} {selectedPlace.city}{" "}
+            </Text>
+            <Text style={{ fontSize: globalStyle.h5, marginVertical: 8 }}>
+              {selectedPlace.description}
+            </Text>
+            <View style={{ margin: 15 }}>
+              <MenuBottomItem
+                onPressed={() => {
+                  ImHerePressed(user._id, selectedPlace._id);
+                }}
+                srcIsActive={
+                  isUserInPlace(user._id, selectedPlace) ? (
+                    <IconDogBlue />
+                  ) : (
+                    <IconDogBlueLight />
+                  )
+                }
+                label="J'y suis"
+              ></MenuBottomItem>
+            </View>
+          </View>
+        )}
       </MapPopUpModal>
 
       {/* users */}
