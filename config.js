@@ -16,7 +16,7 @@ const redPrimary = "#DF4141";
 export const globalStyle = {
 
     h1: 30,
-    h2: 25,
+    h2: 20,
     h3: 18,
     h4: 15,
     h5: 12,
@@ -50,6 +50,7 @@ export const globalStyle = {
 
 export const userAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078126/avatar_g55kvf.jpg'
 export const dogAvatarUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734078252/avatar_xmojsb.jpg'
+export const defaultPlaceUrl = 'https://res.cloudinary.com/dlbepeoff/image/upload/v1734431989/default_location_images_u2fbv8.jpg'
 export const logoHomeUrl = '' // à définir et uploader sur cloudinary
 
 

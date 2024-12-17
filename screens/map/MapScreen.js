@@ -29,7 +29,7 @@ import {
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
-import { dogAvatarUrl, userAvatarUrl } from "../../config";
+import { dogAvatarUrl, userAvatarUrl, defaultPlaceUrl } from "../../config";
 import { BACKEND_URL } from "../../config";
 
 import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
@@ -71,6 +71,7 @@ export default function MapScreen2() {
 
   const [placesData, setPlacesData] = useState([]);
   const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState([]);
 
   const [usersData, setUsersData] = useState([]);
   const [usersDataRegionFilter, setUsersDataRegionFilter] = useState([]);
@@ -219,8 +220,9 @@ export default function MapScreen2() {
   //handle marker interaction
   //places
   const onPlaceMarkerPress = async (place) => {
-    // get user info by id
-    const [location] = place;
+    //
+    setSelectedPlace(place);
+    const { location } = place;
     const latitude = location.coordinates[1];
     const longitude = location.coordinates[0];
 
@@ -392,7 +394,7 @@ export default function MapScreen2() {
             longitude: placesMarker.location.coordinates[0],
           }}
           image={icon}
-          onPress={() => onPlaceMarkerPress(place)}
+          onPress={() => onPlaceMarkerPress(placesMarker)}
         />
       );
     });
@@ -464,7 +466,20 @@ export default function MapScreen2() {
       <MapPopUpModal
         visibility={popUpPlacesVisibility}
         onRequestClose={() => setPopUpPlacesVisibility(false)}
-      ></MapPopUpModal>
+      >
+        <View>
+          <Text style={{ fontSize: globalStyle.h2 ,marginBottom:10}}>{selectedPlace.name}</Text>
+        </View>
+        <Image
+          style={{ width: "100%", height: 175, resizeMode:"cover" }}
+          source={{
+            uri:
+              selectedPlace.photo != "" ? selectedPlace.photo : defaultPlaceUrl,
+          }}
+        />
+        <Text style={{marginVertical:5, fontWeight:'bold', fontSize:globalStyle.h6}}>{selectedPlace.houseNumber} {selectedPlace.street} {selectedPlace.postcode} {selectedPlace.city} </Text>
+        <Text style={{marginVertical:10}} >{selectedPlace.description}</Text>
+      </MapPopUpModal>
 
       {/* users */}
       <MapPopUpModal
@@ -537,7 +552,7 @@ export default function MapScreen2() {
                         alignItems: "center",
                         marginVertical: 10,
                         borderRadius: 10,
-                        borderColor:globalStyle.grayLight,
+                        borderColor: globalStyle.grayLight,
                         borderWidth: 2,
                         padding: 10,
                         height: 150,
@@ -549,14 +564,14 @@ export default function MapScreen2() {
                         style={{
                           width: 74,
                           height: 74,
-                          marginBottom:3,
+                          marginBottom: 3,
                           borderRadius: 37,
                           justifyContent: "center",
                           alignItems: "center",
-                          borderWidth:3,
-                          borderColor :dog.isTaken
-                          ? globalStyle.greenPrimary
-                          : globalStyle.grayPrimary,
+                          borderWidth: 3,
+                          borderColor: dog.isTaken
+                            ? globalStyle.greenPrimary
+                            : globalStyle.grayPrimary,
                         }}
                       >
                         <Image
