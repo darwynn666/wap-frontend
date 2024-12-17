@@ -38,9 +38,9 @@ export default function UserScreen(props) {
 
 
     useEffect(() => {
-        // const backAction = () => { navigation.navigate('_Map'); return true } // handle back button : go back to map
-        // const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
-        // return () => backHandler.remove();
+        const backAction = () => { navigation.navigate('_Map'); return true } // handle back button : go back to map
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
+        return () => backHandler.remove();
     }, []);
     
 

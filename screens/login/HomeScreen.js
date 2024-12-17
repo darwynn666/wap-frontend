@@ -67,7 +67,7 @@ export default function HomeScreen(props) {
             <View style={styles.buttonsContainer}>
                 {logged && <>
                     <Text>Bonjour {user.infos.firstname}</Text>
-                    <ButtonPrimary onPress={() => navigation.navigate('Map')} title='Démarrer' />
+                    <ButtonPrimary onPress={() => navigation.navigate('Map',{screen:'_Map'})} title='Démarrer' />
                 </>}
                 {!logged && <>
                     <ButtonPrimary onPress={() => handleSignUp()} title='Sign Up' />
