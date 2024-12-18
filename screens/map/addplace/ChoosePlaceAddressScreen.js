@@ -5,10 +5,11 @@ import { useNavigation } from '@react-navigation/native'
 
 
 
-export default function ChoosePlaceAddressScreen(props) {
+export default function ChoosePlaceAddressScreen() {
     const navigation = useNavigation()
     const route = useRoute()
-
+    const { currentPosition } = route.params
+    console.log(currentPosition)
     return (
         <View style={styles.container}>
             <Text>Component : ChoosePlaceAddressScreen</Text>

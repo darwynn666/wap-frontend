@@ -14,7 +14,7 @@ export default function TestScreen(props) {
     const route = useRoute()
     const user = useSelector(state => state.user.value)
     const settings = useSelector(state => state.settings.value)
-    const [reloadTrigger,setReloadTrigger]=useState()
+    const [reloadTrigger, setReloadTrigger] = useState()
 
     // console.log(user)
     // console.log(settings)
@@ -24,10 +24,8 @@ export default function TestScreen(props) {
 
             <View style={styles.container}>
 
-                <ButtonPrimary title='Reload' onPress={()=>setReloadTrigger(!reloadTrigger)}/>
-                <ButtonSecondary title='Secondary' status={true} />
-                <ButtonSecondary title='Secondary' status={false} />
-                <InputFullSize placeholder='sample text...' secureTextEntry={true}/>
+                <ButtonPrimary title='Reload' onPress={() => setReloadTrigger(!reloadTrigger)} />
+                <InputFullSize placeholder='sample text...' secureTextEntry={true} />
                 <View style={styles.reducers}>
                     <Text>REDUCERS</Text>
                     <Text style={styles.reducer}>user {JSON.stringify(user, null, 2)}</Text>
@@ -47,17 +45,17 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding:globalStyle.padding,
-        paddingTop:40,
+        padding: globalStyle.padding,
+        paddingTop: 40,
     },
-    reducers:{
-        width:'100%',
+    reducers: {
+        width: '100%',
     },
     reducer: {
-        width:'100%',
-        backgroundColor:'#eeeeee',
-        padding:5,
-        marginTop:5,
-        marginBottom:5,
+        width: '100%',
+        backgroundColor: '#eeeeee',
+        padding: 5,
+        marginTop: 5,
+        marginBottom: 5,
     },
 })

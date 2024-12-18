@@ -220,7 +220,7 @@ const CustomDrawerContent = (props) => {
         <TouchableOpacity onPress={() => props.navigation.navigate('_Map')}>
           <Text style={styles.drawerItemLogout}>_Map</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => props.navigation.navigate('_AddPlace')}>
+        <TouchableOpacity onPress={() => props.navigation.navigate('_AddPlace', { screen: 'ChoosePlaceAddress', params: { currentPosition: user.currentPosition } })}>
           <Text style={styles.drawerItemLogout}>_AddPlace</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => props.navigation.navigate('_EditPlace')}>
