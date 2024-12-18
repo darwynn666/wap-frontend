@@ -2,7 +2,8 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setUserCoordinates,setUserFriends } from "../../reducers/user";
 
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
@@ -27,22 +28,27 @@ import MarkerPlace from "./components/MarkerPlace";
 import MarkerPlaceUsersCounter from "./components/MarkerPlaceUsersCounter";
 import MarkerUser from "./components/MarkerUser";
 
+const lodash = require('lodash')
+
 // COMPONENT
 export default function MapScreen2() {
+  const POP_UP_SPEED = 500;
+  const REFRESH_USER_INTERVAL = 10000;
+
   const navigation = useNavigation();
 
   const mapRef = useRef(null);
 
   const [popUpPlacesVisibility, setPopUpPlacesVisibility] = useState(false);
   const [popUpUsersVisibility, setPopUpUsersVisibility] = useState(false);
-  const POP_UP_SPEED = 500;
 
   const [currentPosition, setCurrentPosition] = useState(false);
   const [positionMarker, setPositionMarker] = useState();
-  const [mapType, setMapType] = useState("standard");
+
   const [visibleRegion, setVisibleRegion] = useState();
 
   const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
 
   const settings = useSelector((state) => state.settings.value);
   const usersDisplayIgnored = settings.usersDisplayIgnored;
@@ -60,23 +66,82 @@ export default function MapScreen2() {
   const [forcePosition, setForcePosition] = useState();
   const [forcePositionColor, setForcePositionColor] = useState("#666666");
 
+  const intervalRef = useRef(null);
+
+  //check friends to update
+  useEffect(() => {
+    const updateData = async() => {
+      const request = await fetch(`${BACKEND_URL}/friends/${user.token}`);
+      const response = await request.json();
+      const isTheSame = lodash.isEqual(response.data, user.friends);
+      if (!isTheSame)
+        console.log("refresh friends")
+        dispatch(setUserFriends(response.data))
+    };
+
+    // start
+    intervalRef.current = setInterval(updateData, REFRESH_USER_INTERVAL);
+
+    // clean interval
+    return () => clearInterval(intervalRef.current);
+  }, []);
+
   // user position
   useEffect(() => {
     (async () => {
+      let isFirstUpdate = true;
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
-          setCurrentPosition(location.coords);
-          setVisibleRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.05, //0.05 equivaut à environ 5km
-            longitudeDelta: 0.05,
-          });
-        });
+        const locationResponse = await Location.watchPositionAsync(
+          { distanceInterval: 10 },
+          (location) => {
+            setCurrentPosition(location.coords);
+            if (isFirstUpdate) {
+              setVisibleRegion({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.05, //0.05 equivaut à environ 5km
+                longitudeDelta: 0.05,
+              });
+              isFirstUpdate = false;
+            }
+          }
+        );
       }
     })();
   }, []);
+
+  useEffect(() => {
+    //async function to use dispatch and fetch simultany
+    (async () => {
+      if (currentPosition) {
+        //set dispatch
+        dispatch(
+          setUserCoordinates({
+            type: "Point",
+            coordinates: [currentPosition.longitude, currentPosition.latitude],
+          })
+        );
+        //update to bdd
+        const request = await fetch(
+          `${BACKEND_URL}/users/${user.token}/coordinates`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              longitude: currentPosition.longitude,
+              latitude: currentPosition.latitude,
+            }),
+          }
+        );
+        const response = await request.json();
+        console.log(response);
+      }
+    })();
+    //diptach position
+  }, [currentPosition]);
 
   const filterMarkers = (region) => {
     // console.log(region);
@@ -91,13 +156,13 @@ export default function MapScreen2() {
           if (visibleRegion.latitude) {
             return (
               marker.location.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
+                region.latitude - region.latitudeDelta / 2 &&
               marker.location.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
+                region.latitude + region.latitudeDelta / 2 &&
               marker.location.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
+                region.longitude - region.longitudeDelta / 2 &&
               marker.location.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
+                region.longitude + region.longitudeDelta / 2
             );
           }
         })
@@ -108,13 +173,13 @@ export default function MapScreen2() {
           if (visibleRegion.latitude) {
             return (
               marker.currentLocation.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
+                region.latitude - region.latitudeDelta / 2 &&
               marker.currentLocation.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
+                region.latitude + region.latitudeDelta / 2 &&
               marker.currentLocation.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
+                region.longitude - region.longitudeDelta / 2 &&
               marker.currentLocation.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
+                region.longitude + region.longitudeDelta / 2
             );
           }
         })
@@ -202,7 +267,6 @@ export default function MapScreen2() {
     getUsers();
   }, []);
 
-
   //create markers
   const places = placesDataRegionFilter
     .filter(
@@ -231,7 +295,12 @@ export default function MapScreen2() {
     });
 
   const users = usersDataRegionFilter
+    .filter(() => {
+      //filter by the status of the current user
+      return user.status != "off";
+    })
     .filter((userData) => {
+      //filter by the filter menu
       const _isAccepted = isAccepted(userData._id);
       const _isBlocked = isBlocked(userData._id);
       const _unkow = !(_isAccepted || _isBlocked);
@@ -243,7 +312,16 @@ export default function MapScreen2() {
       if (usersDisplayIgnored.includes("unknows")) isShown = isShown && !_unkow;
       return isShown;
     })
-    .filter((x) => x._id != user._id)
+    .filter((x) => {
+      //exclude the current user
+      return x._id != user._id;
+    })
+    .filter((userFiltered) => {
+      //filter is in place
+      return !placesDataRegionFilter.some((placeFiltered) =>
+        placeFiltered.users.includes(userFiltered._id)
+      );
+    })
     .map((markerUser, i) => {
       return (
         <MarkerUser
@@ -304,10 +382,9 @@ export default function MapScreen2() {
         onPress={() => navigation.openDrawer()}
       >
         <FontAwesomeIcon icon={faBars} color="black" size={30} />
-        {user.friends.incoming.length > 0 &&
+        {user.friends.incoming.length > 0 && (
           <FontAwesomeIcon icon={faCircle} size={10} style={styles.notifIcon} />
-        }
-
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -348,7 +425,7 @@ const styles = StyleSheet.create({
   },
   menuButton: {
     // backgroundColor: 'white',
-    flexDirection:'row',
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -359,7 +436,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   notifIcon: {
-    color: 'salmon',
+    color: "salmon",
     marginLeft: -10,
     marginBottom: -15,
   },
@@ -404,5 +481,4 @@ const styles = StyleSheet.create({
     height: 1,
     width: "100%",
   },
-
 });
