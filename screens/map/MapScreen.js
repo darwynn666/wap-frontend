@@ -12,10 +12,13 @@ import {
   faMapMarker,
   faBars,
 } from "@fortawesome/free-solid-svg-icons";
-import MenuFiltersComponent from "./components/MenuFiltersComponent";
-import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
 import { BACKEND_URL } from "../../config";
+
+import MenuFiltersComponent from "./components/MenuFiltersComponent";
+import MenuStatusComponent from "./components/MenuStatusComponent";
+import MenuAddPlaceComponent from "./components/MenuAddPlaceComponent";
+
 
 import MapPopUpPlace from "./components/MapPopUpPlace";
 import MapPopUpUser from "./components/MapPopUpUser";
@@ -324,14 +327,7 @@ export default function MapScreen2() {
           <MenuStatusComponent />
         </View>
         <View style={{ width: "25%", height: "100%" }}>
-          <TouchableOpacity style={styles.buttonAddPlace}>
-            <FontAwesomeIcon
-              icon={faMapMarker}
-              size={30}
-              color={globalStyle.buttonPrimaryBackgroundColor}
-            />
-            <Text style={styles.buttonAddPlaceText}>Ajouter</Text>
-          </TouchableOpacity>
+        <MenuAddPlaceComponent />
         </View>
       </View>
     </View>
