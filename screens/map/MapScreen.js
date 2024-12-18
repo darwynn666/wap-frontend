@@ -3,7 +3,7 @@ import { Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setUserCoordinates } from "../../reducers/user";
+import { setUserCoordinates,setUserFriends } from "../../reducers/user";
 
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
@@ -27,6 +27,8 @@ import MapPopUpUser from "./components/MapPopUpUser";
 import MarkerPlace from "./components/MarkerPlace";
 import MarkerPlaceUsersCounter from "./components/MarkerPlaceUsersCounter";
 import MarkerUser from "./components/MarkerUser";
+
+const lodash = require('lodash')
 
 // COMPONENT
 export default function MapScreen2() {
@@ -66,15 +68,16 @@ export default function MapScreen2() {
 
   //check friends to update
   useEffect(() => {
-    // Fonction à exécuter
     const updateData = async() => {
-      console.log('Action exécutée !');
       const request = await fetch(`${BACKEND_URL}/friends/${user.token}`);
       const response = await request.json();
-      console.log(response);
+      const isTheSame = lodash.isEqual(response.data, user.friends);
+      if (!isTheSame)
+        console.log("refresh friends")
+        dispatch(setUserFriends(response.data))
     };
 
-    // Démarrer l'intervalle
+    // start
     intervalRef.current = setInterval(updateData, 10000);
 
     // clean interval
