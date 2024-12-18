@@ -2,8 +2,8 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
-import { useSelector,useDispatch } from "react-redux";
-import {setUserCoordinates} from "../../reducers/user"
+import { useSelector, useDispatch } from "react-redux";
+import { setUserCoordinates } from "../../reducers/user";
 
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
@@ -90,26 +90,31 @@ export default function MapScreen2() {
   useEffect(() => {
     //async function to use dispatch and fetch simultany
     (async () => {
-      console.log("update current user position");
-      //set dispatch
-      dispatch(setUserCoordinates({
-        type: 'Point',
-        coordinates: [currentPosition.longitude, currentPosition.latitude]
-      }))
-      //update to bdd
-      const request = await fetch(`${BACKEND_URL}/users/${user.token}/coordinates`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-type': 'application/json'
-           },
-         body: JSON.stringify({longitude:currentPosition.longitude, latitude:currentPosition.latitude})
-        }
-      )
-      const response = await request.json();
-      console.log(response)
-
-      
+      if (currentPosition) {
+        //set dispatch
+        dispatch(
+          setUserCoordinates({
+            type: "Point",
+            coordinates: [currentPosition.longitude, currentPosition.latitude],
+          })
+        );
+        //update to bdd
+        const request = await fetch(
+          `${BACKEND_URL}/users/${user.token}/coordinates`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              longitude: currentPosition.longitude,
+              latitude: currentPosition.latitude,
+            }),
+          }
+        );
+        const response = await request.json();
+        console.log(response);
+      }
     })();
     //diptach position
   }, [currentPosition]);
