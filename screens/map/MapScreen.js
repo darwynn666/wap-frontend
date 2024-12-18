@@ -231,7 +231,12 @@ export default function MapScreen2() {
     });
 
   const users = usersDataRegionFilter
+    .filter (()=>{
+      //filter by the status of the current user
+      return user.status!="off"
+    })
     .filter((userData) => {
+      //filter by the menu
       const _isAccepted = isAccepted(userData._id);
       const _isBlocked = isBlocked(userData._id);
       const _unkow = !(_isAccepted || _isBlocked);
