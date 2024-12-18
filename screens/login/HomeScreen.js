@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import ButtonPrimary from '../../globalComponents/ButtonPrimary'
 import { BACKEND_URL, globalStyle } from '../../config'
-import { setUser } from '../../reducers/user'
+import { logout } from '../../reducers/user'
 import { logoHomeUrl } from '../../config'
 
 
@@ -19,22 +19,34 @@ export default function HomeScreen(props) {
 
     useEffect(() => {
         if (route.params?.forceLogout) {
-            dispatch(setUser({}))
-            setLogged(false)
-            route.params.forceLogout=false
-            return
+            handleLogout()
         }
     }, [route.params?.forceLogout])
 
     useEffect(() => {
         if (user?.token) {
             fetchUser()
+            setLogged(true)
         }
         else {
             setLogged(false)
         }
     }, [])
 
+    const handleLogout = async () => {
+        const url = `${BACKEND_URL}/users/${user.token}/status`
+        console.log('PUT', url)
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'off' })
+        })
+        const data = await response.json()
+        // console.log(data)
+        dispatch(logout())
+        setLogged(false)
+        route.params.forceLogout = false
+    }
 
     const handleSignUp = () => {
         navigation.navigate('SignUpUser')

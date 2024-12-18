@@ -73,7 +73,7 @@ import EditPlaceAddressScreen from './screens/map/editplace/EditPlaceAddressScre
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSignOut, faUserCircle, faDog, faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import { faSignOut, faUserCircle, faDog, faUserFriends, faCircle } from '@fortawesome/free-solid-svg-icons';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -168,6 +168,7 @@ const StackEditPlace = () => {
 }
 const CustomDrawerContent = (props) => {
   const user = useSelector(state => state.user.value)
+
   return (
     <View style={styles.drawerContainer}>
 
@@ -198,6 +199,9 @@ const CustomDrawerContent = (props) => {
         <TouchableOpacity onPress={() => props.navigation.navigate('Mes amis')}>
           <View style={styles.drawerItemContainer}>
             <FontAwesomeIcon icon={faUserFriends} size={30} style={{ color: globalStyle.greenPrimary }}></FontAwesomeIcon>
+            {user.friends.incoming.length > 0 &&
+              <FontAwesomeIcon icon={faCircle} size={10} style={styles.notifIcon}></FontAwesomeIcon>
+            }
             <Text style={styles.drawerItem}>Mes amis</Text>
           </View>
         </TouchableOpacity>
@@ -312,6 +316,11 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     color: '#333333',
     marginLeft: 20,
+  },
+  notifIcon: {
+    color: 'salmon',
+    marginLeft: -10,
+    marginBottom: -15,
   },
   logoutContainer: {
     flexDirection: 'row',

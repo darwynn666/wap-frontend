@@ -37,7 +37,8 @@ export const userSlice = createSlice({
             state.value.currentLocation = action.payload
         },
         logout: (state, action) => {
-            state.value = null
+            state.value.token = null
+            state.value.status = 'pause'
         }
     },
 })

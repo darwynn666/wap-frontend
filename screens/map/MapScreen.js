@@ -23,6 +23,7 @@ import {
   faLocationCrosshairs,
   faMapMarker,
   faBars,
+  faCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
@@ -100,13 +101,13 @@ export default function MapScreen2() {
           if (visibleRegion.latitude) {
             return (
               marker.location.coordinates[1] >=
-                region.latitude - region.latitudeDelta / 2 &&
+              region.latitude - region.latitudeDelta / 2 &&
               marker.location.coordinates[1] <=
-                region.latitude + region.latitudeDelta / 2 &&
+              region.latitude + region.latitudeDelta / 2 &&
               marker.location.coordinates[0] >=
-                region.longitude - region.longitudeDelta / 2 &&
+              region.longitude - region.longitudeDelta / 2 &&
               marker.location.coordinates[0] <=
-                region.longitude + region.longitudeDelta / 2
+              region.longitude + region.longitudeDelta / 2
             );
           }
         })
@@ -117,13 +118,13 @@ export default function MapScreen2() {
           if (visibleRegion.latitude) {
             return (
               marker.currentLocation.coordinates[1] >=
-                region.latitude - region.latitudeDelta / 2 &&
+              region.latitude - region.latitudeDelta / 2 &&
               marker.currentLocation.coordinates[1] <=
-                region.latitude + region.latitudeDelta / 2 &&
+              region.latitude + region.latitudeDelta / 2 &&
               marker.currentLocation.coordinates[0] >=
-                region.longitude - region.longitudeDelta / 2 &&
+              region.longitude - region.longitudeDelta / 2 &&
               marker.currentLocation.coordinates[0] <=
-                region.longitude + region.longitudeDelta / 2
+              region.longitude + region.longitudeDelta / 2
             );
           }
         })
@@ -394,6 +395,10 @@ export default function MapScreen2() {
         onPress={() => navigation.openDrawer()}
       >
         <FontAwesomeIcon icon={faBars} color="black" size={30} />
+        {user.friends.incoming.length > 0 &&
+          <FontAwesomeIcon icon={faCircle} size={10} style={styles.notifIcon} />
+        }
+
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -441,6 +446,7 @@ const styles = StyleSheet.create({
   },
   menuButton: {
     // backgroundColor: 'white',
+    flexDirection:'row',
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -450,6 +456,12 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 5,
   },
+  notifIcon: {
+    color: 'salmon',
+    marginLeft: -10,
+    marginBottom: -15,
+  },
+
   forcePosition: {
     // backgroundColor: 'white',
     justifyContent: "center",
@@ -490,4 +502,5 @@ const styles = StyleSheet.create({
     height: 1,
     width: "100%",
   },
+
 });
