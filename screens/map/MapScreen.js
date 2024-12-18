@@ -115,6 +115,10 @@ export default function MapScreen2() {
     //async function to use dispatch and fetch simultany
     (async () => {
       if (currentPosition) {
+        //force anim position was null before
+        if (mapRef.current) {
+          mapRef.current.animateToRegion(currentPosition, popupSpeed);
+        }
         //set dispatch
         dispatch(
           setUserCoordinates({
