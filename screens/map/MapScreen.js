@@ -1,25 +1,13 @@
-import {
-  StyleSheet,
-  Image,
-  Text,
-  TextInput,
-  View,
-  Modal,
-  Pressable,
-  Dimensions,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
-import { Marker, Callout } from "react-native-maps";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
-  faCircleChevronRight,
   faLocationCrosshairs,
   faMapMarker,
   faBars,
@@ -29,12 +17,80 @@ import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
 import { BACKEND_URL } from "../../config";
 
-
-
 import MapPopUpPlace from "./components/MapPopUpPlace";
 import MapPopUpUser from "./components/MapPopUpUser";
 
 import MarkerPlace from "./components/MarkerPlace";
+import MarkerPlaceUsersCounter from "./components/MarkerPlaceUsersCounter";
+
+const MarkerUser = ({ markerUser, isAccepted, isBlocked ,setSelectedUser, mapRef,setPopUpUsersVisibility,popupSpeed}) => {
+
+  const onUsersMarkerPress = async (coordinate, user) => {
+    // get user info by id
+    const usersRequest = await fetch(`${BACKEND_URL}/users/${user._id}`);
+    const usersResponse = await usersRequest.json();
+    const usersData = usersResponse.data;
+    let _user = { friendType: "" };
+    //check status of user by id
+    const friendType = [
+      { name: "accepted", value: isAccepted(user._id) },
+      { name: "blocked", value: isBlocked(user._id) },
+      {
+        name: "unknowed",
+        value: !(isAccepted(user._id) || isBlocked(user._id)),
+      },
+    ];
+
+    _user.friendType = friendType
+      .filter((x) => x.value === true)
+      .map((x) => x.name)[0];
+
+    const userAllInfos = { ..._user, ...usersData };
+    setSelectedUser(userAllInfos);
+
+    const adjustedRegion = {
+      latitude: coordinate.latitude + (isAccepted(user._id) ? 0.035 : 0.01), // offset to show marker under marker
+      longitude: coordinate.longitude,
+      latitudeDelta: 0.05,
+      longitudeDelta: 0.05,
+    };
+
+    // move to marker
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(adjustedRegion, popupSpeed);
+      setTimeout(() => {
+        setPopUpUsersVisibility(true);
+      }, popupSpeed);
+    }
+  };
+
+  let icon = require("../../assets/icons/icon_dog_gray.png");
+  //need to check if friends or blocked
+  if (isAccepted(markerUser._id))
+    icon = require("../../assets/icons/icon_dog_green.png");
+  else if (isBlocked(markerUser._id))
+    icon = require("../../assets/icons/icon_dog_red.png");
+
+  return (
+    <Marker
+      coordinate={{
+        latitude: markerUser.currentLocation.coordinates[1],
+        longitude: markerUser.currentLocation.coordinates[0],
+      }}
+      // pinColor="royalblue"
+      image={icon}
+      onPress={() =>
+        onUsersMarkerPress(
+          {
+            latitude: markerUser.currentLocation.coordinates[1],
+            longitude: markerUser.currentLocation.coordinates[0],
+          },
+          markerUser
+        )
+      }
+    ></Marker>
+  );
+};
 
 // COMPONENT
 export default function MapScreen2() {
@@ -209,45 +265,7 @@ export default function MapScreen2() {
   //places
 
   //users
-  const onUsersMarkerPress = async (coordinate, user) => {
-    // get user info by id
-    const usersRequest = await fetch(`${BACKEND_URL}/users/${user._id}`);
-    const usersResponse = await usersRequest.json();
-    const usersData = usersResponse.data;
 
-    let _user = { friendType: "" };
-    //check status of user by id
-    const friendType = [
-      { name: "accepted", value: isAccepted(user._id) },
-      { name: "blocked", value: isBlocked(user._id) },
-      {
-        name: "unknowed",
-        value: !(isAccepted(user._id) || isBlocked(user._id)),
-      },
-    ];
-
-    _user.friendType = friendType
-      .filter((x) => x.value === true)
-      .map((x) => x.name)[0];
-
-    const userAllInfos = { ..._user, ...usersData };
-    setSelectedUser(userAllInfos);
-
-    const adjustedRegion = {
-      latitude: coordinate.latitude + (isAccepted(user._id) ? 0.035 : 0.01), // offset to show marker under marker
-      longitude: coordinate.longitude,
-      latitudeDelta: 0.05,
-      longitudeDelta: 0.05,
-    };
-
-    // move to marker
-    if (mapRef.current) {
-      mapRef.current.animateToRegion(adjustedRegion, POP_UP_SPEED);
-      setTimeout(() => {
-        setPopUpUsersVisibility(true);
-      }, POP_UP_SPEED);
-    }
-  };
 
   //popup button handler
 
@@ -275,34 +293,7 @@ export default function MapScreen2() {
     )
     .filter((place) => place.users.length > 0)
     .map((placesMarker, i) => {
-      const nbUser = placesMarker.users.length;
-
-      const images = [
-        require(`../../assets/icons/icon_counter_0.png`),
-        require(`../../assets/icons/icon_counter_1.png`),
-        require(`../../assets/icons/icon_counter_2.png`),
-        require(`../../assets/icons/icon_counter_3.png`),
-        require(`../../assets/icons/icon_counter_4.png`),
-        require(`../../assets/icons/icon_counter_5.png`),
-        require(`../../assets/icons/icon_counter_6.png`),
-        require(`../../assets/icons/icon_counter_7.png`),
-        require(`../../assets/icons/icon_counter_8.png`),
-        require(`../../assets/icons/icon_counter_9.png`),
-        require(`../../assets/icons/icon_counter_10.png`),
-      ];
-
-      return (
-        <Marker
-          key={i}
-          anchor={{ x: 0, y: 0 }}
-          coordinate={{
-            latitude: placesMarker.location.coordinates[1],
-            longitude: placesMarker.location.coordinates[0],
-          }}
-          image={images[nbUser <= 10 ? nbUser : 10]}
-          tappable={false}
-        />
-      );
+      return <MarkerPlaceUsersCounter key={i} placesMarker={placesMarker} />;
     });
 
   const users = usersDataRegionFilter
@@ -319,33 +310,18 @@ export default function MapScreen2() {
       return isShown;
     })
     .filter((x) => x._id != user._id)
-    .map((user, i) => {
-      let icon = require("../../assets/icons/icon_dog_gray.png");
-      //need to check if friends or blocked
-      if (isAccepted(user._id))
-        icon = require("../../assets/icons/icon_dog_green.png");
-      else if (isBlocked(user._id))
-        icon = require("../../assets/icons/icon_dog_red.png");
-
+    .map((markerUser, i) => {
       return (
-        <Marker
+        <MarkerUser
           key={i}
-          coordinate={{
-            latitude: user.currentLocation.coordinates[1],
-            longitude: user.currentLocation.coordinates[0],
-          }}
-          // pinColor="royalblue"
-          image={icon}
-          onPress={() =>
-            onUsersMarkerPress(
-              {
-                latitude: user.currentLocation.coordinates[1],
-                longitude: user.currentLocation.coordinates[0],
-              },
-              user
-            )
-          }
-        ></Marker>
+          markerUser={markerUser}
+          isAccepted={isAccepted}
+          isBlocked={isBlocked}
+          setSelectedUser={setSelectedUser}
+          mapRef={mapRef}
+          setPopUpUsersVisibility={setPopUpUsersVisibility}
+          popupSpeed={POP_UP_SPEED}
+        />
       );
     });
 
