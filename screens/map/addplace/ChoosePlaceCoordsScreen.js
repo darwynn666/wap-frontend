@@ -1,30 +1,187 @@
-import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
-import { useEffect, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
+import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity,ScrollView } from 'react-native'
+import { useEffect, useState, useRef } from 'react'
+import { useRoute, useNavigation } from '@react-navigation/native'
+import { Marker } from "react-native-maps";
+import MapView from "react-native-maps";
+import * as Location from "expo-location";
+import { globalStyle } from '../../../config'
+import { useSelector } from 'react-redux';
+import InputFullSize from '../../../globalComponents/InputFullSize';
+import ButtonPrimary from '../../../globalComponents/ButtonPrimary';
+import {
+    IconBarBlue,
+    IconBarGrayLight,
+    IconRestaurantBlue,
+    IconRestaurantGrayLight,
+    IconParkBlue,
+    IconParkGrayLight,
+    IconShopsBlue,
+    IconShopsGrayLight,
+    IconToiletBlue,
+    IconToiletGrayLight,
+} from "../../../globalComponents/Icons";
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faMapMarker } from '@fortawesome/free-solid-svg-icons';
 
 
-
-export default function ChoosePlaceCoordsScreen(props) {
-    const navigation = useNavigation()
+export default function ChoosePlaceCoordsScreen() {
+    const navigation = useNavigation();
+    const mapRef = useRef(null);
     const route = useRoute()
+    const user = useSelector(state => state.user.value);
+    const [name, setName] = useState(null)
+    const [type, setType] = useState('bars')
+    const [coordinates, setCoordinates] = useState(user.currentLocation.coordinates)
+    const [positionMarker, setPositionMarker] = useState(null)
+    const [location, setLocation] = useState(null)
+
+    const initialRegion = {
+        longitude: user.currentLocation.coordinates[0],
+        latitude: user.currentLocation.coordinates[1],
+        latitudeDelta: 0.05, //0.05 equivaut à environ 5km
+        longitudeDelta: 0.05,
+    }
+
+    // user position
+    useEffect(() => {
+        (async () => {
+            const { status } = await Location.requestForegroundPermissionsAsync()
+            if (!status === "granted") {
+                console.log('Localisation refusée')
+                return
+            }
+            Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+            })
+        })()
+    }, [])
+
+    const handlePress = (region) => {
+        const coords = region.nativeEvent.coordinate;
+        console.log(coords)
+        setCoordinates([coords.longitude, coords.latitude])
+        setPositionMarker(
+            <Marker coordinate={coords}>
+                <FontAwesomeIcon icon={faMapMarker} size={30} color={globalStyle.greenPrimary} />
+            </Marker>
+        )
+    }
+
+    const handleSubmit = () => {
+        if (!name || !type || !coordinates) {
+            console.log('missing field')
+            return
+        }
+        console.log(name, type, coordinates)
+        navigation.navigate('ChoosePlaceAddress', { name, type, coordinates })
+    }
 
     return (
-        <View style={styles.container}>
-            <Text>Component : ChoosePlaceCoordsScreen</Text>
-            <Text>Route : {route.name}</Text>
-        </View>
+
+            <View style={styles.container}>
+                <MapView
+                    // ref={mapRef}
+                    style={{ width: '100%', height: '50%' }}
+                    initialRegion={initialRegion}
+                    mapType='standard'
+                    showsUserLocation
+                    showsMyLocationButton
+                    onPress={region => handlePress(region)}
+                >
+                    {positionMarker}
+                </MapView>
+
+                <View style={styles.coordinatesContainer}>
+                    {coordinates && (
+                        <>
+                            <Text>Lon: {coordinates[0]}</Text>
+                            <Text>Lat: {coordinates[1]}</Text>
+                        </>
+                    )}
+                </View>
+
+                <View style={styles.formContainer}>
+                    <Text>Ajouter un lieu</Text>
+                    <Text style={styles.title2}>Choisissez un endroit sur la carte puis indiquez un nom</Text>
+
+                    <InputFullSize onChangeText={(value) => setName(value)} value={name} placeholder='Nom du lieu' />
+                    <View style={styles.itemsView}>
+                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('bars')}>
+                            {type === 'bars' ? <IconBarBlue /> : <IconBarGrayLight />}
+                            <Text style={styles.itemText}>Bar</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('restaurants')}>
+                            {type === 'restaurants' ? <IconRestaurantBlue /> : <IconRestaurantGrayLight />}
+                            <Text style={styles.itemText}>Resto</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('parks')}>
+                            {type === 'parks' ? <IconParkBlue /> : <IconParkGrayLight />}
+                            <Text style={styles.itemText}>Parc</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('shops')}>
+                            {type === 'shops' ? <IconShopsBlue /> : <IconShopsGrayLight />}
+                            <Text style={styles.itemText}>Shop</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('garbages')}>
+                            {type === 'garbages' ? <IconToiletBlue /> : <IconToiletGrayLight />}
+                            <Text style={styles.itemText}>Toilet</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {(coordinates && name) &&
+                        <ButtonPrimary title='Continuer' onPress={() => handleSubmit()} />
+                    }
+                </View>
+            </View>
     )
 }
 
-import { globalStyle } from '../../../config'
 // STYLES
 const styles = StyleSheet.create({
     container: {
         backgroundColor: globalStyle.backgroundColor,
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
         paddingTop: 20,
+        // paddingBottom: 50,
+    },
+    title: {
+        // backgroundColor: 'yellow',
+        fontSize: globalStyle.h2,
+        textAlign: 'center',
+        color: globalStyle.greenPrimary,//'#999999',
+    },
+    title2: {
+        fontSize: globalStyle.h2,
+        textAlign: 'center',
+        color: '#666666',
+    },
+    coordinatesContainer: {
+        position: 'absolute',
+        bottom: '50%',
+        padding: 20,
+    },
+    formContainer: {
+        backgroundColor: '#ffffff',
+        // position: 'absolute',
+        width: '100%',
+        height: '50%',
+        bottom: 0,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: globalStyle.padding,
+    },
+    itemsView: {
+        width: '100%',
+        flexDirection: "row",
+        justifyContent: "space-around",
+    },
+    typeItem: {
+        // backgroundColor:'yellow',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 5,
+    },
+    itemText: {
+        color: '#999999',
     },
 })

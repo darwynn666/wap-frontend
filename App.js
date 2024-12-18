@@ -149,8 +149,8 @@ const StackLogout = () => {
 }
 const StackAddPlace = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: true }}>
-      <Stack.Screen name="AreYouThere" component={AreYouThereScreen} />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* <Stack.Screen name="AreYouThere" component={AreYouThereScreen} /> */}
       <Stack.Screen name="ChoosePlaceCoords" component={ChoosePlaceCoordsScreen} />
       <Stack.Screen name="ChoosePlaceAddress" component={ChoosePlaceAddressScreen} />
       <Stack.Screen name="ConfirmPlaceAddress" component={ConfirmPlaceAddressScreen} />
@@ -220,7 +220,7 @@ const CustomDrawerContent = (props) => {
         <TouchableOpacity onPress={() => props.navigation.navigate('_Map')}>
           <Text style={styles.drawerItemLogout}>_Map</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => props.navigation.navigate('_AddPlace', { screen: 'ChoosePlaceAddress', params: { currentPosition: user.currentPosition } })}>
+        <TouchableOpacity onPress={() => props.navigation.navigate('_AddPlace', { screen: 'ChoosePlaceCoords' })}>
           <Text style={styles.drawerItemLogout}>_AddPlace</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => props.navigation.navigate('_EditPlace')}>
@@ -239,7 +239,7 @@ const DrawerMap = () => {
       <Drawer.Screen name="Mes amis" component={StackFriends} />
       <Drawer.Screen name="Deconnexion" component={StackLogout} />
       <Drawer.Screen name="_Map" component={StackMap} options={{ headerShown: false, drawerItemStyle: { display: '_none' } }} />
-      <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ drawerItemStyle: { display: '_none' } }} />
+      <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ headerShown: false, drawerItemStyle: { display: '_none' } }} />
       <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: '_none' } }} />
     </Drawer.Navigator>
   )
