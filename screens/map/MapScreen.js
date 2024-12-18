@@ -19,14 +19,12 @@ import MenuFiltersComponent from "./components/MenuFiltersComponent";
 import MenuStatusComponent from "./components/MenuStatusComponent";
 import MenuAddPlaceComponent from "./components/MenuAddPlaceComponent";
 
-
 import MapPopUpPlace from "./components/MapPopUpPlace";
 import MapPopUpUser from "./components/MapPopUpUser";
 
 import MarkerPlace from "./components/MarkerPlace";
 import MarkerPlaceUsersCounter from "./components/MarkerPlaceUsersCounter";
 import MarkerUser from "./components/MarkerUser";
-
 
 // COMPONENT
 export default function MapScreen2() {
@@ -79,7 +77,7 @@ export default function MapScreen2() {
     })();
   }, []);
 
-  const handleRegionChange = (region) => {
+  const filterMarkers = (region) => {
     // console.log(region);
     // if dezoom
     if (region.latitudeDelta > 1) {
@@ -124,6 +122,12 @@ export default function MapScreen2() {
     // console.log('marker 0', markers[0])
     region.latitude && setVisibleRegion(region);
   };
+
+  useEffect(() => {
+    if (placesData.length > 0 && visibleRegion.latitude) {
+      filterMarkers(visibleRegion);
+    }
+  }, [placesData, visibleRegion]);
 
   const toggleForcePosition = () => {
     setForcePosition(!forcePosition);
@@ -197,13 +201,6 @@ export default function MapScreen2() {
     getUsers();
   }, []);
 
-  //handle marker interaction
-  //places
-
-  //users
-
-
-  //popup button handler
 
   //create markers
   const places = placesDataRegionFilter
@@ -272,7 +269,7 @@ export default function MapScreen2() {
         showsUserLocation={!forcePosition}
         showsMyLocationButton={!forcePosition}
         onPress={(region) => handlePress(region)}
-        onRegionChangeComplete={(region) => handleRegionChange(region)}
+        onRegionChangeComplete={(region) => setVisibleRegion(region)}
         moveOnMarkerPress={false}
       >
         {forcePosition && positionMarker}
@@ -327,7 +324,7 @@ export default function MapScreen2() {
           <MenuStatusComponent />
         </View>
         <View style={{ width: "25%", height: "100%" }}>
-        <MenuAddPlaceComponent />
+          <MenuAddPlaceComponent />
         </View>
       </View>
     </View>
