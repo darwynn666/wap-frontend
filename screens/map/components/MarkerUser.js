@@ -34,7 +34,7 @@ export default MarkerUser = ({
     setSelectedUser(userAllInfos);
 
     const adjustedRegion = {
-      latitude: coordinate.latitude + (isAccepted(user._id) ? 0.035 : 0.01), // offset to show marker under marker
+      latitude: coordinate.latitude + (isAccepted(user._id) ? 0.022 : 0.01), // offset to show marker under marker
       longitude: coordinate.longitude,
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
