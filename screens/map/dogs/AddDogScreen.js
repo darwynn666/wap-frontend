@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, Dimensions, TouchableOpacity,BackHandler} from 'react-native'
+import { StyleSheet, Text, TextInput, View, Platform, Image, KeyboardAvoidingView, Dimensions, TouchableOpacity, BackHandler } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { useSelector, useDispatch } from 'react-redux';
@@ -27,9 +27,9 @@ export default function AddDogScreen(props) {
     const [errorMessage, setErrorMessage] = useState(null)
     const [disableButton, setDisableButton] = useState(false)
 
-    useEffect(() => { 
+    useEffect(() => {
         const backAction = () => { navigation.navigate('Dogs'); return true }// handle back button 
-        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction) 
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
         return () => backHandler.remove();
     }, []);
 
@@ -48,7 +48,7 @@ export default function AddDogScreen(props) {
             const dogRes = await fetch(dogUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, sex })
+                body: JSON.stringify({ name, sex, race, birthday, chipid })
             })
             const dogData = await dogRes.json()
             console.log('dogData', dogData.data)
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: globalStyle.h2,
-        marginBottom:20,
+        marginBottom: 20,
     },
 
     inputContainer: {

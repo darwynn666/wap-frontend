@@ -15,7 +15,7 @@ export const userSlice = createSlice({
         setUserStatus: (state, action) => {
             state.value.status = action.payload
         },
-        setUserInfos: (state, action) => { // update user.infos : EXCEPT { user.photo, user.photo_public_id }
+        setUserInfos: (state, action) => { // update user.infos : EXCEPT { photo, photo_public_id }
             state.value.infos.firstname = action.payload.firstname
             state.value.infos.lastname = action.payload.lastname
             state.value.infos.email = action.payload.email
@@ -23,7 +23,7 @@ export const userSlice = createSlice({
             state.value.infos.isDogSitter = action.payload.isDogSitter
             state.value.infos.isSearchingDogSitter = action.payload.isSearchingDogSitter
         },
-        setUserInfosPhoto: (state, action) => {// update user.infos : ONLY { user.photo, user.photo_public_id }
+        setUserInfosPhoto: (state, action) => { // update user.infos : ONLY { photo, photo_public_id }
             state.value.infos.photo = action.payload.photo
             state.value.infos.photo_public_id = action.payload.photo_public_id
         },
@@ -33,11 +33,14 @@ export const userSlice = createSlice({
         setUserFriends: (state, action) => {
             state.value.friends = action.payload
         },
+        setUserCoordinates: (state, action) => {
+            state.value.currentLocation = action.payload
+        },
         logout: (state, action) => {
             state.value = null
         }
     },
 })
 
-export const { setUser, setUserStatus, setUserInfos, setUserInfosPhoto, setUserDogs, setUserFriends, logout } = userSlice.actions
+export const { setUser, setUserStatus, setUserInfos, setUserInfosPhoto, setUserDogs, setUserFriends, setUserCoordinates, logout } = userSlice.actions
 export default userSlice.reducer
