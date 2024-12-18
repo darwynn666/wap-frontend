@@ -74,8 +74,6 @@ export default function MenuFiltersComponent(props) {
   const mapDisplayIgnored = settings.mapDisplayIgnored;
 
   const [modalVisibility, setModalVisibility] = useState(false);
-  // filters is an array of elements to ignore
-  const [filters, setFilters] = useState([]);
 
   const MainButtonHandle = () => {
     setModalVisibility(!modalVisibility);
