@@ -91,13 +91,13 @@ export default function MapScreen2() {
           if (visibleRegion.latitude) {
             return (
               marker.location.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
+                region.latitude - region.latitudeDelta / 2 &&
               marker.location.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
+                region.latitude + region.latitudeDelta / 2 &&
               marker.location.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
+                region.longitude - region.longitudeDelta / 2 &&
               marker.location.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
+                region.longitude + region.longitudeDelta / 2
             );
           }
         })
@@ -108,13 +108,13 @@ export default function MapScreen2() {
           if (visibleRegion.latitude) {
             return (
               marker.currentLocation.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
+                region.latitude - region.latitudeDelta / 2 &&
               marker.currentLocation.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
+                region.latitude + region.latitudeDelta / 2 &&
               marker.currentLocation.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
+                region.longitude - region.longitudeDelta / 2 &&
               marker.currentLocation.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
+                region.longitude + region.longitudeDelta / 2
             );
           }
         })
@@ -202,7 +202,6 @@ export default function MapScreen2() {
     getUsers();
   }, []);
 
-
   //create markers
   const places = placesDataRegionFilter
     .filter(
@@ -231,12 +230,12 @@ export default function MapScreen2() {
     });
 
   const users = usersDataRegionFilter
-    .filter (()=>{
+    .filter(() => {
       //filter by the status of the current user
-      return user.status!="off"
+      return user.status != "off";
     })
     .filter((userData) => {
-      //filter by the menu
+      //filter by the filter menu
       const _isAccepted = isAccepted(userData._id);
       const _isBlocked = isBlocked(userData._id);
       const _unkow = !(_isAccepted || _isBlocked);
@@ -248,7 +247,16 @@ export default function MapScreen2() {
       if (usersDisplayIgnored.includes("unknows")) isShown = isShown && !_unkow;
       return isShown;
     })
-    .filter((x) => x._id != user._id)
+    .filter((x) => {
+      //exclude the current user
+      return x._id != user._id;
+    })
+    .filter((userFiltered) => {
+      //filter is in place
+      return !placesDataRegionFilter.some((placeFiltered) =>
+        placeFiltered.users.includes(userFiltered._id)
+      );
+    })
     .map((markerUser, i) => {
       return (
         <MarkerUser
@@ -309,10 +317,9 @@ export default function MapScreen2() {
         onPress={() => navigation.openDrawer()}
       >
         <FontAwesomeIcon icon={faBars} color="black" size={30} />
-        {user.friends.incoming.length > 0 &&
+        {user.friends.incoming.length > 0 && (
           <FontAwesomeIcon icon={faCircle} size={10} style={styles.notifIcon} />
-        }
-
+        )}
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -353,7 +360,7 @@ const styles = StyleSheet.create({
   },
   menuButton: {
     // backgroundColor: 'white',
-    flexDirection:'row',
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
@@ -364,7 +371,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   notifIcon: {
-    color: 'salmon',
+    color: "salmon",
     marginLeft: -10,
     marginBottom: -15,
   },
@@ -409,5 +416,4 @@ const styles = StyleSheet.create({
     height: 1,
     width: "100%",
   },
-
 });
