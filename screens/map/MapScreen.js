@@ -32,13 +32,15 @@ const lodash = require('lodash')
 
 // COMPONENT
 export default function MapScreen2() {
+  const POP_UP_SPEED = 500;
+  const REFRESH_USER_INTERVAL = 10000;
+
   const navigation = useNavigation();
 
   const mapRef = useRef(null);
 
   const [popUpPlacesVisibility, setPopUpPlacesVisibility] = useState(false);
   const [popUpUsersVisibility, setPopUpUsersVisibility] = useState(false);
-  const POP_UP_SPEED = 500;
 
   const [currentPosition, setCurrentPosition] = useState(false);
   const [positionMarker, setPositionMarker] = useState();
@@ -78,7 +80,7 @@ export default function MapScreen2() {
     };
 
     // start
-    intervalRef.current = setInterval(updateData, 10000);
+    intervalRef.current = setInterval(updateData, REFRESH_USER_INTERVAL);
 
     // clean interval
     return () => clearInterval(intervalRef.current);
