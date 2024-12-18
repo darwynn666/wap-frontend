@@ -62,6 +62,25 @@ export default function MapScreen2() {
   const [forcePosition, setForcePosition] = useState();
   const [forcePositionColor, setForcePositionColor] = useState("#666666");
 
+  const intervalRef = useRef(null);
+
+  //check friends to update
+  useEffect(() => {
+    // Fonction à exécuter
+    const updateData = async() => {
+      console.log('Action exécutée !');
+      const request = await fetch(`${BACKEND_URL}/friends/${user.token}`);
+      const response = await request.json();
+      console.log(response);
+    };
+
+    // Démarrer l'intervalle
+    intervalRef.current = setInterval(updateData, 10000);
+
+    // clean interval
+    return () => clearInterval(intervalRef.current);
+  }, []);
+
   // user position
   useEffect(() => {
     (async () => {
