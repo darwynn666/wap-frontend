@@ -63,17 +63,24 @@ export default function MapScreen2() {
   // user position
   useEffect(() => {
     (async () => {
+      let isFirstUpdate = true;
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
-          setCurrentPosition(location.coords);
-          setVisibleRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.05, //0.05 equivaut à environ 5km
-            longitudeDelta: 0.05,
-          });
-        });
+        const locationResponse = await Location.watchPositionAsync(
+          { distanceInterval: 10 },
+          (location) => {
+            setCurrentPosition(location.coords);
+            if (isFirstUpdate) {
+              setVisibleRegion({
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.05, //0.05 equivaut à environ 5km
+                longitudeDelta: 0.05,
+              });
+              isFirstUpdate=false;
+            }
+          }
+        );
       }
     })();
   }, []);
