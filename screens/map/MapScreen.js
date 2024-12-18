@@ -29,10 +29,12 @@ import MenuStatusComponent from "./components/MenuStatusComponent";
 import { globalStyle } from "../../config";
 import { BACKEND_URL } from "../../config";
 
-import RestaurantIcon from "../../assets/icons/icon_restaurant.png";
+
 
 import MapPopUpPlace from "./components/MapPopUpPlace";
 import MapPopUpUser from "./components/MapPopUpUser";
+
+import MarkerPlace from "./components/MarkerPlace";
 
 // COMPONENT
 export default function MapScreen2() {
@@ -205,28 +207,6 @@ export default function MapScreen2() {
 
   //handle marker interaction
   //places
-  const onPlaceMarkerPress = async (place) => {
-    //
-    setSelectedPlace(place);
-    const { location } = place;
-    const latitude = location.coordinates[1];
-    const longitude = location.coordinates[0];
-
-    const adjustedRegion = {
-      latitude: latitude + 0.01, // offset to show marker under marker
-      longitude: longitude,
-      latitudeDelta: 0.05,
-      longitudeDelta: 0.05,
-    };
-
-    // move to marker
-    if (mapRef.current) {
-      mapRef.current.animateToRegion(adjustedRegion, POP_UP_SPEED);
-      setTimeout(() => {
-        setPopUpPlacesVisibility(true);
-      }, POP_UP_SPEED);
-    }
-  };
 
   //users
   const onUsersMarkerPress = async (coordinate, user) => {
@@ -277,36 +257,14 @@ export default function MapScreen2() {
       (place) => !placesDisplayIgnored.some((filter) => filter == place.type)
     )
     .map((placesMarker, i) => {
-      let icon = "";
-      switch (placesMarker.type) {
-        case "restaurants":
-          icon = require("../../assets/icons/icon_restaurant.png");
-          break;
-        case "bars":
-          icon = require("../../assets/icons/icon_bar.png");
-          break;
-        case "garbages":
-          icon = require("../../assets/icons/icon_toilet.png");
-          break;
-        case "shops":
-          icon = require("../../assets/icons/icon_shop.png");
-          break;
-        case "parks":
-          icon = require("../../assets/icons/icon_park.png");
-          break;
-        default:
-          icon = require("../../assets/icons/icon_location.png");
-      }
       return (
-        <Marker
+        <MarkerPlace
           key={i}
-          anchor={{ x: 0.5, y: 0.5 }}
-          coordinate={{
-            latitude: placesMarker.location.coordinates[1],
-            longitude: placesMarker.location.coordinates[0],
-          }}
-          image={icon}
-          onPress={() => onPlaceMarkerPress(placesMarker)}
+          placesMarker={placesMarker}
+          setSelectedPlace={setSelectedPlace}
+          mapRef={mapRef}
+          setPopUpPlacesVisibility={setPopUpPlacesVisibility}
+          popupSpeed={POP_UP_SPEED}
         />
       );
     });
