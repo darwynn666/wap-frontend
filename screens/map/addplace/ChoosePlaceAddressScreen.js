@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Button,Image } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Button, Image } from 'react-native'
 import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
@@ -6,6 +6,7 @@ import { globalStyle } from '../../../config'
 import { useSelector } from 'react-redux'
 import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
 import { BACKEND_URL } from '../../../config'
+import { ScrollView } from 'react-native-gesture-handler'
 
 
 export default function ChoosePlaceAddressScreen() {
@@ -19,7 +20,7 @@ export default function ChoosePlaceAddressScreen() {
 
 
     useEffect(() => {
-        getPlaces(coordinates[0], coordinates[1], 10000)
+        getPlaces(coordinates[0], coordinates[1], 1000)
     }, [])
 
     const getPlaces = async (longitude, latitude, distance) => {
@@ -29,13 +30,29 @@ export default function ChoosePlaceAddressScreen() {
         const data = await response.json()
         setPlacesData(data.places)
         console.log('placesData', placesData)
+        if (data.places.length === 0) {
+            console.log(route.params)
+            navigation.navigate('ConfirmPlaceAddress', { coordinates, name, type })
+            return
+        }
     }
 
     const places = placesData.map((place, i) => {
+        let type = null
+        switch (place?.type) {
+            case 'bars': type = 'Bar'; break
+            case 'restaurants': type = 'Restaurant'; break
+            case 'shops': type = 'Magasin'; break
+            case 'parks': type = 'Parc'; break
+            case 'garbages': type = 'Distributeur'; break
+        }
         return (
-            <View style={styles.placeContainer}>
+            <View key={i} style={styles.placeContainer}>
                 <Image style={styles.placePhoto} source={{ uri: place?.photo }}></Image>
-                <Text style={styles.placeName}>{place?.name}</Text>
+                <View>
+                    <Text style={styles.placeName}>{place?.name}</Text>
+                    <Text>{type}</Text>
+                </View>
             </View>
         )
     })
@@ -46,19 +63,19 @@ export default function ChoosePlaceAddressScreen() {
         <View style={styles.container}>
 
             <View style={styles.titleContainer}>
-                <Text style={styles.title}>Nous avons trouvé un/des lieu(x) autour de ce point</Text>
+                <Text style={styles.title}>Un lieu similaire semble déjà exister</Text>
             </View>
 
             <View style={styles.placesContainer}>
-                {places}
+                {placesData && places}
             </View>
-
+            <Text>S'il fait partie de cette liste vous pouvez retourner à la carte</Text>
             <View style={styles.bottomContainer}>
                 <Text></Text>
-                <ButtonPrimary title='Retour' />
+                <ButtonPrimary title='Retour' onPress={() => navigation.navigate('_Map', { screen: 'Map' })} />
                 <Text>ou</Text>
                 <Text>Le lieu n'existe pas ?</Text>
-                <ButtonPrimary title='Créer un lieu' />
+                <ButtonPrimary title='Créer un lieu' onPress={() => navigation.navigate('ConfirmPlaceAddress', { coordinates, name, type })} />
             </View>
 
         </View>
@@ -91,24 +108,24 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     placeContainer: {
-        width:'100%',
+        width: '100%',
         flexDirection: 'row',
         justifyContent: 'left',
         alignItems: 'center',
-        padding:10,
+        padding: 10,
     },
     placeName: {
         fontSize: globalStyle.h3,
     },
     placePhoto: {
-        width: 70,
-        height: 70,
+        width: 50,
+        height: 50,
         borderRadius: 50,
-        marginRight:10,
+        marginRight: 10,
     },
     bottomContainer: {
         width: '100%',
-        height:150,
+        height: 150,
         alignItems: 'center',
         justifyContent: 'space-between',
     },
