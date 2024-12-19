@@ -12,6 +12,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import user from './reducers/user'
 import settings from './reducers/settings'
+import places from './reducers/places'
 //import rootReducer from './reducers'; 
 
 // const store = configureStore({
@@ -20,10 +21,11 @@ import settings from './reducers/settings'
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
+  blacklist:['places']
 };
 
 const rootReducer = combineReducers({
-  user, settings
+  user, settings, places
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -73,7 +75,7 @@ import EditPlaceAddressScreen from './screens/map/editplace/EditPlaceAddressScre
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faSignOut, faUserCircle, faDog, faUserFriends, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faSignOut, faUserCircle, faDog, faUserFriends, faCircle, faMap } from '@fortawesome/free-solid-svg-icons';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -182,6 +184,13 @@ const CustomDrawerContent = (props) => {
 
       <View style={styles.drawerItems}>
 
+        <TouchableOpacity onPress={() => props.navigation.navigate('_Map')}>
+          <View style={styles.drawerItemContainer}>
+            <FontAwesomeIcon icon={faMap} size={30} style={{ color: globalStyle.greenPrimary }}></FontAwesomeIcon>
+            <Text style={styles.drawerItem}>Voir la carte</Text>
+          </View>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => props.navigation.navigate('Mon compte')}>
           <View style={styles.drawerItemContainer}>
             <FontAwesomeIcon icon={faUserCircle} size={30} style={{ color: globalStyle.greenPrimary }}></FontAwesomeIcon>
@@ -217,7 +226,8 @@ const CustomDrawerContent = (props) => {
 
         {/* hidden items */}
         <View style={{ width: '100%', height: 1, backgroundColor: '#cccccc', marginVertical: 20 }}></View>
-        <TouchableOpacity onPress={() => props.navigation.navigate('_Map')}>
+
+        {/* <TouchableOpacity onPress={() => props.navigation.navigate('_Map')}>
           <Text style={styles.drawerItemLogout}>_Map</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => props.navigation.navigate('_AddPlace', { screen: 'ChoosePlaceCoords' })}>
@@ -225,7 +235,7 @@ const CustomDrawerContent = (props) => {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => props.navigation.navigate('_EditPlace')}>
           <Text style={styles.drawerItemLogout}>_EditPlace</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
     </View>
@@ -238,9 +248,9 @@ const DrawerMap = () => {
       <Drawer.Screen name="Mes chiens" component={StackDogs} />
       <Drawer.Screen name="Mes amis" component={StackFriends} />
       <Drawer.Screen name="Deconnexion" component={StackLogout} />
-      <Drawer.Screen name="_Map" component={StackMap} options={{ headerShown: false, drawerItemStyle: { display: '_none' } }} />
-      <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ headerShown: false, drawerItemStyle: { display: '_none' } }} />
-      <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: '_none' } }} />
+      <Drawer.Screen name="_Map" component={StackMap} options={{ headerShown: false }} />
+      <Drawer.Screen name="_AddPlace" component={StackAddPlace} options={{ headerShown: false, drawerItemStyle: { display: 'none' } }} />
+      <Drawer.Screen name="_EditPlace" component={StackEditPlace} options={{ drawerItemStyle: { display: 'none' } }} />
     </Drawer.Navigator>
   )
 }
