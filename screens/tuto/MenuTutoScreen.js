@@ -5,25 +5,26 @@ import { useNavigation } from '@react-navigation/native'
 import BottomMenu from './components/BottomMenu'
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import FadeInView from './components/FadeInView'
 
-const FadeInView = ({ delay = 0, duration = 5000, fadeOut = false, children, style }) => {
-    const fadeAnim = useAnimatedValue(fadeOut ? 1 : 0); // Départ selon le sens de l'animation
+// const FadeInView = ({ delay = 0, duration = 5000, fadeOut = false, children, style }) => {
+//     const fadeAnim = useAnimatedValue(fadeOut ? 1 : 0); // Départ selon le sens de l'animation
 
-    useEffect(() => {
-        Animated.timing(fadeAnim, {
-            toValue: fadeOut ? 0 : 1, // Aller vers 1 (apparition) ou 0 (disparition)
-            duration: duration, // Durée de l'animation
-            delay: delay, // Délai avant de commencer
-            useNativeDriver: true,
-        }).start();
-    }, [fadeAnim, fadeOut, delay, duration]);
+//     useEffect(() => {
+//         Animated.timing(fadeAnim, {
+//             toValue: fadeOut ? 0 : 1, // Aller vers 1 (apparition) ou 0 (disparition)
+//             duration: duration, // Durée de l'animation
+//             delay: delay, // Délai avant de commencer
+//             useNativeDriver: true,
+//         }).start();
+//     }, [fadeAnim, fadeOut, delay, duration]);
 
-    return (
-        <Animated.View style={{ ...style, opacity: fadeAnim }}>
-            {children}
-        </Animated.View>
-    );
-};
+//     return (
+//         <Animated.View style={{ ...style, opacity: fadeAnim }}>
+//             {children}
+//         </Animated.View>
+//     );
+// };
 
 export default function StatusTutoScreen() {
     const navigation = useNavigation();
