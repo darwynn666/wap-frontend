@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity, ScrollView, BackHandler } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity, ScrollView, BackHandler, Pressable } from 'react-native'
 import { useEffect, useState, useRef } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { Marker } from "react-native-maps";
@@ -54,7 +54,7 @@ export default function ChoosePlaceCoordsScreen() {
         //         console.log('Localisation refusée')
         //         return
         //     }
-        //     Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+        //     Location.watrchPositionAsync({ distanceInterval: 10 }, (location) => {
         //         setLocation(location)
         //     })
         // })()
@@ -88,17 +88,18 @@ export default function ChoosePlaceCoordsScreen() {
 
     return (
 
-        <View style={styles.container}>
+        <View style={styles.container} onPress={()=> console.log('press')}>
             <MapView
                 // ref={mapRef}
                 style={{ width: '100%', height: '50%' }}
                 initialRegion={initialRegion}
                 mapType='standard'
-                showsUserLocation={true}
-                showsMyLocationButton={true}
+                // showsUserLocation={true}
+                // showsMyLocationButton={true}
                 onPress={region => handlePress(region)}
+                onLongPress={region => handlePress(region)}
             >
-                {positionMarker}
+                {positionMarker} 
             </MapView>
 
             <View style={styles.coordinatesContainer}>
@@ -167,6 +168,7 @@ const styles = StyleSheet.create({
         color: '#666666',
     },
     coordinatesContainer: {
+        // backgroundColor:'yellow',
         position: 'absolute',
         bottom: '50%',
         padding: 20,

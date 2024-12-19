@@ -54,6 +54,7 @@ export default function MapScreen2() {
   const usersDisplayIgnored = settings.usersDisplayIgnored;
   const placesDisplayIgnored = settings.placesDisplayIgnored;
 
+  const triggerNewPlace = useSelector(state => state.places.value)
   const [placesData, setPlacesData] = useState([]);
   const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -297,7 +298,7 @@ export default function MapScreen2() {
 
   useEffect(() => {
     getPlaces();
-  }, []);
+  }, [triggerNewPlace]);
 
   useEffect(() => {
     getUsers();

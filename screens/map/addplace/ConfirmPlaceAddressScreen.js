@@ -1,16 +1,18 @@
 import { StyleSheet, Text, TextInput, View, Button } from 'react-native'
 import { useEffect, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
+import { useRoute, useNavigation } from '@react-navigation/native'
 import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
 import InputFullSize from '../../../globalComponents/InputFullSize'
 import { BACKEND_URL, globalStyle } from '../../../config'
+import { useDispatch, useSelector } from 'react-redux'
+import { setPlace } from '../../../reducers/places'
 
 
 export default function ConfirmPlaceAddressScreen(props) {
     const navigation = useNavigation()
     const route = useRoute()
-
+    const dispatch = useDispatch()
+    const triggerNewPlace = useSelector(state => state.places.value)
     console.log(route.params)
     const { coordinates, name, type } = route.params
 
@@ -48,8 +50,13 @@ export default function ConfirmPlaceAddressScreen(props) {
         })
         const data = await response.json()
         console.log(data)
-        if (data.result) { navigation.navigate('FillPlaceInfos', { name: name, _id: data.place._id }) }
-        else { console.log('error while creating place') }
+        if (data.result) {
+            dispatch(setPlace(!triggerNewPlace))
+            navigation.navigate('FillPlaceInfos', { name: name, _id: data.place._id })
+        }
+        else {
+            console.log('error while creating place')
+        }
     }
 
 
