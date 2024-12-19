@@ -15,8 +15,6 @@ export default function HomeScreen(props) {
     const dispatch = useDispatch()
     const [logged, setLogged] = useState(false)
 
-
-
     useEffect(() => {
         if (route.params?.forceLogout) {
             handleLogout()
