@@ -54,7 +54,7 @@ export default function SignUpDogScreen(props) {
             const userData = await userRes.json()
             console.log('newUser', userData)
             if (userData.result) {
-                dispatch(setUser(userData)) // a verif
+                dispatch(setUser(userData.data))
                 navigation.navigate('Tuto')
             }
         }
