@@ -448,7 +448,7 @@ export default function MapScreen2() {
       >
         <FontAwesomeIcon
           icon={faRefresh}
-          color={globalStyle.greenPrimary}
+          color={globalStyle.grayLight}
           size={30}
         />
       </TouchableOpacity>
