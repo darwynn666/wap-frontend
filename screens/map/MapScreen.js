@@ -112,12 +112,24 @@ export default function MapScreen2() {
     })();
   }, []);
 
+  const [firstRefresRegion,setFirstRefresRegion] = useState(true)
+
   useEffect(() => {
     console.log("update coord");
     // updateCoordinates()
     // async function to use dispatch and fetch simultany
     (async () => {
-      if (currentPosition.latitude) {
+      if (visibleRegion.latitude!=0) {
+        console.log(visibleRegion)
+        if (firstRefresRegion)
+        {
+          console.log("fist time")
+          if (mapRef.current) {
+            console.log("map current")
+            mapRef.current.animateToRegion(visibleRegion, 3000);
+          }
+          setFirstRefresRegion(false)
+        }
         console.log("before dispatch")
         //set dispatch
         dispatch(
