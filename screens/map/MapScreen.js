@@ -3,7 +3,7 @@ import { Marker } from "react-native-maps";
 import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setUserCoordinates,setUserFriends } from "../../reducers/user";
+import { setUserCoordinates, setUserFriends } from "../../reducers/user";
 
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
@@ -70,7 +70,7 @@ export default function MapScreen2() {
 
   //check friends to update
   useEffect(() => {
-    const updateData = async() => {
+    const updateData = async () => {
       const request = await fetch(`${BACKEND_URL}/friends/${user.token}`);
       const response = await request.json();
       const isTheSame = lodash.isEqual(response.data, user.friends);
@@ -112,40 +112,70 @@ export default function MapScreen2() {
   }, []);
 
   useEffect(() => {
+    updateCoordinates()
     //async function to use dispatch and fetch simultany
-    (async () => {
-      if (currentPosition) {
-        //force anim position was null before
-        if (mapRef.current) {
-          mapRef.current.animateToRegion(currentPosition, popupSpeed);
-        }
-        //set dispatch
-        dispatch(
-          setUserCoordinates({
-            type: "Point",
-            coordinates: [currentPosition.longitude, currentPosition.latitude],
-          })
-        );
-        //update to bdd
-        const request = await fetch(
-          `${BACKEND_URL}/users/${user.token}/coordinates`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-type": "application/json",
-            },
-            body: JSON.stringify({
-              longitude: currentPosition.longitude,
-              latitude: currentPosition.latitude,
-            }),
-          }
-        );
-        const response = await request.json();
-        // console.log(response);
-      }
-    })();
+    // (async () => {
+    //   if (currentPosition) {
+
+    //     //force anim position was null before
+    //     if (mapRef.current) {
+    //       mapRef.current.animateToRegion(currentPosition, popupSpeed);
+    //     }
+    //     //set dispatch
+    //     dispatch(
+    //       setUserCoordinates({
+    //         type: "Point",
+    //         coordinates: [currentPosition.longitude, currentPosition.latitude],
+    //       })
+    //     );
+
+    //     //update to bdd
+    //     console.log('fetch user coords to bdd')
+    //     const request = await fetch(
+    //       `${BACKEND_URL}/users/${user.token}/coordinates`,
+    //       {
+    //         method: "PUT",
+    //         headers: {
+    //           "Content-type": "application/json",
+    //         },
+    //         body: JSON.stringify({
+    //           longitude: currentPosition.longitude,
+    //           latitude: currentPosition.latitude,
+    //         }),
+    //       }
+    //     );
+    //     const response = await request.json();
+    //     // console.log(response);
+
+    //   }
+
+    // })();
     //diptach position
   }, [currentPosition]);
+
+  const updateCoordinates = async () => {
+    //force anim position was null before
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(currentPosition, popupSpeed);
+    }
+
+    // fetch then dispatch
+    console.log('fetch user coords to bdd')
+    const request = await fetch(`${BACKEND_URL}/users/${user.token}/coordinates`, {
+      method: "PUT",
+      headers: { "Content-type": "application/json", },
+      body: JSON.stringify({ longitude: currentPosition.longitude, latitude: currentPosition.latitude, }),
+    }
+    );
+    const response = await request.json();
+    if (response) {
+      console.log(response);
+      //set dispatch
+      dispatch(setUserCoordinates({ type: "Point", coordinates: [currentPosition.longitude, currentPosition.latitude], }));
+
+    }
+  }
+
 
   const filterMarkers = (region) => {
     // console.log(region);
@@ -160,13 +190,13 @@ export default function MapScreen2() {
           if (visibleRegion.latitude) {
             return (
               marker.location.coordinates[1] >=
-                region.latitude - region.latitudeDelta / 2 &&
+              region.latitude - region.latitudeDelta / 2 &&
               marker.location.coordinates[1] <=
-                region.latitude + region.latitudeDelta / 2 &&
+              region.latitude + region.latitudeDelta / 2 &&
               marker.location.coordinates[0] >=
-                region.longitude - region.longitudeDelta / 2 &&
+              region.longitude - region.longitudeDelta / 2 &&
               marker.location.coordinates[0] <=
-                region.longitude + region.longitudeDelta / 2
+              region.longitude + region.longitudeDelta / 2
             );
           }
         })
@@ -177,13 +207,13 @@ export default function MapScreen2() {
           if (visibleRegion.latitude) {
             return (
               marker.currentLocation.coordinates[1] >=
-                region.latitude - region.latitudeDelta / 2 &&
+              region.latitude - region.latitudeDelta / 2 &&
               marker.currentLocation.coordinates[1] <=
-                region.latitude + region.latitudeDelta / 2 &&
+              region.latitude + region.latitudeDelta / 2 &&
               marker.currentLocation.coordinates[0] >=
-                region.longitude - region.longitudeDelta / 2 &&
+              region.longitude - region.longitudeDelta / 2 &&
               marker.currentLocation.coordinates[0] <=
-                region.longitude + region.longitudeDelta / 2
+              region.longitude + region.longitudeDelta / 2
             );
           }
         })
@@ -227,7 +257,7 @@ export default function MapScreen2() {
       );
       setCurrentPosition(coords);
     }
-    
+
   };
 
   // markers users

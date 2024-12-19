@@ -34,6 +34,7 @@ export const userSlice = createSlice({
             state.value.friends = action.payload
         },
         setUserCoordinates: (state, action) => {
+            console.log('set reducer user coordinates')
             state.value.currentLocation = action.payload
         },
         logout: (state, action) => {
