@@ -384,6 +384,7 @@ export default function MapScreen2() {
   return (
     <View style={styles.container}>
       <MapView
+        key={`map-${Date.now()}`}
         ref={mapRef}
         initialRegion={visibleRegion}
         mapType={settings.mapDisplayIgnored}

@@ -69,8 +69,8 @@ export default function ChoosePlaceCoordsScreen() {
             </Marker >
         )
     }, [coordinates])
-   
-    
+
+
     const handlePress = (region) => {
         const coords = region.nativeEvent.coordinate;
         console.log(coords)
@@ -90,6 +90,7 @@ export default function ChoosePlaceCoordsScreen() {
 
         <View style={styles.container}>
             <MapView
+                key={`map-${Date.now()}`}
                 // ref={mapRef}
                 style={{ width: '100%', height: '50%' }}
                 initialRegion={initialRegion}
