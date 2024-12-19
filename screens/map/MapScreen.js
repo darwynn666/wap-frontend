@@ -4,6 +4,7 @@ import MapView from "react-native-maps";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserCoordinates, setUserFriends } from "../../reducers/user";
+import { setPlace } from "../../reducers/places";
 
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
@@ -54,7 +55,9 @@ export default function MapScreen2() {
   const usersDisplayIgnored = settings.usersDisplayIgnored;
   const placesDisplayIgnored = settings.placesDisplayIgnored;
 
-  const [placesData, setPlacesData] = useState([]);
+  const placesData = useSelector(state => state.places.value)
+  // const [placesData, setPlacesData] = useState([]);
+
   const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
 
@@ -95,14 +98,17 @@ export default function MapScreen2() {
         const locationResponse = await Location.watchPositionAsync(
           { distanceInterval: 10 },
           (location) => {
+            if(location.coords) {console.log('loc ok',location.coords)}
             setCurrentPosition(location.coords);
             if (isFirstUpdate) {
+              // console.log('first upd')
               setVisibleRegion({
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude,
                 latitudeDelta: 0.05, //0.05 equivaut à environ 5km
                 longitudeDelta: 0.05,
               });
+              // console.log('first upd ____')
               isFirstUpdate = false;
             }
           }
@@ -178,7 +184,7 @@ export default function MapScreen2() {
 
 
   const filterMarkers = (region) => {
-    // console.log(region);
+    console.log('filter region', region);
     // if dezoom
     if (region.latitudeDelta > 1) {
       setPlacesDataRegionFilter([]);
@@ -281,7 +287,8 @@ export default function MapScreen2() {
     const placesResponse = await fetch(`${BACKEND_URL}/places`);
     const placesData = await placesResponse.json();
     if (placesData.result) {
-      setPlacesData(placesData.data);
+      // setPlacesData(placesData.data);
+      dispatch(setPlace(placesData.data))
       const end = Date.now(); // Fin du chronométrage
       console.log(`Execution Time Places: ${end - start} ms`);
     }
@@ -400,7 +407,7 @@ export default function MapScreen2() {
         visibility={popUpPlacesVisibility}
         userID={user._id}
         placesData={placesData}
-        setPlacesData={setPlacesData}
+        // setPlacesData={setPlacesData}
         setSelectedPlace={setSelectedPlace}
         setPopUpPlacesVisibility={setPopUpPlacesVisibility}
       />

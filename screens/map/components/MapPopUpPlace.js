@@ -3,7 +3,9 @@ import { globalStyle } from "../../../config";
 import MapPopUpModal from "./MapPopUpModal";
 import { IconDogBlue, IconDogBlueLight } from "../../../globalComponents/Icons";
 import { BACKEND_URL } from "../../../config";
-import {  defaultPlaceUrl } from "../../../config";
+import { defaultPlaceUrl } from "../../../config";
+import { useDispatch, useSelector } from "react-redux";
+import { setPlace } from "../../../reducers/places";
 
 //places popup
 export default MapPopUpPlace = ({
@@ -11,9 +13,12 @@ export default MapPopUpPlace = ({
   visibility,
   userID,
   placesData,
-  setPlacesData,
+  // setPlacesData,
   setPopUpPlacesVisibility,
 }) => {
+
+  const dispatch = useDispatch()
+
   const isUserInPlace = (userID, place) => {
     if (!place) return false;
     else return place.users.includes(userID);
@@ -34,12 +39,23 @@ export default MapPopUpPlace = ({
     console.log(response);
 
     // set value in place usestate
-    setPlacesData([
+    // setPlacesData([
+    //   ...placesData.map((x) => {
+    //     if (x._id === place_id) x.users = response.users;
+    //     return x;
+    //   }),
+    // ]);
+
+
+    dispatch(setPlace([
       ...placesData.map((x) => {
         if (x._id === place_id) x.users = response.users;
         return x;
       }),
-    ]);
+    ]))
+
+
+
     //
     const tmpPlaces = { ...selectedPlace };
     tmpPlaces.users = response.users;
