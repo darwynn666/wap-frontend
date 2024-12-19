@@ -96,7 +96,7 @@ export default function FillPlaceInfosScreen(props) {
                 <Image source={{ uri: placePhoto }} style={styles.avatar} ></Image>
                 <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
             </TouchableOpacity>
-
+    
             <Modal visible={modalVisible} transparent={true} style={{ flex: 1 }}>
                 <View style={styles.modalContainer}>
                     <Text style={styles.title}>Choisissez une image à importer</Text>
@@ -111,6 +111,8 @@ export default function FillPlaceInfosScreen(props) {
                     <ButtonSecondary title='Annuler' onPress={() => setModalVisible(false)} />
                 </View>
             </Modal>
+
+            <Text>Vous pouvez ajouter une photo et une courte description du lieu</Text>
 
             <View style={styles.inputContainer}>
                 <TextInput onChangeText={(value) => setDescription(value)} value={description} style={styles.placeDescription} multiline={true} numberOfLines={5} placeholder='Quelques mots sur ce lieu' />

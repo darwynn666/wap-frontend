@@ -38,7 +38,7 @@ export default function ChoosePlaceCoordsScreen() {
     const initialRegion = {
         longitude: user.currentLocation.coordinates[0],
         latitude: user.currentLocation.coordinates[1],
-        latitudeDelta: 0.05, //0.05 equivaut à environ 5km
+        latitudeDelta: 0.05,
         longitudeDelta: 0.05,
     }
 
@@ -51,6 +51,7 @@ export default function ChoosePlaceCoordsScreen() {
                 return
             }
             Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+                setLocation(location)
             })
         })()
     }, [])
@@ -83,8 +84,8 @@ export default function ChoosePlaceCoordsScreen() {
                     style={{ width: '100%', height: '50%' }}
                     initialRegion={initialRegion}
                     mapType='standard'
-                    showsUserLocation
-                    showsMyLocationButton
+                    showsUserLocation={true}
+                    showsMyLocationButton={true}
                     onPress={region => handlePress(region)}
                 >
                     {positionMarker}

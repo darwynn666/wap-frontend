@@ -48,7 +48,6 @@ export default function MapScreen2() {
   const [visibleRegion, setVisibleRegion] = useState();
 
   const user = useSelector((state) => state.user.value);
-  if(!user.token) return
   const dispatch = useDispatch();
 
   const settings = useSelector((state) => state.settings.value);
@@ -213,9 +212,10 @@ export default function MapScreen2() {
   }, [forcePosition]);
 
   // on map press : force position, add place, ...
-  const handlePress = (region) => {
+  const handlePress = (event) => {
+    console.log(event.nativeEvent)
     if (forcePosition) {
-      const coords = region.nativeEvent.coordinate;
+      const coords = event.nativeEvent.coordinate;
       setPositionMarker(
         <Marker coordinate={coords}>
           <FontAwesomeIcon
@@ -227,6 +227,7 @@ export default function MapScreen2() {
       );
       setCurrentPosition(coords);
     }
+    
   };
 
   // markers users
@@ -352,7 +353,7 @@ export default function MapScreen2() {
         style={{ width: "100%", height: "100%" }}
         showsUserLocation={!forcePosition}
         showsMyLocationButton={!forcePosition}
-        onPress={(region) => handlePress(region)}
+        onPress={(event) => handlePress(event)}
         onRegionChangeComplete={(region) => setVisibleRegion(region)}
         moveOnMarkerPress={false}
       >
