@@ -26,7 +26,7 @@ import { faMapMarker } from '@fortawesome/free-solid-svg-icons';
 
 export default function ChoosePlaceCoordsScreen() {
     const navigation = useNavigation();
-    const mapRef = useRef(null);
+    const mapRef2 = useRef(null);
     const route = useRoute()
     const user = useSelector(state => state.user.value);
     const [name, setName] = useState(null)
@@ -90,8 +90,9 @@ export default function ChoosePlaceCoordsScreen() {
 
         <View style={styles.container} onPress={()=> console.log('press')}>
             <MapView
-                key={`map-${Date.now()}`}
-                // ref={mapRef}
+                // key={`map-${Date.now()}`}
+                key='choosePlaceMap'
+                ref={mapRef2}
                 style={{ width: '100%', height: '50%' }}
                 initialRegion={initialRegion}
                 mapType='standard'
