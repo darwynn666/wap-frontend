@@ -11,7 +11,7 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { globalStyle } from "../../../config";
 
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
+import { faLayerGroup,faShop } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
 
 export default function MenuAddPlaceComponent(props) {
@@ -23,7 +23,7 @@ export default function MenuAddPlaceComponent(props) {
     <View style={styles.container}>
       <TouchableOpacity style={{ width: "100%", justifyContent: "center", alignItems: "center" }} 
       onPress={() => navigation.navigate('_AddPlace', { screen: 'ChoosePlaceCoords' })}  >
-        <FontAwesomeIcon icon={faLayerGroup} style={{ color: globalStyle.grayPrimary }} size={globalStyle.iconSize} ></FontAwesomeIcon>
+        <FontAwesomeIcon icon={faShop} style={{ color: globalStyle.grayPrimary }} size={globalStyle.iconSize} ></FontAwesomeIcon>
       </TouchableOpacity>
     </View>
   )

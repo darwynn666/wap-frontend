@@ -4,8 +4,9 @@ import MapPopUpModal from "./MapPopUpModal";
 import { IconDogBlue, IconDogBlueLight } from "../../../globalComponents/Icons";
 import { BACKEND_URL } from "../../../config";
 import { defaultPlaceUrl } from "../../../config";
-import { useDispatch } from "react-redux";
 import { setUserStatus } from "../../../reducers/user";
+import { useDispatch, useSelector } from "react-redux";
+import { setPlace } from "../../../reducers/places";
 
 //places popup
 export default MapPopUpPlace = ({
@@ -13,7 +14,7 @@ export default MapPopUpPlace = ({
   visibility,
   user,
   placesData,
-  setPlacesData,
+  // setPlacesData,
   setPopUpPlacesVisibility,
 }) => {
   const dispatch = useDispatch();
@@ -46,12 +47,23 @@ export default MapPopUpPlace = ({
     else dispatch(setUserStatus("walk"));
 
     // set value in place usestate
-    setPlacesData([
+    // setPlacesData([
+    //   ...placesData.map((x) => {
+    //     if (x._id === place_id) x.users = response.users;
+    //     return x;
+    //   }),
+    // ]);
+
+
+    dispatch(setPlace([
       ...placesData.map((x) => {
         if (x._id === place_id) x.users = response.users;
         return x;
       }),
-    ]);
+    ]))
+
+
+
     //
     const tmpPlaces = { ...selectedPlace };
     tmpPlaces.users = response.users;

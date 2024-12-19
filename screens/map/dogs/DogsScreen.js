@@ -31,7 +31,7 @@ export default function DogsScreen() {
         const backAction = () => { navigation.navigate('_Map'); return true }// handle back button
         const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
         return () => backHandler.remove();
-    }, []);
+    }, [user]);
 
     useEffect(() => { // reload dogs list if needed (after edit, add and delete)
         getDogs()
