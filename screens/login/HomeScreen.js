@@ -26,7 +26,6 @@ export default function HomeScreen(props) {
     useEffect(() => {
         if (user?.token) {
             fetchUser()
-            setLogged(true)
         }
         else {
             setLogged(false)

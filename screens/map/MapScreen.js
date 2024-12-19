@@ -48,6 +48,7 @@ export default function MapScreen2() {
   const [visibleRegion, setVisibleRegion] = useState();
 
   const user = useSelector((state) => state.user.value);
+  if(!user.token) return
   const dispatch = useDispatch();
 
   const settings = useSelector((state) => state.settings.value);
