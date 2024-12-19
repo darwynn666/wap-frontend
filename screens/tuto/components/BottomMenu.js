@@ -33,7 +33,7 @@ export default function BottomMenu(props) {
             <View style={[styles.progressBar, { width: `${progression}%` }]}></View>
             <View style={styles.buttonsContainer}>
                 {currentIndex > 0 && <ButtonSecondary onPress={() => { navigateToPrevRoute() }} title='Précédent' status={true} />}
-                <ButtonSecondary onPress={() => { navigation.navigate('Map') }} title='Skip' status={false} />
+                <ButtonSecondary onPress={() => { navigation.navigate('Map',{screen:"_Map"}) }} title='Skip' status={false} />
                 <ButtonSecondary onPress={() => { navigateToNextRoute() }} title='Suivant' status={true} />
             </View>
         </View>
