@@ -63,7 +63,7 @@ export default function MenuStatusComponent(props) {
 
   const user = useSelector((state) => state.user.value);
 
-  const [status, setStatus] = useState(user.status);
+  //const [status, setStatus] = useState(user.status);
 
   const [modalVisibility, setModalVisibility] = useState(false);
 
@@ -74,7 +74,7 @@ export default function MenuStatusComponent(props) {
   const handleMenuBottomItemPressed = async (status) => {
     //store status to revert id lost connection backend
     const statusBackup = status;
-    setStatus(status);
+    dispatch(setUserStatus(status));
     setModalVisibility(false);
     //change user status in bdd
     const response = await fetch(`${BACKEND_URL}/users/${user.token}/status`, {
@@ -121,14 +121,14 @@ export default function MenuStatusComponent(props) {
         <MainButton
           onPressCallBack={MainButtonHandle}
           color={globalStyle.buttonSecondaryYesColor}
-          status={status}
+          status={user.status}
         ></MainButton>
       </ModalMenu>
       <View style={styles.container}>
         <MainButton
           onPressCallBack={MainButtonHandle}
           color={globalStyle.buttonSecondaryNoColor}
-          status={status}
+          status={user.status}
         ></MainButton>
       </View>
     </>

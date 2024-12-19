@@ -45,7 +45,7 @@ export default MarkerPlace = ({ placesMarker,setSelectedPlace, mapRef, setPopUpP
     }
     return (
       <Marker
-        anchor={{ x: 0.5, y: 0.5 }}
+        anchor={{ x: 1.0, y: 1.0 }}
         coordinate={{
           latitude: placesMarker.location.coordinates[1],
           longitude: placesMarker.location.coordinates[0],

@@ -399,7 +399,7 @@ export default function MapScreen2() {
       <MapPopUpPlace
         place={selectedPlace}
         visibility={popUpPlacesVisibility}
-        userID={user._id}
+        user={user}
         placesData={placesData}
         setPlacesData={setPlacesData}
         setSelectedPlace={setSelectedPlace}
