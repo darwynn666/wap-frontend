@@ -9,17 +9,20 @@ import {  defaultPlaceUrl } from "../../../config";
 export default MapPopUpPlace = ({
   place,
   visibility,
-  userID,
+  user,
   placesData,
   setPlacesData,
   setPopUpPlacesVisibility,
 }) => {
+  console.log("user : ",user)
   const isUserInPlace = (userID, place) => {
     if (!place) return false;
     else return place.users.includes(userID);
   };
 
   const ImHerePressed = async (user_id, place_id) => {
+    console.log("i m here press")
+    console.log("my id is :", user_id)
     //set value in bdd
     const request = await fetch(
       `${BACKEND_URL}/places/${place_id}/users/${user_id}`,
@@ -79,10 +82,10 @@ export default MapPopUpPlace = ({
           <View style={{ margin: 15 }}>
             <MenuBottomItem
               onPressed={() => {
-                ImHerePressed(userID, place._id);
+                ImHerePressed(user._id, place._id);
               }}
               srcIsActive={
-                isUserInPlace(userID, place) ? (
+                isUserInPlace(user._id, place) ? (
                   <IconDogBlue />
                 ) : (
                   <IconDogBlueLight />
