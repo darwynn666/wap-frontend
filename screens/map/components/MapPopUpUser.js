@@ -62,7 +62,7 @@ const MapPopUpUserDogElement = ({ dog }) => {
         <Image
           style={{ width: 60, height: 60, borderRadius: 30 }}
           source={{
-            uri: dog.photo != "" ? dog.photo : dogAvatarUrl,
+            uri: dog.photo ? dog.photo : dogAvatarUrl,
           }}
         />
       </View>
@@ -102,7 +102,7 @@ const MapPopUpUserAcceptedElement = ({ user }) => {
           <Image
             style={{ width: 100, height: 100, borderRadius: 50 }}
             source={{
-              uri: user.infos.photo != "" ? user.infos.photo : userAvatarUrl,
+              uri: user.infos.photo ? user.infos.photo : userAvatarUrl,
             }}
           />
         </View>
