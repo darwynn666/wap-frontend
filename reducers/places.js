@@ -5,7 +5,7 @@ const initialState = {
 }
 
 export const placesSlice = createSlice({
-    name: 'user',
+    name: 'places',
     initialState,
     reducers: {
         setPlace: (state, action) => {

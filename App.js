@@ -13,6 +13,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import user from './reducers/user'
 import settings from './reducers/settings'
 import places from './reducers/places'
+import newplace from './reducers/newplace'
 //import rootReducer from './reducers'; 
 
 // const store = configureStore({
@@ -25,7 +26,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  user, settings, places
+  user, settings, places, newplace
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

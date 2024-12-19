@@ -5,14 +5,14 @@ import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
 import InputFullSize from '../../../globalComponents/InputFullSize'
 import { BACKEND_URL, globalStyle } from '../../../config'
 import { useDispatch, useSelector } from 'react-redux'
-import { setPlace } from '../../../reducers/places'
+import { setTriggerNewPlace } from '../../../reducers/newplace'
 
 
 export default function ConfirmPlaceAddressScreen(props) {
     const navigation = useNavigation()
     const route = useRoute()
     const dispatch = useDispatch()
-    const triggerNewPlace = useSelector(state => state.places.value)
+    const triggerNewPlace = useSelector(state => state.newplace.value)
     console.log(route.params)
     const { coordinates, name, type } = route.params
 
@@ -51,7 +51,7 @@ export default function ConfirmPlaceAddressScreen(props) {
         const data = await response.json()
         console.log(data)
         if (data.result) {
-            dispatch(setPlace(!triggerNewPlace))
+            dispatch(setTriggerNewPlace(true))
             navigation.navigate('FillPlaceInfos', { name: name, _id: data.place._id })
         }
         else {

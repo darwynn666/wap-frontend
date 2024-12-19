@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserCoordinates, setUserFriends } from "../../reducers/user";
 import { setPlace } from "../../reducers/places";
+import { setTriggerNewPlace } from "../../reducers/newplace";
 
 import * as Location from "expo-location";
 import { useNavigation } from "@react-navigation/native";
@@ -57,6 +58,7 @@ export default function MapScreen2() {
 
   const placesData = useSelector(state => state.places.value)
   // const [placesData, setPlacesData] = useState([]);
+  const triggerNewPlace = useSelector(state => state.newplace.value)
 
   const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -70,6 +72,7 @@ export default function MapScreen2() {
   const [forcePositionColor, setForcePositionColor] = useState("#666666");
 
   const intervalRef = useRef(null);
+
 
   //check friends to update
   useEffect(() => {
@@ -98,7 +101,7 @@ export default function MapScreen2() {
         Location.watchPositionAsync(
           { distanceInterval: 10 },
           (location) => {
-            if(location.coords) {console.log('loc ok',location.coords)}
+            if (location.coords) { console.log('loc ok', location.coords) }
             setCurrentPosition(location.coords);
             if (isFirstUpdate) {
               // console.log('first upd')
@@ -117,17 +120,16 @@ export default function MapScreen2() {
     })();
   }, []);
 
-  const [firstRefresRegion,setFirstRefresRegion] = useState(true)
+  const [firstRefresRegion, setFirstRefresRegion] = useState(true)
 
   useEffect(() => {
     console.log("update coord");
     // updateCoordinates()
     // async function to use dispatch and fetch simultany
     (async () => {
-      if (visibleRegion.latitude!=0) {
+      if (visibleRegion.latitude != 0) {
         console.log(visibleRegion)
-        if (firstRefresRegion)
-        {
+        if (firstRefresRegion) {
           console.log("fist time")
           if (mapRef.current) {
             console.log("map current")
@@ -289,8 +291,13 @@ export default function MapScreen2() {
   };
 
   useEffect(() => {
-    getPlaces();
+    if(triggerNewPlace) {
+      console.log('get places,set trigger false')
+      getPlaces();
+      dispatch(setTriggerNewPlace(false))
+    }
   }, [triggerNewPlace]);
+  console.log('triggerNewPlace',triggerNewPlace)
 
   useEffect(() => {
     getUsers();

@@ -95,8 +95,8 @@ export default function ChoosePlaceCoordsScreen() {
                 style={{ width: '100%', height: '50%' }}
                 initialRegion={initialRegion}
                 mapType='standard'
-                // showsUserLocation={true}
-                // showsMyLocationButton={true}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
                 onPress={region => handlePress(region)}
                 onLongPress={region => handlePress(region)}
             >
