@@ -63,7 +63,7 @@ export default function SignUpUserScreen(props) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
+            <ScrollView keyboardShouldPersistTaps={"always"}>
                 <View style={styles.titleContainer}>
                     <Text style={styles.titleText}>On a besoin d'un peu d'infos pour te créer un compte !</Text>
                 </View>

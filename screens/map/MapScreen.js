@@ -93,7 +93,7 @@ export default function MapScreen2() {
       let isFirstUpdate = true;
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        const locationResponse = await Location.watchPositionAsync(
+        Location.watchPositionAsync(
           { distanceInterval: 10 },
           (location) => {
             setCurrentPosition(location.coords);
@@ -113,69 +113,43 @@ export default function MapScreen2() {
   }, []);
 
   useEffect(() => {
-    updateCoordinates()
-    //async function to use dispatch and fetch simultany
-    // (async () => {
-    //   if (currentPosition) {
+    console.log("update coord");
+    // updateCoordinates()
+    // async function to use dispatch and fetch simultany
+    (async () => {
+      if (currentPosition.latitude) {
+        console.log("before dispatch")
+        //set dispatch
+        dispatch(
+          setUserCoordinates({
+            type: "Point",
+            coordinates: [currentPosition.longitude, currentPosition.latitude],
+          })
+        );
 
-    //     //force anim position was null before
-    //     if (mapRef.current) {
-    //       mapRef.current.animateToRegion(currentPosition, popupSpeed);
-    //     }
-    //     //set dispatch
-    //     dispatch(
-    //       setUserCoordinates({
-    //         type: "Point",
-    //         coordinates: [currentPosition.longitude, currentPosition.latitude],
-    //       })
-    //     );
+        //update to bdd
+        console.log('fetch user coords to bdd')
+        const request = await fetch(
+          `${BACKEND_URL}/users/${user.token}/coordinates`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-type": "application/json",
+            },
+            body: JSON.stringify({
+              longitude: currentPosition.longitude,
+              latitude: currentPosition.latitude,
+            }),
+          }
+        );
+        const response = await request.json();
+        // console.log(response);
 
-    //     //update to bdd
-    //     console.log('fetch user coords to bdd')
-    //     const request = await fetch(
-    //       `${BACKEND_URL}/users/${user.token}/coordinates`,
-    //       {
-    //         method: "PUT",
-    //         headers: {
-    //           "Content-type": "application/json",
-    //         },
-    //         body: JSON.stringify({
-    //           longitude: currentPosition.longitude,
-    //           latitude: currentPosition.latitude,
-    //         }),
-    //       }
-    //     );
-    //     const response = await request.json();
-    //     // console.log(response);
+      }
 
-    //   }
-
-    // })();
+    })();
     //diptach position
   }, [currentPosition]);
-
-  const updateCoordinates = async () => {
-    //force anim position was null before
-    if (mapRef.current) {
-      mapRef.current.animateToRegion(currentPosition, popupSpeed);
-    }
-
-    // fetch then dispatch
-    console.log('fetch user coords to bdd')
-    const request = await fetch(`${BACKEND_URL}/users/${user.token}/coordinates`, {
-      method: "PUT",
-      headers: { "Content-type": "application/json", },
-      body: JSON.stringify({ longitude: currentPosition.longitude, latitude: currentPosition.latitude, }),
-    }
-    );
-    const response = await request.json();
-    if (response) {
-      console.log(response);
-      //set dispatch
-      dispatch(setUserCoordinates({ type: "Point", coordinates: [currentPosition.longitude, currentPosition.latitude], }));
-
-    }
-  }
 
 
   const filterMarkers = (region) => {

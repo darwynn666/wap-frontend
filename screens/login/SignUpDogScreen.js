@@ -66,7 +66,7 @@ export default function SignUpDogScreen(props) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView>
+            <ScrollView keyboardShouldPersistTaps={"always"}>
 
                 <Text style={styles.titleText}>Ajoute ton chien</Text>
 
