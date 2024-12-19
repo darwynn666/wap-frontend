@@ -4,6 +4,8 @@ import MapPopUpModal from "./MapPopUpModal";
 import { IconDogBlue, IconDogBlueLight } from "../../../globalComponents/Icons";
 import { BACKEND_URL } from "../../../config";
 import {  defaultPlaceUrl } from "../../../config";
+import { useDispatch } from "react-redux";
+import { setUserStatus } from "../../../reducers/user";
 
 //places popup
 export default MapPopUpPlace = ({
@@ -14,7 +16,8 @@ export default MapPopUpPlace = ({
   setPlacesData,
   setPopUpPlacesVisibility,
 }) => {
-  console.log("user : ",user)
+  const dispatch = useDispatch()
+
   const isUserInPlace = (userID, place) => {
     if (!place) return false;
     else return place.users.includes(userID);
@@ -35,6 +38,9 @@ export default MapPopUpPlace = ({
     );
     const response = await request.json();
     console.log(response);
+    //set status of current user
+    if (response.users.includes(user_id))
+      dispatch(setUserStatus('pause'));
 
     // set value in place usestate
     setPlacesData([
