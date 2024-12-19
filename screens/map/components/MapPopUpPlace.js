@@ -3,7 +3,7 @@ import { globalStyle } from "../../../config";
 import MapPopUpModal from "./MapPopUpModal";
 import { IconDogBlue, IconDogBlueLight } from "../../../globalComponents/Icons";
 import { BACKEND_URL } from "../../../config";
-import {  defaultPlaceUrl } from "../../../config";
+import { defaultPlaceUrl } from "../../../config";
 import { useDispatch } from "react-redux";
 import { setUserStatus } from "../../../reducers/user";
 
@@ -16,7 +16,7 @@ export default MapPopUpPlace = ({
   setPlacesData,
   setPopUpPlacesVisibility,
 }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const isUserInPlace = (userID, place) => {
     if (!place) return false;
@@ -24,8 +24,8 @@ export default MapPopUpPlace = ({
   };
 
   const ImHerePressed = async (user_id, place_id) => {
-    console.log("i m here press")
-    console.log("my id is :", user_id)
+    console.log("i m here press");
+    console.log("my id is :", user_id);
     //set value in bdd
     const request = await fetch(
       `${BACKEND_URL}/places/${place_id}/users/${user_id}`,
@@ -39,8 +39,8 @@ export default MapPopUpPlace = ({
     const response = await request.json();
     console.log(response);
     //set status of current user
-    if (response.users.includes(user_id))
-      dispatch(setUserStatus('pause'));
+    if (response.users.includes(user_id)) dispatch(setUserStatus("pause"));
+    else dispatch(setUserStatus("walk"));
 
     // set value in place usestate
     setPlacesData([
