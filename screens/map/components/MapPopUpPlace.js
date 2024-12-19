@@ -39,7 +39,10 @@ export default MapPopUpPlace = ({
     const response = await request.json();
     console.log(response);
     //set status of current user
-    if (response.users.includes(user_id)) dispatch(setUserStatus("pause"));
+    if (response.users.includes(user_id))
+      {
+        dispatch(setUserStatus("pause"));
+      }
     else dispatch(setUserStatus("walk"));
 
     // set value in place usestate
