@@ -15,6 +15,7 @@ import {
   faMapMarker,
   faBars,
   faCircle,
+  faRefresh,
 } from "@fortawesome/free-solid-svg-icons";
 import { globalStyle } from "../../config";
 import { BACKEND_URL } from "../../config";
@@ -282,6 +283,11 @@ export default function MapScreen2() {
     }
   };
 
+  const refreshMap=()=> {
+    getUsers()
+    getPlaces()
+  }
+
   const isAccepted = (id) => {
     return user.friends.accepted.some((friend) => friend == id);
   };
@@ -436,6 +442,17 @@ export default function MapScreen2() {
         />
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={styles.refresh}
+        onPress={() => refreshMap()}
+      >
+        <FontAwesomeIcon
+          icon={faRefresh}
+          color={globalStyle.greenPrimary}
+          size={30}
+        />
+      </TouchableOpacity>
+
       <View style={styles.bottomMenu}>
         <View style={{ width: "25%", height: "100%" }}>
           <MenuFiltersComponent />
@@ -487,6 +504,18 @@ const styles = StyleSheet.create({
     // left: Dimensions.get('window').width / 2 - 20,
     right: 50,
     top: 30,
+    width: 40,
+    height: 40,
+    borderRadius: 5,
+  },
+  refresh: {
+    // backgroundColor: 'white',
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    // left: Dimensions.get('window').width / 2 - 20,
+    right: 10,
+    top: 80,
     width: 40,
     height: 40,
     borderRadius: 5,
