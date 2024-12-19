@@ -75,7 +75,7 @@ export default function MapScreen2() {
       const response = await request.json();
       const isTheSame = lodash.isEqual(response.data, user.friends);
       if (!isTheSame)
-        console.log("refresh friends")
+        // console.log("refresh friends")
         dispatch(setUserFriends(response.data))
     };
 
@@ -141,7 +141,7 @@ export default function MapScreen2() {
           }
         );
         const response = await request.json();
-        console.log(response);
+        // console.log(response);
       }
     })();
     //diptach position
@@ -213,7 +213,7 @@ export default function MapScreen2() {
 
   // on map press : force position, add place, ...
   const handlePress = (event) => {
-    console.log(event.nativeEvent)
+    // console.log(event.nativeEvent)
     if (forcePosition) {
       const coords = event.nativeEvent.coordinate;
       setPositionMarker(

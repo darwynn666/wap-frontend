@@ -1,8 +1,8 @@
 // backend
-// export const BACKEND_URL = 'https://wap-backend.vercel.app'
+export const BACKEND_URL = 'https://wap-backend.vercel.app'
 // export const BACKEND_URL = 'http://192.168.1.147:3000'
 // export const BACKEND_URL = 'http://192.168.1.190:3000'
-export const BACKEND_URL = 'http://10.1.1.56:3000'
+// export const BACKEND_URL = 'http://10.1.1.56:3000'
 // export const BACKEND_URL = 'http://10.1.2.252:3000'
 
 

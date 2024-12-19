@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity,ScrollView } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Button, TouchableOpacity, ScrollView, BackHandler } from 'react-native'
 import { useEffect, useState, useRef } from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import { Marker } from "react-native-maps";
@@ -44,27 +44,37 @@ export default function ChoosePlaceCoordsScreen() {
 
     // user position
     useEffect(() => {
-        (async () => {
-            const { status } = await Location.requestForegroundPermissionsAsync()
-            if (!status === "granted") {
-                console.log('Localisation refusée')
-                return
-            }
-            Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
-                setLocation(location)
-            })
-        })()
+
+        const backAction = () => { navigation.navigate('_Map'); return true } // handle back button : go back to map
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction)
+
+        // (async () => {
+        //     const { status } = await Location.requestForegroundPermissionsAsync()
+        //     if (!status === "granted") {
+        //         console.log('Localisation refusée')
+        //         return
+        //     }
+        //     Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+        //         setLocation(location)
+        //     })
+        // })()
+
+        return () => backHandler.remove();
     }, [])
 
+    useEffect(() => {
+        setPositionMarker(
+            <Marker coordinate={{ longitude: coordinates[0], latitude: coordinates[1] }}>
+                <FontAwesomeIcon icon={faMapMarker} size={30} color={globalStyle.greenPrimary} />
+            </Marker >
+        )
+    }, [coordinates])
+   
+    
     const handlePress = (region) => {
         const coords = region.nativeEvent.coordinate;
         console.log(coords)
         setCoordinates([coords.longitude, coords.latitude])
-        setPositionMarker(
-            <Marker coordinate={coords}>
-                <FontAwesomeIcon icon={faMapMarker} size={30} color={globalStyle.greenPrimary} />
-            </Marker>
-        )
     }
 
     const handleSubmit = () => {
@@ -78,60 +88,60 @@ export default function ChoosePlaceCoordsScreen() {
 
     return (
 
-            <View style={styles.container}>
-                <MapView
-                    // ref={mapRef}
-                    style={{ width: '100%', height: '50%' }}
-                    initialRegion={initialRegion}
-                    mapType='standard'
-                    showsUserLocation={true}
-                    showsMyLocationButton={true}
-                    onPress={region => handlePress(region)}
-                >
-                    {positionMarker}
-                </MapView>
+        <View style={styles.container}>
+            <MapView
+                // ref={mapRef}
+                style={{ width: '100%', height: '50%' }}
+                initialRegion={initialRegion}
+                mapType='standard'
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+                onPress={region => handlePress(region)}
+            >
+                {positionMarker}
+            </MapView>
 
-                <View style={styles.coordinatesContainer}>
-                    {coordinates && (
-                        <>
-                            <Text>Lon: {coordinates[0]}</Text>
-                            <Text>Lat: {coordinates[1]}</Text>
-                        </>
-                    )}
-                </View>
-
-                <View style={styles.formContainer}>
-                    <Text>Ajouter un lieu</Text>
-                    <Text style={styles.title2}>Choisissez un endroit sur la carte puis indiquez un nom</Text>
-
-                    <InputFullSize onChangeText={(value) => setName(value)} value={name} placeholder='Nom du lieu' />
-                    <View style={styles.itemsView}>
-                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('bars')}>
-                            {type === 'bars' ? <IconBarBlue /> : <IconBarGrayLight />}
-                            <Text style={styles.itemText}>Bar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('restaurants')}>
-                            {type === 'restaurants' ? <IconRestaurantBlue /> : <IconRestaurantGrayLight />}
-                            <Text style={styles.itemText}>Resto</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('parks')}>
-                            {type === 'parks' ? <IconParkBlue /> : <IconParkGrayLight />}
-                            <Text style={styles.itemText}>Parc</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('shops')}>
-                            {type === 'shops' ? <IconShopsBlue /> : <IconShopsGrayLight />}
-                            <Text style={styles.itemText}>Shop</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.typeItem} onPress={() => setType('garbages')}>
-                            {type === 'garbages' ? <IconToiletBlue /> : <IconToiletGrayLight />}
-                            <Text style={styles.itemText}>Toilet</Text>
-                        </TouchableOpacity>
-                    </View>
-                    {(coordinates && name) &&
-                        <ButtonPrimary title='Continuer' onPress={() => handleSubmit()} />
-                    }
-                </View>
+            <View style={styles.coordinatesContainer}>
+                {coordinates && (
+                    <>
+                        <Text>Lon: {coordinates[0]}</Text>
+                        <Text>Lat: {coordinates[1]}</Text>
+                    </>
+                )}
             </View>
+
+            <View style={styles.formContainer}>
+                <Text>Ajouter un lieu</Text>
+                <Text style={styles.title2}>Choisissez un endroit sur la carte puis indiquez un nom</Text>
+
+                <InputFullSize onChangeText={(value) => setName(value)} value={name} placeholder='Nom du lieu' />
+                <View style={styles.itemsView}>
+                    <TouchableOpacity style={styles.typeItem} onPress={() => setType('bars')}>
+                        {type === 'bars' ? <IconBarBlue /> : <IconBarGrayLight />}
+                        <Text style={styles.itemText}>Bar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.typeItem} onPress={() => setType('restaurants')}>
+                        {type === 'restaurants' ? <IconRestaurantBlue /> : <IconRestaurantGrayLight />}
+                        <Text style={styles.itemText}>Resto</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.typeItem} onPress={() => setType('parks')}>
+                        {type === 'parks' ? <IconParkBlue /> : <IconParkGrayLight />}
+                        <Text style={styles.itemText}>Parc</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.typeItem} onPress={() => setType('shops')}>
+                        {type === 'shops' ? <IconShopsBlue /> : <IconShopsGrayLight />}
+                        <Text style={styles.itemText}>Shop</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.typeItem} onPress={() => setType('garbages')}>
+                        {type === 'garbages' ? <IconToiletBlue /> : <IconToiletGrayLight />}
+                        <Text style={styles.itemText}>Toilet</Text>
+                    </TouchableOpacity>
+                </View>
+                {(coordinates && name) &&
+                    <ButtonPrimary title='Continuer' onPress={() => handleSubmit()} />
+                }
+            </View>
+        </View>
     )
 }
 
