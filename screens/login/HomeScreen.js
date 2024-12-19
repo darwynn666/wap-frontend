@@ -72,7 +72,7 @@ export default function HomeScreen(props) {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: logoHomeUrl }} style={styles.logo}></Image>
+        <Image source={logoHomeUrl} style={styles.logo}></Image>
         {/* <Text>Image Logo</Text> */}
       </View>
       <View style={styles.buttonsContainer}>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   logo: {
     width: "100%",
     height: "100%",
-    resizeMode: "contain",
+    resizeMode: "cover",
   },
   buttonsContainer: {
     // backgroundColor:'red',
