@@ -5,25 +5,9 @@ import { useNavigation } from '@react-navigation/native'
 import BottomMenu from './components/BottomMenu'
 import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import FadeInView from './components/FadeInView'
+import Handtuto from './components/Handtuto'
 
-const FadeInView = ({ delay = 0, duration = 5000, fadeOut = false, children, style }) => {
-    const fadeAnim = useAnimatedValue(fadeOut ? 1 : 0); // Départ selon le sens de l'animation
-
-    useEffect(() => {
-        Animated.timing(fadeAnim, {
-            toValue: fadeOut ? 0 : 1, // Aller vers 1 (apparition) ou 0 (disparition)
-            duration: duration, // Durée de l'animation
-            delay: delay, // Délai avant de commencer
-            useNativeDriver: true,
-        }).start();
-    }, [fadeAnim, fadeOut, delay, duration]);
-
-    return (
-        <Animated.View style={{ ...style, opacity: fadeAnim }}>
-            {children}
-        </Animated.View>
-    );
-};
 
 export default function StatusTutoScreen() {
     const navigation = useNavigation();
@@ -50,149 +34,97 @@ export default function StatusTutoScreen() {
         };
     }, []);
 
+
     return (
-        <ImageBackground source={require('../../assets/icons/map_tuto.jpg')} style={styles.background}>
-            <Text style={styles.texttuto}>Tuto 4/5</Text>
-            <View style={styles.containermap}>
-                <FadeInView fadeOut={true} duration={3000} style={styles.container}>
-                    <View style={styles.tooltip}>
-                        {/* <Text style={styles.tooltiptext}>Ici tu peux choisir le status de ton chien</Text> */}
-                        <Icon name="hand-pointer-o" style={[styles.hand, { transform: [{ rotate: '180deg' }] }]} size={50} color="#44CD6F" />
-                    </View>
-                </FadeInView>
-                <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
-                    <Image style={styles.image} source={require('../../assets/icons/menuutilisateur.png')} />
-                </FadeInView>
-                <View style={styles.containerbutton}>
-                    <BottomMenu navigateTo='MenuTuto' />
+        <View style={styles.container}>
+
+            <ImageBackground source={require('../../assets/icons/map_tuto.jpg')} style={styles.background}>
+                <View style={styles.containerpagination}>
+                    <Text style={styles.texttuto}>Tuto 4/5</Text>
                 </View>
+
+                <View style={styles.containeranimation}>
+                    <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
+                        <Image style={styles.image} source={require('../../assets/icons/menuplaces.png')} />
+                    </FadeInView>
+                    <FadeInView>
+                        
+                    </FadeInView>
+                    <FadeInView fadeOut={true} duration={3000} style={styles.containerhand}>
+                        <Handtuto />
+                    </FadeInView>
+
+                </View>
+
+            </ImageBackground >
+            <View style={styles.containerbutton}>
+                <BottomMenu navigateTo='MenuTuto' />
             </View>
-        </ImageBackground>
-    );
+        </View>
+
+    )
 }
 
 import { globalStyle } from '../../config'
 // STYLES
+
 const styles = StyleSheet.create({
     container: {
-        //backgroundColor: '#000',
-        //opacity: 0.2,
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 20,
-        // height: '90%',
-    },
-    containermap: {
-        //backgroundColor: '#000',
-        //opacity: 0.2,
-        flex: 0.9,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 20,
-        height: '100%',
-        marginTop: 150
-    },
-    containerbutton: {
-        flex: 0.1,
-        width: '100%',
-        height: '15%',
-        marginBottom: -94,
-
     },
     background: {
-        width: '100%',
-        height: '97%',
+        flex: 1,
+        marginBottom: '54' // L'ImageBackground occupe tout l'espace disponible
+    },
+    containerpagination: {
+        position: 'absolute',
+        top: 5,
+        right: 5,
+        backgroundColor: 'black',
+        padding: 5,
+        borderRadius: 5,
     },
     texttuto: {
-        color: '#000',
-        alignItems: 'center',
-        position: 'relative',
-        top: 20,
-        left: 300,
-        fontSize: globalStyle.h2,
-    },
-    tooltip: {
-        position: 'absolute',
-        top: 480,
-        right:-190,
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
-        padding: 10,
-        borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
-        zIndex: 1,
-        justifyContent: 'center',
-    },
-    tooltip1: {
-        position: 'absolute',
-        //bottom: -400,
-        //right: 20,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
-        padding: 10,
-        borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
-        zIndex: 1,
-        marginTop: 90,
-        // position: 'absolute',
-        left: - 115,
-        bottom: -25
-    },
-    tooltip2: {
-        position: 'absolute',
-        top: -520,
-        left: 240,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
-        padding: 10,
-        borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
-        zIndex: 1,
-
-    },
-    tooltip3: {
-        position: 'absolute',
-        bottom: 290,
-        left: 15,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
-        padding: 10,
-        borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
-        zIndex: 2,
-    },
-    tooltip4: {
-        position: 'absolute',
-        bottom: 130,
-        left: 248,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
-        padding: 10,
-        borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
-        zIndex: 2,
-    },
-    tooltiptext: {
+        fontSize: 18,
         color: '#fff',
-        fontSize: 14,
-        textAlign: 'center',
-        lineHeight: 18, // Ajoute un espace suffisant entre les lignes pour une meilleure lisibilité
+        margin: '20',
     },
-    arrow: {
-        marginTop: -30
+    containeranimation: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+        marginBottom: 50, // Pour espacer la main du bord inférieur
+        padding: 2,
     },
-   
-    image: {
+    containerhand: {
+        width: 80,
+        height: 80,
+    },
+    containerbutton: {
+        //height:' 10%',
         width: '100%',
-        height: 500,
-        marginBottom: 65,
-
+        padding: 1,
+        backgroundColor: globalStyle.backgroundColor, // Couleur de fond pour démarquer la section bouton
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     imageContainer: {
-        marginBottom: -30
+        position: 'absolute',
+       // bottom: 90, // Place l'image en bas de l'écran
+        width: '100%', // Prend toute la largeur
+        height: '100%',
+        justifyContent:'flex-end',
+        alignSelf:'center',
+        //alignItems:'flex-end', // Ajuste la hauteur (peut être modifié selon les besoins)
     },
-
-    menu: {
-        justifyContent: 'center',
-        alignContent: 'center',
-
-
-    },
-
-})
+    image: {
+        width: '100%',
+        height: '36%',
+        resizeMode: 'cover',
+        opacity:1,
+        justifyContent:'flex-end' ,
+        position:'absolute',
+        bottom: -60,
+    
+    }
+});

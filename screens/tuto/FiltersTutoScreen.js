@@ -3,27 +3,11 @@ import { useEffect, useState } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useNavigation } from '@react-navigation/native'
 import BottomMenu from './components/BottomMenu'
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-const FadeInView = ({ delay = 0, duration = 3000, fadeOut = false, children, style }) => {
-    const fadeAnim = useAnimatedValue(fadeOut ? 1 : 0); // Départ selon le sens de l'animation
-
-    useEffect(() => {
-        Animated.timing(fadeAnim, {
-            toValue: fadeOut ? 0 : 1, // Aller vers 1 (apparition) ou 0 (disparition)
-            duration: duration, // Durée de l'animation
-            delay: delay, // Délai avant de commencer
-            useNativeDriver: true,
-        }).start();
-    }, [fadeAnim, fadeOut, delay, duration]);
-
-    return (
-        <Animated.View style={{ ...style, opacity: fadeAnim }}>
-            {children}
-        </Animated.View>
-    );
-};
-
+import Icon from 'react-native-vector-icons/FontAwesome'
+import FadeInView from './components/FadeInView'
+import Handtuto from './components/Handtuto'
+import { globalStyle } from '../../config'
+import { ImageBackgroundBase } from 'react-native'
 
 
 export default function FiltersTutoScreen() {
@@ -45,48 +29,49 @@ export default function FiltersTutoScreen() {
     }, []);
     return (
         <ImageBackground source={require('../../assets/icons/map_tuto.jpg')} style={styles.background}>
-            <Text style={styles.texttuto}>Tuto 2/5</Text>
-            <View style={styles.containermap}>
-                {/* Tooltip avec animation de disparition */}
-                <FadeInView fadeOut={true} duration={3000} style={styles.container}>
-                    <View style={styles.tooltip}>
-                        {/* <Text style={styles.tooltiptext}>Ici tu peux choisir le status de ton chien</Text> */}
-                        <Icon name="hand-pointer-o" style={[styles.hand, { transform: [{ rotate: '180deg' }] }]} loop={true} size={50} color="#44CD6F" />
-                    </View>
-                </FadeInView>
-            </View>
-            {/* Image avec animation */}
-            <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
-                <Image style={styles.image} source={require('../../assets/icons/menufiltre.png')} />
-            </FadeInView>
 
-            {tooltip1Visible && (
+            <View style={styles.containermap}>
+                <View style={styles.pagetuto}>
+                    <Text style={styles.texttuto}>Tuto 2/5</Text>
+                </View>
+                {/* Tooltip avec animation de disparition */}
+                <FadeInView fadeOut={true} duration={3000} style={styles.containericon}>
+                    <Handtuto />
+                </FadeInView>
+                {/* </View>
+            {/* Image avec animation */}
+                {/* <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
+                <Image style={styles.image} source={require('../../assets/icons/menufiltre.png')} />
+            </FadeInView> */}
+
+                {/* {tooltip1Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip2}>
                         <Text style={styles.tooltiptext}>Ici tu peux choisir le type de carte.</Text>
-                        {/* <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
-                    </View>
+                        <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
+                {/* </View>
                 </FadeInView>
-            )}
-
+            )} */}
+                {/* 
             {tooltip2Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip3}>
-                        <Text style={styles.tooltiptext}>Ici tu peux choisir les lieux que tu veux afficher sur la carte.</Text>
-                        {/* <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
-                    </View>
+                        <Text style={styles.tooltiptext}>Ici tu peux choisir les lieux que tu veux afficher sur la carte.</Text> */}
+                {/* <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
+                {/* </View>
                 </FadeInView>
-            )}
+            )} */}
 
-            {tooltip3Visible && (
+                {/* {tooltip3Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip4}>
                         <Text style={styles.tooltiptext}>Ici tu peux choisir les utilisateurs que tu veux afficher sur la carte.</Text>
                         {/* <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
-                    </View>
+                {/* </View>
                 </FadeInView>
-            )}
-            <View style={styles.containerbutton}>
+            )}  */}
+
+                {/* <View style={styles.containerbutton}> */}
                 <BottomMenu navigateTo="StatusTuto" />
             </View>
         </ImageBackground>
@@ -94,27 +79,34 @@ export default function FiltersTutoScreen() {
 }
 
 
-import { globalStyle } from '../../config'
+
+
 // STYLES
 const styles = StyleSheet.create({
-    container: {
+    containericon: {
+        flexDirection: 'row',
+        alignContent: 'center',
+        alignSelf: 'flex-start',
+
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start',
+        paddingTop: 20,
+
+    },
+    containermap: {
+flex: 1,
+ flexDirection: 'row',
+        alignContent: 'center',
+        padding: 20,
         //backgroundColor: '#000',
         //opacity: 0.2,
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 20,
-        // height: '90%',
-    },
-    containermap: {
-        //backgroundColor: '#000',
-        //opacity: 0.2,
-        flex: 0.9,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: 20,
-        height: '100%',
-        marginTop: 150
+        // justifyContent: 'center',
+        // alignItems: 'center',
+        // paddingTop: 20,
+        // height: '100%',
+        //marginTop: 150
     },
     containerbutton: {
         flex: 0.1,
@@ -138,7 +130,7 @@ const styles = StyleSheet.create({
     tooltip: {
         position: 'absolute',
         top: 480,
-        left:-190,
+        left: -190,
         backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
         padding: 10,
         borderRadius: 8,
@@ -200,7 +192,7 @@ const styles = StyleSheet.create({
     arrow: {
         marginTop: -30
     },
-   
+
     image: {
         width: '100%',
         height: 500,
