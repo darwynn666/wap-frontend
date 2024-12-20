@@ -31,12 +31,12 @@ import MarkerPlace from "./components/MarkerPlace";
 import MarkerPlaceUsersCounter from "./components/MarkerPlaceUsersCounter";
 import MarkerUser from "./components/MarkerUser";
 
-const lodash = require('lodash')
+const lodash = require("lodash");
 
 // COMPONENT
 export default function MapScreen2() {
   const POP_UP_SPEED = 500;
-  const REFRESH_USER_INTERVAL = 10000;
+  const REFRESH_USER_INTERVAL = 5000;
 
   const navigation = useNavigation();
 
@@ -57,9 +57,9 @@ export default function MapScreen2() {
   const usersDisplayIgnored = settings.usersDisplayIgnored;
   const placesDisplayIgnored = settings.placesDisplayIgnored;
 
-  const placesData = useSelector(state => state.places.value)
+  const placesData = useSelector((state) => state.places.value);
   // const [placesData, setPlacesData] = useState([]);
-  const triggerNewPlace = useSelector(state => state.newplace.value)
+  const triggerNewPlace = useSelector((state) => state.newplace.value);
 
   const [placesDataRegionFilter, setPlacesDataRegionFilter] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
@@ -74,7 +74,6 @@ export default function MapScreen2() {
 
   const intervalRef = useRef(null);
 
-
   //check friends to update
   useEffect(() => {
     const updateData = async () => {
@@ -83,7 +82,7 @@ export default function MapScreen2() {
       const isTheSame = lodash.isEqual(response.data, user.friends);
       if (!isTheSame)
         // console.log("refresh friends")
-        dispatch(setUserFriends(response.data))
+        dispatch(setUserFriends(response.data));
     };
 
     // start
@@ -99,42 +98,48 @@ export default function MapScreen2() {
       let isFirstUpdate = true;
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        Location.watchPositionAsync(
-          { distanceInterval: 10 },
-          (location) => {
-            if (location.coords) { console.log('loc ok', location.coords) }
-            setCurrentPosition(location.coords);
-            if (isFirstUpdate) {
-              // console.log('first upd')
-              setVisibleRegion({
-                latitude: location.coords.latitude,
-                longitude: location.coords.longitude,
-                latitudeDelta: 0.05, //0.05 equivaut à environ 5km
-                longitudeDelta: 0.05,
-              });
-              // console.log('first upd ____')
-              isFirstUpdate = false;
-            }
+        Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+          if (location.coords) {
+            console.log("loc ok", location.coords);
           }
-        );
+          setCurrentPosition(location.coords);
+          if (isFirstUpdate) {
+            // console.log('first upd')
+            setVisibleRegion({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.05, //0.05 equivaut à environ 5km
+              longitudeDelta: 0.05,
+            });
+            // console.log('first upd ____')
+            isFirstUpdate = false;
+          }
+        });
       }
     })();
   }, []);
 
-  const [firstRefresRegion, setFirstRefresRegion] = useState(true)
+  const [firstRefresRegion, setFirstRefresRegion] = useState(true);
+
+  //handle anim map
+  useEffect(() => {
+    async () => {
+      if (visibleRegion.latitude && visibleRegion.latitude != 0) {
+        if (firstRefresRegion) {
+          if (mapRef.current) {
+            console.log("map current");
+            mapRef.current.animateToRegion(visibleRegion, 3000);
+          }
+          setFirstRefresRegion(false);
+        }
+      }
+    };
+  }, [currentPosition]);
 
   useEffect(() => {
     (async () => {
-      if (visibleRegion.latitude!=0) {
-        if (firstRefresRegion)
-        {
-          if (mapRef.current) {
-            console.log("map current")
-            mapRef.current.animateToRegion(visibleRegion, 3000);
-          }
-          setFirstRefresRegion(false)
-        }
-        console.log("before dispatch")
+      if (visibleRegion.latitude && visibleRegion.latitude != 0) {
+        console.log("before dispatch");
         //set dispatch
         dispatch(
           setUserCoordinates({
@@ -159,63 +164,67 @@ export default function MapScreen2() {
         );
         const response = await request.json();
       }
-
     })();
     //diptach position
   }, [currentPosition]);
 
-
   const filterMarkers = (region) => {
-    console.log('filter region', region);
+    console.log("filter region");
     // if dezoom
     if (region.latitudeDelta > 1) {
       setPlacesDataRegionFilter([]);
       setUsersDataRegionFilter([]);
     } else {
       //filter places
-      setPlacesDataRegionFilter(
-        placesData.filter((marker) => {
-          if (visibleRegion.latitude) {
-            return (
-              marker.location.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
-              marker.location.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
-              marker.location.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
-              marker.location.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
-            );
-          }
-        })
-      );
-      //filter users
-      setUsersDataRegionFilter(
-        usersData.filter((marker) => {
-          if (visibleRegion.latitude) {
-            return (
-              marker.currentLocation.coordinates[1] >=
-              region.latitude - region.latitudeDelta / 2 &&
-              marker.currentLocation.coordinates[1] <=
-              region.latitude + region.latitudeDelta / 2 &&
-              marker.currentLocation.coordinates[0] >=
-              region.longitude - region.longitudeDelta / 2 &&
-              marker.currentLocation.coordinates[0] <=
-              region.longitude + region.longitudeDelta / 2
-            );
-          }
-        })
-      );
+      console.log("nb placesData", placesData.length);
+      if (placesData.length > 0) {
+        setPlacesDataRegionFilter(
+          placesData.filter((marker) => {
+            if (visibleRegion.latitude) {
+              return (
+                marker.location.coordinates[1] >=
+                  region.latitude - region.latitudeDelta / 2 &&
+                marker.location.coordinates[1] <=
+                  region.latitude + region.latitudeDelta / 2 &&
+                marker.location.coordinates[0] >=
+                  region.longitude - region.longitudeDelta / 2 &&
+                marker.location.coordinates[0] <=
+                  region.longitude + region.longitudeDelta / 2
+              );
+            }
+          })
+        );
+      }
+      if (usersData.length > 0) {
+        //filter users
+        console.log("nb userdata", usersData.length);
+        setUsersDataRegionFilter(
+          usersData.filter((marker) => {
+            if (visibleRegion.latitude) {
+              return (
+                marker.currentLocation.coordinates[1] >=
+                  region.latitude - region.latitudeDelta / 2 &&
+                marker.currentLocation.coordinates[1] <=
+                  region.latitude + region.latitudeDelta / 2 &&
+                marker.currentLocation.coordinates[0] >=
+                  region.longitude - region.longitudeDelta / 2 &&
+                marker.currentLocation.coordinates[0] <=
+                  region.longitude + region.longitudeDelta / 2
+              );
+            }
+          })
+        );
+      }
     }
     // console.log('marker 0', markers[0])
     region.latitude && setVisibleRegion(region);
   };
 
   useEffect(() => {
-    if (placesData.length > 0 && visibleRegion.latitude) {
+    if (visibleRegion) {
       filterMarkers(visibleRegion);
     }
-  }, [placesData, visibleRegion]);
+  }, [placesData, usersData, visibleRegion]);
 
   const toggleForcePosition = () => {
     setForcePosition(!forcePosition);
@@ -245,7 +254,6 @@ export default function MapScreen2() {
       );
       setCurrentPosition(coords);
     }
-
   };
 
   // markers users
@@ -270,16 +278,17 @@ export default function MapScreen2() {
     const placesData = await placesResponse.json();
     if (placesData.result) {
       // setPlacesData(placesData.data);
-      dispatch(setPlace(placesData.data))
+      console.log("places data")
+      dispatch(setPlace(placesData.data));
       const end = Date.now(); // Fin du chronométrage
       console.log(`Execution Time Places: ${end - start} ms`);
     }
   };
 
-  const refreshMap=()=> {
-    getUsers()
-    getPlaces()
-  }
+  const refreshMap = () => {
+    getUsers();
+    getPlaces();
+  };
 
   const isAccepted = (id) => {
     return user.friends.accepted.some((friend) => friend == id);
@@ -290,16 +299,17 @@ export default function MapScreen2() {
   };
 
   useEffect(() => {
-    if(triggerNewPlace) {
-      console.log('get places,set trigger false')
+    if (triggerNewPlace) {
+      console.log("get places,set trigger false");
       getPlaces();
-      dispatch(setTriggerNewPlace(false))
+      dispatch(setTriggerNewPlace(false));
     }
   }, [triggerNewPlace]);
-  console.log('triggerNewPlace',triggerNewPlace)
+  // console.log('triggerNewPlace',triggerNewPlace)
 
   useEffect(() => {
-    getUsers();
+    getUsers()
+    getPlaces();
   }, []);
 
   //create markers
@@ -331,10 +341,8 @@ export default function MapScreen2() {
 
   const users = usersDataRegionFilter
     .filter((_user) => {
-      console.log(_user )
-      return _user.status!="off" && user.status != "off"
+      return _user.status != "off" && user.status != "off";
       //filter by the status of the current user
-      
     })
     .filter((userData) => {
       //filter by the filter menu
@@ -378,7 +386,7 @@ export default function MapScreen2() {
   return (
     <View style={styles.container}>
       <MapView
-        key='mainMap'
+        key="mainMap"
         // key={`map-${Date.now()}`}
         ref={mapRef}
         initialRegion={visibleRegion}
@@ -437,10 +445,7 @@ export default function MapScreen2() {
         />
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.refresh}
-        onPress={() => refreshMap()}
-      >
+      <TouchableOpacity style={styles.refresh} onPress={() => refreshMap()}>
         <FontAwesomeIcon
           icon={faRefresh}
           color={globalStyle.grayLight}
