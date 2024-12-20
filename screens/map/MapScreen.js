@@ -124,14 +124,10 @@ export default function MapScreen2() {
   const [firstRefresRegion, setFirstRefresRegion] = useState(true)
 
   useEffect(() => {
-    console.log("update coord");
-    // updateCoordinates()
-    // async function to use dispatch and fetch simultany
     (async () => {
-      if (visibleRegion.latitude != 0) {
-        console.log(visibleRegion)
-        if (firstRefresRegion) {
-          console.log("fist time")
+      if (visibleRegion.latitude!=0) {
+        if (firstRefresRegion)
+        {
           if (mapRef.current) {
             console.log("map current")
             mapRef.current.animateToRegion(visibleRegion, 3000);
@@ -148,7 +144,6 @@ export default function MapScreen2() {
         );
 
         //update to bdd
-        console.log('fetch user coords to bdd')
         const request = await fetch(
           `${BACKEND_URL}/users/${user.token}/coordinates`,
           {
@@ -163,8 +158,6 @@ export default function MapScreen2() {
           }
         );
         const response = await request.json();
-        // console.log(response);
-
       }
 
     })();
@@ -337,9 +330,11 @@ export default function MapScreen2() {
     });
 
   const users = usersDataRegionFilter
-    .filter(() => {
+    .filter((_user) => {
+      console.log(_user )
+      return _user.status!="off" && user.status != "off"
       //filter by the status of the current user
-      return user.status != "off";
+      
     })
     .filter((userData) => {
       //filter by the filter menu
