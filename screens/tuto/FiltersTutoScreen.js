@@ -29,45 +29,42 @@ export default function FiltersTutoScreen() {
     }, []);
     return (
         <ImageBackground source={require('../../assets/icons/map_tuto.jpg')} style={styles.background}>
-
             <View style={styles.containermap}>
                 <View style={styles.pagetuto}>
                     <Text style={styles.texttuto}>Tuto 2/5</Text>
                 </View>
-                <FadeInView fadeOut={true} duration={3000} style={styles.containericon}>
-                    <Icon name="hand-pointer-o" style={[styles.hand, { transform: [{ rotate: '180deg' }] }]} size={100} color={'black'}/>
+                <FadeInView fadeOut={false} delay={500} duration={500} style={styles.containericon}>
+                    <Icon name="hand-pointer-o" style={[styles.hand, { transform: [{ rotate: '180deg' }] }]} size={80} color={globalStyle.greenPrimary} />
                 </FadeInView>
-                </View>
-            
-                <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
+            </View>
+            <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
                 <Image style={styles.image} source={require('../../assets/icons/menufiltre.png')} />
             </FadeInView>
 
-                {tooltip1Visible && (
+            {tooltip1Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip2}>
                         <Text style={styles.tooltiptext}>Ici tu peux choisir le type de carte.</Text>
-                </View>
+                    </View>
                 </FadeInView>
             )}
-                
+
             {tooltip2Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip3}>
-                        <Text style={styles.tooltiptext}>Ici tu peux choisir les lieux que tu veux afficher sur la carte.</Text> 
-                </View>
+                        <Text style={styles.tooltiptext}>Ici tu peux choisir les lieux que tu veux afficher sur la carte.</Text>
+                    </View>
                 </FadeInView>
             )}
 
-                {tooltip3Visible && (
+            {tooltip3Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip4}>
-                        <Text style={styles.tooltiptext}>Ici tu peux choisir les utilisateurs que tu veux afficher sur la carte.</Text>     
-                </View>
+                        <Text style={styles.tooltiptext}>Ici tu peux choisir les utilisateurs que tu veux afficher sur la carte.</Text>
+                    </View>
                 </FadeInView>
-            )} 
-
-                <View style={styles.containerbutton}>
+            )}
+            <View style={styles.containerbutton}>
                 <BottomMenu navigateTo="StatusTuto" />
             </View>
         </ImageBackground>
@@ -80,20 +77,17 @@ export default function FiltersTutoScreen() {
 // STYLES
 const styles = StyleSheet.create({
     containericon: {
-        top: -500,
-        //right:200,
-        left: 
-        flexDirection: 'row',
+        position: 'absolute',
+        bottom: -440,
         alignContent: 'center',
-        //alignSelf: 'flex-end',
+        alignSelf: 'flex-end',
         flex: 1,
-       // justifyContent: 'flex-end',
-       // alignItems: 'flex-start',
-       // paddingTop: 20,
+        justifyContent: 'center',
+        alignItems: 'flex-start',
     },
     containermap: {
-flex: 1,
- flexDirection: 'row',
+        flex: 1,
+        flexDirection: 'row',
         alignContent: 'center',
         padding: 20,
         flex: 1,
@@ -103,7 +97,6 @@ flex: 1,
         width: '100%',
         height: '15%',
         marginBottom: -25,
-
     },
     background: {
         width: '100%',
@@ -121,7 +114,7 @@ flex: 1,
         position: 'absolute',
         top: 480,
         left: -190,
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
+        backgroundColor: 'rgba(0, 0, 0,1)',
         padding: 10,
         borderRadius: 8,
         maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
@@ -130,75 +123,74 @@ flex: 1,
     },
     tooltip1: {
         position: 'absolute',
-        //bottom: -400,
-        //right: 20,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
+        backgroundColor: 'rgba(0, 0, 0,1)',
         padding: 10,
         borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
+        maxWidth: 150,
         zIndex: 1,
         marginTop: 90,
-        // position: 'absolute',
         left: - 115,
         bottom: -25
     },
     tooltip2: {
         position: 'absolute',
         top: -520,
-        left: 240,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
+        left: 240,
+        backgroundColor: 'rgba(0, 0, 0,1)',
         padding: 10,
         borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
+        maxWidth: 150,
         zIndex: 1,
-
     },
     tooltip3: {
         position: 'absolute',
         bottom: 290,
-        left: 15,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
+        left: 15,
+        backgroundColor: 'rgba(0, 0, 0,1)',
         padding: 10,
         borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
+        maxWidth: 150,
         zIndex: 2,
     },
     tooltip4: {
         position: 'absolute',
         bottom: 130,
-        left: 248,// Ajustez cette valeur pour placer le tooltip
-        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
+        left: 248,
+        backgroundColor: 'rgba(0, 0, 0,1)',
         padding: 10,
         borderRadius: 8,
-        maxWidth: 150, // Limite la largeur maximale pour forcer le passage à la ligne
+        maxWidth: 150,
         zIndex: 2,
     },
     tooltiptext: {
         color: '#fff',
         fontSize: 14,
         textAlign: 'center',
-        lineHeight: 18, // Ajoute un espace suffisant entre les lignes pour une meilleure lisibilité
+        lineHeight: 18,
     },
     arrow: {
         marginTop: -30
     },
-
     image: {
         width: '100%',
         height: 500,
         marginBottom: 54,
-
     },
     imageContainer: {
         marginBottom: -30
     },
-
     menu: {
         justifyContent: 'center',
         alignContent: 'center',
     },
-    hand:{
-        
-    },
-
+    hand: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1,
+        backgroundColor: 'black',
+        width: '80',
+        borderRadius: 8,
+        margin: 5,
+        padding: 2,
+    }
 })
