@@ -36,7 +36,7 @@ const lodash = require('lodash')
 // COMPONENT
 export default function MapScreen2() {
   const POP_UP_SPEED = 500;
-  const REFRESH_USER_INTERVAL = 10000;
+  const REFRESH_USER_INTERVAL = 5000;
 
   const navigation = useNavigation();
 
@@ -123,17 +123,27 @@ export default function MapScreen2() {
 
   const [firstRefresRegion, setFirstRefresRegion] = useState(true)
 
+
+  //handle anim map
   useEffect(() => {
     (async () => {
-      if (visibleRegion.latitude!=0) {
+      if (visibleRegion.latitude && visibleRegion.latitude!=0) {
         if (firstRefresRegion)
-        {
-          if (mapRef.current) {
-            console.log("map current")
-            mapRef.current.animateToRegion(visibleRegion, 3000);
+          {
+            if (mapRef.current) {
+              console.log("map current")
+              mapRef.current.animateToRegion(visibleRegion, 3000);
+            }
+            setFirstRefresRegion(false)
           }
-          setFirstRefresRegion(false)
-        }
+      }
+    })
+  },[currentPosition])
+
+  //change first region when 
+  useEffect(() => {
+    (async () => {
+      if (visibleRegion.latitude && visibleRegion.latitude!=0) {
         console.log("before dispatch")
         //set dispatch
         dispatch(
