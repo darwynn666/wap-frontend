@@ -20,6 +20,7 @@ export default function ConfirmPlaceAddressScreen(props) {
     const [street, setStreet] = useState(null)
     const [postcode, setPostCode] = useState(null)
     const [city, setCity] = useState(null)
+    const [disableButton, setDisableButton] = useState(false)
 
     useEffect(() => {
         getAddress()
@@ -41,6 +42,7 @@ export default function ConfirmPlaceAddressScreen(props) {
     const handleSubmit = async () => {
         if (!coordinates) { console.log('required coordinates'); return }
         if (!name || !type || !housenumber || !street || !postcode || !city) { console.log('required address'); return }
+        setDisableButton(true)
         const url = `${BACKEND_URL}/places`
         console.log('POST', url)
         const response = await fetch(url, {
@@ -49,6 +51,7 @@ export default function ConfirmPlaceAddressScreen(props) {
             body: JSON.stringify({ name, type, housenumber, street, postcode, city, longitude: coordinates[0], latitude: coordinates[1] })
         })
         const data = await response.json()
+        setDisableButton(false)
         console.log(data)
         if (data.result) {
             dispatch(setTriggerNewPlace(true))
@@ -71,7 +74,7 @@ export default function ConfirmPlaceAddressScreen(props) {
                     <InputFullSize onChangeText={(value) => setPostCode(value)} value={postcode} placeholder='Code postal' />
                     <InputFullSize onChangeText={(value) => setCity(value)} value={city} placeholder='Ville' />
                 </View>
-                <ButtonPrimary title='Suivant' onPress={() => handleSubmit()} />
+                <ButtonPrimary title='Suivant' onPress={() => handleSubmit()}  disabled={disableButton} />
                 <ButtonPrimary title='Annuler' onPress={() => navigation.navigate('_Map', { screen: 'Map' })} />
             </View>
         </View>

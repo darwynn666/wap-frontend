@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TextInput, View, Button, Image, Dimensions, TouchableOpacity, Modal } from 'react-native'
 import { useEffect, useState } from 'react'
-import { useRoute } from '@react-navigation/native'
-import { useNavigation } from '@react-navigation/native'
+import { useRoute, useNavigation } from '@react-navigation/native'
+import { useDispatch } from 'react-redux'
 import ButtonPrimary from '../../../globalComponents/ButtonPrimary'
 import ButtonSecondary from '../../../globalComponents/ButtonSecondary'
 import InputFullSize from '../../../globalComponents/InputFullSize'
@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faPen, faCamera, faFileImage } from '@fortawesome/free-solid-svg-icons'
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { setTriggerNewPlace } from '../../../reducers/newplace'
 
 export default function FillPlaceInfosScreen(props) {
     const navigation = useNavigation()
@@ -17,6 +18,8 @@ export default function FillPlaceInfosScreen(props) {
     const [modalVisible, setModalVisible] = useState(false)
     const [placePhoto, setPlacePhoto] = useState(null)
     const [description, setDescription] = useState(null)
+    const dispatch = useDispatch()
+    const [disableButton, setDisableButton] = useState(false)
 
     console.log(route.params)
 
@@ -60,7 +63,8 @@ export default function FillPlaceInfosScreen(props) {
             name: 'photo.jpg',
             type: 'image/jpeg',
         })
-        const url = `${BACKEND_URL}/places/${route.params._id}/photo`
+
+        const url = `${BACKEND_URL}/places/${route.params._id}/photo` 
         console.log('PUT', url)
         try {
             const response = await fetch(url, {
@@ -74,6 +78,7 @@ export default function FillPlaceInfosScreen(props) {
     }
 
     const updatePlace = async () => {
+        setDisableButton(true)
         const url = `${BACKEND_URL}/places/${route.params._id}/step2`
         console.log('PUT', url)
         const response = await fetch(url, {
@@ -82,7 +87,10 @@ export default function FillPlaceInfosScreen(props) {
             body: JSON.stringify({ description })
         })
         const data = await response.json()
+        setDisableButton(false)
         if (data.result) {
+            console.log('dispatch and navigate')
+            dispatch(setTriggerNewPlace(true))
             navigation.navigate('_Map', { screen: 'Map' })
         }
     }
@@ -96,7 +104,7 @@ export default function FillPlaceInfosScreen(props) {
                 <Image source={{ uri: placePhoto }} style={styles.avatar} ></Image>
                 <FontAwesomeIcon icon={faPen} color={globalStyle.greenPrimary} size={20} style={styles.icon}></FontAwesomeIcon>
             </TouchableOpacity>
-    
+
             <Modal visible={modalVisible} transparent={true} style={{ flex: 1 }}>
                 <View style={styles.modalContainer}>
                     <Text style={styles.title}>Choisissez une image à importer</Text>
@@ -119,7 +127,7 @@ export default function FillPlaceInfosScreen(props) {
             </View>
 
             <View style={styles.bottomControls}>
-                <ButtonPrimary title='Terminer' onPress={() => updatePlace()} />
+                <ButtonPrimary title='Terminer' onPress={() => updatePlace()} disabled={disableButton} />
                 <ButtonPrimary title='Plus tard' />
             </View>
 
