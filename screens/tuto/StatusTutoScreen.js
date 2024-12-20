@@ -32,7 +32,6 @@ export default function StatusTutoScreen() {
             <View style={styles.containermap}>
                 <FadeInView fadeOut={true} duration={3000} style={styles.container}>
                     <View style={styles.tooltip}>
-                        {/* <Text style={styles.tooltiptext}>Ici tu peux choisir le status de ton chien</Text> */}
                         <Icon name="hand-pointer-o" style={[styles.hand, { transform: [{ rotate: '180deg' }] }]} size={50} color="#44CD6F" />
                     </View>
                 </FadeInView>
@@ -59,7 +58,6 @@ export default function StatusTutoScreen() {
                     <FadeInView fadeOut={false} duration={3000} style={styles.menu}>
                         <View style={styles.tooltip3}>
                             <Text style={styles.tooltiptext}>Quand tu ne veux plus apparaitre sur la carte choisi le chien gris </Text>
-                            {/* <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
                         </View>
                     </FadeInView>
                 )}
@@ -102,7 +100,7 @@ const styles = StyleSheet.create({
         // marginTop: 50
         // paddingTop:'20%',
         //justifyContent:'space between',
-        marginBottom: -65
+        marginBottom: -80
 
     },
     background: {
@@ -168,17 +166,6 @@ const styles = StyleSheet.create({
 
     },
     arrow: {
-        // width: 180,
-        // height: 10,
-        // borderLeftWidth: 2,
-        // borderRightWidth: 2,
-        // borderBottomWidth: 2,
-        // borderStyle: 'solid',
-        // //backgroundColor: 'rgba(0, 0, 0,0.8)',
-        // // borderLeftColor: 'transparent',
-        // // borderRightColor: 'transparent',
-        // // borderBottomColor: '#fff',
-        // marginBottom: -35, // Ajustez selon l'espace souhaité
         position: 'relative',
         top: 45,
         left: 50,
@@ -187,14 +174,12 @@ const styles = StyleSheet.create({
         width: '100%', // Valeur fixe
         // height: 200, // Valeur fixe
         resizeMode: 'contain', // Essayez différents modes
-
-
     },
     imageContainer: {
         width: '100%',
         height: '60%',
         alignItems: 'center',
-        marginBottom: 330
+        marginBottom: 328
 
     },
     tooltipmenu: {

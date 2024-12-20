@@ -143,8 +143,7 @@ const styles = StyleSheet.create({
         // marginTop: 50
         // paddingTop:'20%',
         //justifyContent:'space between',
-        marginBottom: -95
-
+        marginBottom: -160
     },
     background: {
         width: '100%',
@@ -240,7 +239,7 @@ const styles = StyleSheet.create({
     image: {
         height: 800,
         position: 'absolute',
-        top: -270,
+        top: -260,
         right: -91,
 
         resizeMode: 'contain', // Essayez différents modes

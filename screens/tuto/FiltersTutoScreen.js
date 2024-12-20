@@ -34,44 +34,40 @@ export default function FiltersTutoScreen() {
                 <View style={styles.pagetuto}>
                     <Text style={styles.texttuto}>Tuto 2/5</Text>
                 </View>
-                {/* Tooltip avec animation de disparition */}
                 <FadeInView fadeOut={true} duration={3000} style={styles.containericon}>
-                    <Handtuto />
+                    <Icon name="hand-pointer-o" style={[styles.hand, { transform: [{ rotate: '180deg' }] }]} size={100} color={'black'}/>
                 </FadeInView>
-                {/* </View>
-            {/* Image avec animation */}
-                {/* <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
+                </View>
+            
+                <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
                 <Image style={styles.image} source={require('../../assets/icons/menufiltre.png')} />
-            </FadeInView> */}
+            </FadeInView>
 
-                {/* {tooltip1Visible && (
+                {tooltip1Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip2}>
                         <Text style={styles.tooltiptext}>Ici tu peux choisir le type de carte.</Text>
-                        <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
-                {/* </View>
+                </View>
                 </FadeInView>
-            )} */}
-                {/* 
+            )}
+                
             {tooltip2Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip3}>
-                        <Text style={styles.tooltiptext}>Ici tu peux choisir les lieux que tu veux afficher sur la carte.</Text> */}
-                {/* <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
-                {/* </View>
+                        <Text style={styles.tooltiptext}>Ici tu peux choisir les lieux que tu veux afficher sur la carte.</Text> 
+                </View>
                 </FadeInView>
-            )} */}
+            )}
 
-                {/* {tooltip3Visible && (
+                {tooltip3Visible && (
                 <FadeInView delay={500} duration={1000} fadeOut={false} style={styles.menu}>
                     <View style={styles.tooltip4}>
-                        <Text style={styles.tooltiptext}>Ici tu peux choisir les utilisateurs que tu veux afficher sur la carte.</Text>
-                        {/* <Icon name="arrow-down" style={styles.arrow} size={30} color="#000" /> */}
-                {/* </View>
+                        <Text style={styles.tooltiptext}>Ici tu peux choisir les utilisateurs que tu veux afficher sur la carte.</Text>     
+                </View>
                 </FadeInView>
-            )}  */}
+            )} 
 
-                {/* <View style={styles.containerbutton}> */}
+                <View style={styles.containerbutton}>
                 <BottomMenu navigateTo="StatusTuto" />
             </View>
         </ImageBackground>
@@ -84,29 +80,23 @@ export default function FiltersTutoScreen() {
 // STYLES
 const styles = StyleSheet.create({
     containericon: {
+        top: -500,
+        //right:200,
+        left: 
         flexDirection: 'row',
         alignContent: 'center',
-        alignSelf: 'flex-start',
-
+        //alignSelf: 'flex-end',
         flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'flex-start',
-        paddingTop: 20,
-
+       // justifyContent: 'flex-end',
+       // alignItems: 'flex-start',
+       // paddingTop: 20,
     },
     containermap: {
 flex: 1,
  flexDirection: 'row',
         alignContent: 'center',
         padding: 20,
-        //backgroundColor: '#000',
-        //opacity: 0.2,
         flex: 1,
-        // justifyContent: 'center',
-        // alignItems: 'center',
-        // paddingTop: 20,
-        // height: '100%',
-        //marginTop: 150
     },
     containerbutton: {
         flex: 0.1,
@@ -196,7 +186,7 @@ flex: 1,
     image: {
         width: '100%',
         height: 500,
-        marginBottom: 65,
+        marginBottom: 54,
 
     },
     imageContainer: {
@@ -206,8 +196,9 @@ flex: 1,
     menu: {
         justifyContent: 'center',
         alignContent: 'center',
-
-
+    },
+    hand:{
+        
     },
 
 })

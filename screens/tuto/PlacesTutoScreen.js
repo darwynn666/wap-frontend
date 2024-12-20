@@ -20,9 +20,9 @@ export default function StatusTutoScreen() {
 
 
     useEffect(() => {
-        const timer1 = setTimeout(() => setTooltip1Visible(true), 1500);
-        const timer2 = setTimeout(() => setTooltip2Visible(true), 3000);
-        const timer3 = setTimeout(() => setTooltip3Visible(true), 4500);
+        const timer1 = setTimeout(() => setTooltip1Visible(true), 2000);
+        const timer2 = setTimeout(() => setTooltip2Visible(true), 3500);
+        const timer3 = setTimeout(() => setTooltip3Visible(true), 5000);
         const timer4 = setTimeout(() => setTooltip4Visible(true), 6000);
         const timer5 = setTimeout(() => setTooltip5Visible(true), 7500);
         return () => {
@@ -47,12 +47,21 @@ export default function StatusTutoScreen() {
                     <FadeInView delay={500} duration={3000} style={styles.imageContainer}>
                         <Image style={styles.image} source={require('../../assets/icons/menuplaces.png')} />
                     </FadeInView>
-                    <FadeInView>
-                        
-                    </FadeInView>
-                    <FadeInView fadeOut={true} duration={3000} style={styles.containerhand}>
-                        <Handtuto />
-                    </FadeInView>
+
+                    {tooltip1Visible && (
+                        <FadeInView fadeOut={false} duration={3000} style={styles.menu}>
+                            <View style={styles.tooltip1}>
+                                <Text style={styles.tooltiptext}>Ici tu peux enrregistrer un nouveau lieu DogFriendly </Text>
+                            </View>
+                        </FadeInView>
+                    )}
+                    {tooltip2Visible && (
+                        <FadeInView fadeOut={false} duration={3000} style={styles.menu}>
+                            <View style={styles.tooltip2}>
+                                <Text style={styles.tooltiptext}>Saisi un nom et choisi le type de lieu </Text>
+                            </View>
+                        </FadeInView>
+                    )}
 
                 </View>
 
@@ -80,14 +89,15 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 5,
         right: 5,
-        backgroundColor: 'black',
+        // backgroundColor: 'black',
         padding: 5,
         borderRadius: 5,
     },
     texttuto: {
         fontSize: 18,
-        color: '#fff',
+        color: '#000',
         margin: '20',
+        fontSize: globalStyle.h2,
     },
     containeranimation: {
         flex: 1,
@@ -110,21 +120,50 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         position: 'absolute',
-       // bottom: 90, // Place l'image en bas de l'écran
+        bottom: 10, // Place l'image en bas de l'écran
         width: '100%', // Prend toute la largeur
         height: '100%',
-        justifyContent:'flex-end',
-        alignSelf:'center',
+        justifyContent: 'flex-end',
+        alignSelf: 'center',
         //alignItems:'flex-end', // Ajuste la hauteur (peut être modifié selon les besoins)
     },
     image: {
         width: '100%',
-        height: '36%',
+        height: '50%',
         resizeMode: 'cover',
-        opacity:1,
-        justifyContent:'flex-end' ,
-        position:'absolute',
+        opacity: 1,
+        justifyContent: 'flex-end',
+        position: 'absolute',
         bottom: -60,
-    
-    }
+
+    },
+    tooltip1: {
+        position: 'absolute',
+        top: -300,
+        right: 100,
+        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
+        padding: 5,
+        borderRadius: 8,
+        maxWidth: 250, // Limite la largeur maximale pour forcer le passage à la ligne
+        zIndex: 1,
+        justifyContent: 'center',
+    },
+    tooltip2: {
+        position: 'absolute',
+        top: -180,
+        right: 100,
+        backgroundColor: 'rgba(0, 0, 0,1)', // Opacité corrigée pour que le fond soit bien visible
+        padding: 5,
+        borderRadius: 8,
+        maxWidth: 250, // Limite la largeur maximale pour forcer le passage à la ligne
+        zIndex: 1,
+        justifyContent: 'center',
+    },
+    tooltiptext: {
+        color: '#fff',
+        fontSize: 14,
+        textAlign: 'center',
+        lineHeight: 18, // Ajoute un espace suffisant entre les lignes pour une meilleure lisibilité
+        padding: 10,
+    },
 });
