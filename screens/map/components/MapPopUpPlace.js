@@ -7,6 +7,7 @@ import { defaultPlaceUrl } from "../../../config";
 import { setUserStatus } from "../../../reducers/user";
 import { useDispatch, useSelector } from "react-redux";
 import { setPlace } from "../../../reducers/places";
+import { useState,useEffect } from "react";
 
 //places popup
 export default MapPopUpPlace = ({
@@ -18,6 +19,13 @@ export default MapPopUpPlace = ({
   setPopUpPlacesVisibility,
 }) => {
   const dispatch = useDispatch();
+
+  const [isHere, setIsHere] = useState();
+
+  useEffect(() => {
+    if (!place) setIsHere(false);
+    else setIsHere(place.users.includes(user._id));
+  }, [place]);
 
   const isUserInPlace = (userID, place) => {
     if (!place) return false;
@@ -40,11 +48,13 @@ export default MapPopUpPlace = ({
     const response = await request.json();
     console.log(response);
     //set status of current user
-    if (response.users.includes(user_id))
-      {
-        dispatch(setUserStatus("pause"));
-      }
-    else dispatch(setUserStatus("walk"));
+    if (response.users.includes(user_id)) {
+      setIsHere(true);
+      dispatch(setUserStatus("pause"));
+    } else {
+      setIsHere(false);
+      dispatch(setUserStatus("walk"));
+    }
 
     // set value in place usestate
     // setPlacesData([
@@ -54,20 +64,14 @@ export default MapPopUpPlace = ({
     //   }),
     // ]);
 
-
-    dispatch(setPlace([
-      ...placesData.map((x) => {
-        if (x._id === place_id) x.users = response.users;
-        return x;
-      }),
-    ]))
-
-
-
-    //
-    const tmpPlaces = { ...selectedPlace };
-    tmpPlaces.users = response.users;
-    setSelectedPlace(tmpPlaces);
+    dispatch(
+      setPlace([
+        ...placesData.map((x) => {
+          if (x._id === place_id) x.users = response.users;
+          return x;
+        }),
+      ])
+    );
   };
 
   return (
@@ -105,13 +109,7 @@ export default MapPopUpPlace = ({
               onPressed={() => {
                 ImHerePressed(user._id, place._id);
               }}
-              srcIsActive={
-                isUserInPlace(user._id, place) ? (
-                  <IconDogBlue />
-                ) : (
-                  <IconDogBlueLight />
-                )
-              }
+              srcIsActive={isHere ? <IconDogBlue /> : <IconDogBlueLight />}
               label="J'y suis"
             ></MenuBottomItem>
           </View>
