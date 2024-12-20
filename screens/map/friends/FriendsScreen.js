@@ -104,7 +104,7 @@ export default function FriendsScreen(props) {
 
     const usersBlockedCards = usersBlocked.map((friend, i) => {
         return (
-            <View key={i} style={styles.usersBlockedContainer} >
+            <View key={i} style={styles.userBlockedContainer} >
                 <Image style={styles.usersBlockedAvatar} source={{ uri: friend.infos.photo_public_id ? friend.infos.photo : userAvatarUrl }} />
                 <Text style={styles.usersBlockedName} >{friend.infos.firstname} {friend.infos.lastname}</Text>
                 <ButtonSecondary title='Annuler' status={true} onPress={() => confirmCancelBlockFriend(friend._id, friend.infos.firstname)} />
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
     },
-    usersBlockedContainer: {
+    userBlockedContainer: {
         width: '100%',
         flexDirection: 'row',
         justifyContent: 'space-between',
