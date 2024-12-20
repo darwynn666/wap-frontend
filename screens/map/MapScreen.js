@@ -136,7 +136,7 @@ export default function MapScreen2() {
         }
       }
     
-  }, [currentPosition]);
+  }, [currentPosition,mapRef]);
 
   useEffect(() => {
     (async () => {
@@ -393,7 +393,7 @@ export default function MapScreen2() {
         key={mapKey}
         // key={`map-${Date.now()}`}
         ref={mapRef}
-        // initialRegion={visibleRegion}
+        initialRegion={visibleRegion}
         mapType={settings.mapDisplayIgnored}
         style={{ width: "100%", height: "100%" }}
         showsUserLocation={!forcePosition}
