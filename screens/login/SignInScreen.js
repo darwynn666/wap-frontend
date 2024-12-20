@@ -66,7 +66,7 @@ export default function SignIn(props) {
             <ScrollView style={{ height: '1%' }}>
 
                 <View style={styles.imageContainer}>
-                    <Image source={{ uri: logoHomeUrl }} style={styles.logo}></Image>
+                    <Image source={logoHomeUrl } style={styles.logo}></Image>
                     {/* <Text>Image Logo</Text> */}
                 </View>
 
@@ -113,9 +113,10 @@ const styles = StyleSheet.create({
         height: '80%',
     },
     logo: {
-        width: '100%',
-        height: '100%',
-        resizeMode: 'contain',
+        marginTop:'15%',
+        width: '80%',
+        height: '80%',
+        resizeMode: 'cover',
     },
     formContainer: {
         padding: globalStyle.padding,

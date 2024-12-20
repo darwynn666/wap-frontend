@@ -124,7 +124,7 @@ export default function MapScreen2() {
   //handle anim map
   useEffect(() => {
     async () => {
-      if (visibleRegion.latitude && visibleRegion.latitude != 0) {
+      if (visibleRegion &&visibleRegion.latitude && visibleRegion.latitude != 0) {
         if (firstRefresRegion) {
           if (mapRef.current) {
             console.log("map current");
@@ -134,7 +134,7 @@ export default function MapScreen2() {
         }
       }
     };
-  }, [currentPosition]);
+  }, [currentPosition,mapRef]);
 
   useEffect(() => {
     (async () => {
