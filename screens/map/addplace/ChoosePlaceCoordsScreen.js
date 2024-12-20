@@ -34,6 +34,7 @@ export default function ChoosePlaceCoordsScreen() {
     const [coordinates, setCoordinates] = useState(user.currentLocation.coordinates)
     const [positionMarker, setPositionMarker] = useState(null)
     const [location, setLocation] = useState(null)
+    const [mapKey, setMapKey] = useState(`map-${Date.now()}`)
 
     const initialRegion = {
         longitude: user.currentLocation.coordinates[0],
@@ -88,10 +89,10 @@ export default function ChoosePlaceCoordsScreen() {
 
     return (
 
-        <View style={styles.container} onPress={()=> console.log('press')}>
+        <View style={styles.container} onPress={() => console.log('press')}>
             <MapView
-                // key={`map-${Date.now()}`}
-                key='choosePlaceMap'
+                key={`map-${Date.now()}`}
+                // key={mapKey}
                 ref={mapRef2}
                 style={{ width: '100%', height: '50%' }}
                 initialRegion={initialRegion}
@@ -101,7 +102,7 @@ export default function ChoosePlaceCoordsScreen() {
                 onPress={region => handlePress(region)}
                 onLongPress={region => handlePress(region)}
             >
-                {positionMarker} 
+                {positionMarker}
             </MapView>
 
             <View style={styles.coordinatesContainer}>

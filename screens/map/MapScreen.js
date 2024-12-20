@@ -72,6 +72,7 @@ export default function MapScreen2() {
   const [forcePosition, setForcePosition] = useState();
   const [forcePositionColor, setForcePositionColor] = useState("#666666");
 
+  const [mapKey, setMapKey] = useState(`map-${Date.now()}`)
   const intervalRef = useRef(null);
 
   //check friends to update
@@ -124,7 +125,7 @@ export default function MapScreen2() {
   //handle anim map
   useEffect(() => {
     async () => {
-      if (visibleRegion &&visibleRegion.latitude && visibleRegion.latitude != 0) {
+      if (visibleRegion && visibleRegion.latitude && visibleRegion.latitude != 0) {
         if (firstRefresRegion) {
           if (mapRef.current) {
             console.log("map current");
@@ -134,7 +135,7 @@ export default function MapScreen2() {
         }
       }
     };
-  }, [currentPosition,mapRef]);
+  }, [currentPosition, mapRef]);
 
   useEffect(() => {
     (async () => {
@@ -183,13 +184,13 @@ export default function MapScreen2() {
             if (visibleRegion.latitude) {
               return (
                 marker.location.coordinates[1] >=
-                  region.latitude - region.latitudeDelta / 2 &&
+                region.latitude - region.latitudeDelta / 2 &&
                 marker.location.coordinates[1] <=
-                  region.latitude + region.latitudeDelta / 2 &&
+                region.latitude + region.latitudeDelta / 2 &&
                 marker.location.coordinates[0] >=
-                  region.longitude - region.longitudeDelta / 2 &&
+                region.longitude - region.longitudeDelta / 2 &&
                 marker.location.coordinates[0] <=
-                  region.longitude + region.longitudeDelta / 2
+                region.longitude + region.longitudeDelta / 2
               );
             }
           })
@@ -203,13 +204,13 @@ export default function MapScreen2() {
             if (visibleRegion.latitude) {
               return (
                 marker.currentLocation.coordinates[1] >=
-                  region.latitude - region.latitudeDelta / 2 &&
+                region.latitude - region.latitudeDelta / 2 &&
                 marker.currentLocation.coordinates[1] <=
-                  region.latitude + region.latitudeDelta / 2 &&
+                region.latitude + region.latitudeDelta / 2 &&
                 marker.currentLocation.coordinates[0] >=
-                  region.longitude - region.longitudeDelta / 2 &&
+                region.longitude - region.longitudeDelta / 2 &&
                 marker.currentLocation.coordinates[0] <=
-                  region.longitude + region.longitudeDelta / 2
+                region.longitude + region.longitudeDelta / 2
               );
             }
           })
@@ -288,6 +289,7 @@ export default function MapScreen2() {
   const refreshMap = () => {
     getUsers();
     getPlaces();
+    setMapKey(`map-${Date.now()}`)
   };
 
   const isAccepted = (id) => {
@@ -309,7 +311,8 @@ export default function MapScreen2() {
 
   useEffect(() => {
     getUsers()
-    getPlaces();
+    getPlaces()
+    setMapKey(`map-${Date.now()}`)
   }, []);
 
   //create markers
@@ -386,7 +389,7 @@ export default function MapScreen2() {
   return (
     <View style={styles.container}>
       <MapView
-        key="mainMap"
+        key={mapKey}
         // key={`map-${Date.now()}`}
         ref={mapRef}
         initialRegion={visibleRegion}
