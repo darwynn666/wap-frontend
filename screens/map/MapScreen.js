@@ -124,7 +124,8 @@ export default function MapScreen2() {
 
   //handle anim map
   useEffect(() => {
-    async () => {
+    console.log("refresh map")
+    console.log(firstRefresRegion)
       if (visibleRegion && visibleRegion.latitude && visibleRegion.latitude != 0) {
         if (firstRefresRegion) {
           if (mapRef.current) {
@@ -134,8 +135,8 @@ export default function MapScreen2() {
           setFirstRefresRegion(false);
         }
       }
-    };
-  }, [currentPosition, mapRef]);
+    
+  }, [currentPosition]);
 
   useEffect(() => {
     (async () => {
@@ -392,7 +393,7 @@ export default function MapScreen2() {
         key={mapKey}
         // key={`map-${Date.now()}`}
         ref={mapRef}
-        initialRegion={visibleRegion}
+        // initialRegion={visibleRegion}
         mapType={settings.mapDisplayIgnored}
         style={{ width: "100%", height: "100%" }}
         showsUserLocation={!forcePosition}
